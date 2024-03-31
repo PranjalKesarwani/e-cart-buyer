@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { NavigationProp } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -8,19 +8,27 @@ type SplashProps = NativeStackScreenProps<RootStackParamList, "SplashScreen">
 
 const SplashScreen = ({ navigation }: SplashProps) => {
 
+  const [isAuth,setIsAuth] = useState<boolean>(false);
+
+  setTimeout(()=>{
+    if(!isAuth)return navigation.replace("LoginScreen");
+    navigation.replace("HomeScreen")
+
+  },3000)
+
 
   return (
     <View style={styles.container}>
-      <Text>hii pranjal</Text>
-     <Button
+      <Text>Authenticating User...</Text>
+     {/* <Button
       title='Go to home screen'
     //  onPress={()=>navigation.navigate("OtpScreen",{otp:7856})}
-    onPress={()=>navigation.navigate("HomeScreen")}
+    // onPress={()=>navigation.navigate("HomeScreen")}
     // onPress={ ()=>{navigation.push("OtpScreen",{
     //   otp:8878
     // })}}
 
-     />
+     /> */}
    
     </View>
   );

@@ -9,14 +9,14 @@ type OtpProps = NativeStackScreenProps<RootStackParamList, "OtpScreen">
 
 const OTPScreen= ({route}:OtpProps) => {
 
-  const {otp}  = route.params;
+  const {phoneNumber}  = route.params;
 
 const navigation =  useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   return (
     <View >
       <Text style={styles.container}>
-        OTP: {otp}
+        OTP: {phoneNumber}
         <Button
         title='Go to home screen via go back method'
         onPress={()=>navigation.goBack()}

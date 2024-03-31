@@ -8,6 +8,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from './src/screens/SpalshScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import LoginScreen from './src/screens/LoginScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -35,6 +36,15 @@ function App(): React.JSX.Element {
             options={
               {
                 title: "Home Screen"
+              }
+            }
+          />
+           <Stack.Screen
+            name='LoginScreen'
+            component={LoginScreen}
+            options={
+              {
+                title: "Login Screen"
               }
             }
           />

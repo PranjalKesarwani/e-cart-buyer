@@ -1,10 +1,19 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Button } from 'react-native';
+import { RootStackParamList } from '../../types';
 
-const HomeScreen: React.FC = () => {
+type HomeProps = NativeStackScreenProps<RootStackParamList, "HomeScreen">
+
+
+const HomeScreen = ({navigation}:HomeProps) => {
   return (
     <View style={styles.container} >
       <Text>Welcome to Home Screen!</Text>
+      <Button 
+      title='User authenticated successfully'
+      onPress={()=>navigation.navigate("LoginScreen")}
+      />
     </View>
   );
 };
