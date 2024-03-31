@@ -1,25 +1,42 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button } from 'react-native';
+import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
+import { RootStackParamList } from '../../types';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-const OTPScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
-  const [otp, setOTP] = useState('');
+type OtpProps = NativeStackScreenProps<RootStackParamList, "OtpScreen">
 
-  const handleOTPSubmit = () => {
-    // Call API to verify OTP
-    // For demo, navigate to HomeScreen directly
-    navigation.navigate('HomeScreen');
-  };
+const OTPScreen= ({route}:OtpProps) => {
+
+  const {otp}  = route.params;
+
+const navigation =  useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   return (
     <View >
-      <TextInput
-        placeholder="Enter OTP"
-        value={otp}
-        onChangeText={setOTP}
-      />
-      <Button title="Submit" onPress={handleOTPSubmit} />
+      <Text style={styles.container}>
+        OTP: {otp}
+        <Button
+        title='Go to home screen via go back method'
+        onPress={()=>navigation.goBack()}
+        />
+          <Button
+        title='Go to home screen via pop method'
+        onPress={()=>navigation.popToTop()}
+        />
+      </Text>
     </View>
   );
 };
 
 export default OTPScreen;
+
+const styles = StyleSheet.create({
+  container:{
+    flex:1,
+    justifyContent:"center",
+    alignItems:"center"
+
+  }
+})

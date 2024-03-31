@@ -1,26 +1,38 @@
 import React, { useEffect } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet, Button } from 'react-native';
 import { NavigationProp } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../types';
 
-type Props = {
-  navigation: NavigationProp<any>;
-};
+type SplashProps = NativeStackScreenProps<RootStackParamList, "SplashScreen">
 
-const SplashScreen: React.FC<Props> = ({ navigation }) => {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      console.log('hello duniya'); // Log a message after 2 seconds
-      navigation.navigate('LoginScreen'); // Navigate to a screen that exists in your navigation stack
-    }, 2000);
+const SplashScreen = ({ navigation }: SplashProps) => {
 
-    return () => clearTimeout(timer); // Clear the timeout when component unmounts
-  }, [navigation]);
 
   return (
-    <View>
-      <Text>hii world</Text>
+    <View style={styles.container}>
+      <Text>hii pranjal</Text>
+     <Button
+      title='Go to home screen'
+    //  onPress={()=>navigation.navigate("OtpScreen",{otp:7856})}
+    onPress={()=>navigation.navigate("HomeScreen")}
+    // onPress={ ()=>{navigation.push("OtpScreen",{
+    //   otp:8878
+    // })}}
+
+     />
+   
     </View>
   );
 };
 
 export default SplashScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex:1,
+    alignItems: "center",
+    justifyContent:"center"
+
+  }
+})

@@ -1,7 +1,20 @@
 import React from 'react';
-import { Text, View } from 'react-native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-const Stack = createNativeStackNavigator();
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  View,
+  Text
+} from 'react-native';
+import { RootStackParamList } from '../types';
+
+//Screens
+import SplashScreen from '../screens/SpalshScreen';
+import HomeScreen from '../screens/HomeScreen';
+import OTPScreen from '../screens/OtpScreen';
+
+
+
+const RootStack = createNativeStackNavigator<RootStackParamList>();
+
 
 
 
@@ -10,13 +23,12 @@ const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
   return (
-    
-      <View>
-        <Text>
-          Hello pranjal  kesarwni
-        </Text>
-        </View>
-    
+<RootStack.Navigator initialRouteName="SplashScreen">
+<RootStack.Screen name="SplashScreen" component={SplashScreen} />
+
+
+</RootStack.Navigator>
+
   );
 };
 
