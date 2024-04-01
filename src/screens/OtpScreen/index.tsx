@@ -14,18 +14,18 @@ const OTPScreen= ({route}:OtpProps) => {
 const navigation =  useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   return (
-    <View >
+    <View style={styles.container} >
+
+
       <Text style={styles.container}>
         OTP: {phoneNumber}
-        <Button
-        title='Go to home screen via go back method'
-        onPress={()=>navigation.goBack()}
-        />
-          <Button
-        title='Go to home screen via pop method'
-        onPress={()=>navigation.popToTop()}
-        />
+      
+  
       </Text>
+      <Button
+        title='Go to name info screen'
+        onPress={()=>navigation.replace("NameInfoScreen")}
+        />
     </View>
   );
 };
@@ -33,10 +33,11 @@ const navigation =  useNavigation<NativeStackNavigationProp<RootStackParamList>>
 export default OTPScreen;
 
 const styles = StyleSheet.create({
-  container:{
-    flex:1,
-    justifyContent:"center",
-    alignItems:"center"
-
-  }
-})
+  container: {
+    flex: 1,
+    
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10, 
+  },
+});

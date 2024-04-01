@@ -5,7 +5,8 @@ export type RootStackParamList = {
     SplashScreen: undefined;
     OtpScreen: {phoneNumber:string};
     HomeScreen:undefined;
-    LoginScreen:undefined
+    LoginScreen:undefined;
+    NameInfoScreen:undefined;
 
 };
 

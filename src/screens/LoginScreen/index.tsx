@@ -1,25 +1,32 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
+import { View, TextInput, Button, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { RootStackParamList } from '../../types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
-type LoginProps = NativeStackScreenProps<RootStackParamList, "LoginScreen">
+type OtpProps = NativeStackScreenProps<RootStackParamList, "LoginScreen">;
 
+const LoginScreen = ({ navigation }: OtpProps) => {
+  const [phoneNumber, setPhoneNumber] = useState('');
 
-
-const LoginScreen = ({ navigation }: LoginProps) => {
-
-
+  const handleSendOTP = () => {
+    navigation.navigate('OtpScreen', { phoneNumber });
+  };
 
   return (
     <View style={styles.container}>
-      <Text>This is login screen</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter phone number"
+        keyboardType="phone-pad"
+        value={phoneNumber}
+        onChangeText={setPhoneNumber}
+      />
+      <TouchableOpacity style={styles.button} onPress={handleSendOTP}>
+        <Text style={styles.buttonText}>Send OTP</Text>
+      </TouchableOpacity>
     </View>
   );
 };
-
-export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -46,3 +53,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+export default LoginScreen;

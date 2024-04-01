@@ -9,6 +9,8 @@ import SplashScreen from './src/screens/SpalshScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import LoginScreen from './src/screens/LoginScreen';
+import OTPScreen from './src/screens/OtpScreen';
+import NameInfoScreen from './src/screens/NameInfoScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -39,12 +41,31 @@ function App(): React.JSX.Element {
               }
             }
           />
-           <Stack.Screen
+          <Stack.Screen
             name='LoginScreen'
             component={LoginScreen}
             options={
               {
                 title: "Login Screen"
+              }
+            }
+          />
+          <Stack.Screen
+            name='OtpScreen'
+            component={OTPScreen}
+            options={
+              {
+                title: "OTP Screen"
+              }
+            }
+          />
+
+          <Stack.Screen
+            name='NameInfoScreen'
+            component={NameInfoScreen}
+            options={
+              {
+                title: "Name info Screen"
               }
             }
           />
