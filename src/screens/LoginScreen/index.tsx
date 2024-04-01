@@ -9,7 +9,7 @@ const LoginScreen = ({ navigation }: OtpProps) => {
   const [phoneNumber, setPhoneNumber] = useState('');
 
   const handleSendOTP = () => {
-    navigation.navigate('OtpScreen', { phoneNumber });
+    navigation.replace('OtpScreen', { phoneNumber });
   };
 
   return (
@@ -22,7 +22,7 @@ const LoginScreen = ({ navigation }: OtpProps) => {
         onChangeText={setPhoneNumber}
       />
       <TouchableOpacity style={styles.button} onPress={handleSendOTP}>
-        <Text style={styles.buttonText}>Send OTP</Text>
+        <Text style={styles.buttonText}>Send OTP please</Text>
       </TouchableOpacity>
     </View>
   );

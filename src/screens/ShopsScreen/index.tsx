@@ -3,14 +3,14 @@ import React from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { RootStackParamList } from '../../types';
 
-type HomeProps = NativeStackScreenProps<RootStackParamList, "HomeScreen">
+type ShopsProps = NativeStackScreenProps<RootStackParamList, "HomeScreen">
 
 
-const HomeScreen = ({navigation}:HomeProps) => {
+const ShopsScreen = ({navigation}:ShopsProps) => {
   
   return (
     <View style={styles.container} >
-      <Text>Welcome to Home Screen!</Text>
+      <Text>Welcome to List of shops Screen!</Text>
       <Button 
       title='User authenticated successfully'
       onPress={()=>navigation.navigate("LoginScreen")}
@@ -19,7 +19,7 @@ const HomeScreen = ({navigation}:HomeProps) => {
   );
 };
 
-export default HomeScreen;
+export default ShopsScreen;
 
 const styles = StyleSheet.create({
   container:{

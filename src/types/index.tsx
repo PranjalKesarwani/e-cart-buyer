@@ -7,6 +7,7 @@ export type RootStackParamList = {
     HomeScreen:undefined;
     LoginScreen:undefined;
     NameInfoScreen:undefined;
+    ShopsScreen:undefined;
 
 };
 
