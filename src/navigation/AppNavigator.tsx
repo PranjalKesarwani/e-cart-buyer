@@ -10,24 +10,72 @@ import { RootStackParamList } from '../types';
 import SplashScreen from '../screens/SpalshScreen';
 import HomeScreen from '../screens/HomeScreen';
 import OTPScreen from '../screens/OtpScreen';
+import LoginScreen from '../screens/LoginScreen';
+import NameInfoScreen from '../screens/NameInfoScreen';
+import DrawerNavigator from './DrawerNavigator';
 
 
 
-const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 
 
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 
 
 
 const AppNavigator = () => {
   return (
-<RootStack.Navigator initialRouteName="SplashScreen">
-<RootStack.Screen name="SplashScreen" component={SplashScreen} />
+
+    <Stack.Navigator initialRouteName='SplashScreen'  screenOptions={{
+      headerShown: false,
+    }}>
+      <Stack.Screen
+        name='SplashScreen'
+        component={SplashScreen}
+        options={
+          {
+            title: "Splash Screen"
+          }
+        }
+      />
 
 
-</RootStack.Navigator>
+      <Stack.Screen
+        name='LoginScreen'
+        component={LoginScreen}
+        options={
+          {
+            title: "Login Screen"
+          }
+        }
+      />
+      <Stack.Screen
+        name='OtpScreen'
+        component={OTPScreen}
+        options={
+          {
+            title: "OTP Screen"
+          }
+        }
+      />
+
+      <Stack.Screen
+        name='NameInfoScreen'
+        component={NameInfoScreen}
+        options={
+          {
+            title: "Name info Screen"
+          }
+        }
+      />
+
+      <Stack.Screen
+        name='DrawerNavigator'
+        component={DrawerNavigator}
+      />
+
+    </Stack.Navigator>
 
   );
 };

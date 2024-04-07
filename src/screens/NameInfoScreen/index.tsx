@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
 import { RootStackParamList } from '../../types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import HomeScreen from '../HomeScreen';
 
 type NameInfoProps = NativeStackScreenProps<RootStackParamList, "NameInfoScreen">
 
@@ -19,7 +20,7 @@ return (
       />
       <Button
       title='Go to Home Screen'
-      onPress={()=>navigation.replace("HomeScreen")}
+      onPress={()=>navigation.navigate("DrawerNavigator")}
       />
     </View>
   );
