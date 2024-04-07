@@ -18,6 +18,8 @@ export type RootStackParamList = {
     OrderDetailsScreen:undefined;
     AddressScreen:undefined;
     PaymentScreen: undefined;
+    OrderStatusScreen: undefined;
+    YourOrdersScreen: undefined;
 
 };
 
@@ -33,6 +35,8 @@ export type RootDrawerParamList = {
     OrderDetailsScreen:undefined;
     AddressScreen:undefined;
     PaymentScreen:undefined;
+    OrderStatusScreen: undefined;
+    YourOrdersScreen: undefined;
 
 
    

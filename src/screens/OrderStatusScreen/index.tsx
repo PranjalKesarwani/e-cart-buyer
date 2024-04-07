@@ -4,28 +4,28 @@ import { View, Text, StyleSheet, Button } from 'react-native';
 import { RootDrawerParamList, RootStackParamList } from '../../types';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-type PaymentScreenProps = NativeStackScreenProps<RootStackParamList, "PaymentScreen">
+type OrderStatusScreenProps = NativeStackScreenProps<RootStackParamList, "OrderStatusScreen">
 
 
 
-const PaymentScreen = ({ navigation }: PaymentScreenProps) => {
+const OrderStatusScreen = ({ navigation }: OrderStatusScreenProps) => {
 
     return (
         <View style={styles.container}>
         <View style={styles.buttonContainer}>
-           
+        <Text>Order placed successfully</Text>
           <TouchableOpacity
-            onPress={() => navigation.navigate('OrderStatusScreen')}
+            onPress={() => navigation.navigate('DrawerNavigator')}
             style={styles.button}>
-            <Text style={styles.buttonText}>Go to Order status screen</Text>
+            <Text style={styles.buttonText}>Go to Home screen</Text>
           </TouchableOpacity>
- 
+
         </View>
       </View>
     );
 };
 
-export default PaymentScreen;
+export default OrderStatusScreen;
 
 const styles = StyleSheet.create({
     container: {

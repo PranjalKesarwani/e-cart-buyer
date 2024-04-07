@@ -11,6 +11,8 @@ import WishListScreen from "../screens/WishLIstScreen";
 import OrderDetailsScreen from "../screens/OrderDetailsScreen";
 import AddressScreen from "../screens/AddressScreen";
 import PaymentScreen from "../screens/PaymentScreen";
+import OrderStatusScreen from "../screens/OrderStatusScreen";
+import YourOrdersScreen from "../screens/YourOrdersScreen";
 
 
 
@@ -30,6 +32,10 @@ const DrawerNavigator = () => {
       <Drawer.Screen
         name="AllChatScreen"
         component={AllChatScreen}
+      />
+      <Drawer.Screen
+        name="YourOrdersScreen"
+        component={YourOrdersScreen}
       />
       <Drawer.Screen
         name="ShopListScreen"
@@ -75,6 +81,11 @@ const DrawerNavigator = () => {
       <Drawer.Screen
         name="PaymentScreen"
         component={PaymentScreen}
+        options={{ drawerLabel: () => null, drawerItemStyle: { height: 0 } }}
+      />
+      <Drawer.Screen
+        name="OrderStatusScreen"
+        component={OrderStatusScreen}
         options={{ drawerLabel: () => null, drawerItemStyle: { height: 0 } }}
       />
     </Drawer.Navigator>

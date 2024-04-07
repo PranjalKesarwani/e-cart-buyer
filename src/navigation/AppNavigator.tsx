@@ -75,10 +75,7 @@ const AppNavigator = () => {
         name='DrawerNavigator'
         component={DrawerNavigator}
       />
-      <Stack.Screen
-        name='ShopListScreen'
-        component={ShopListScreen}
-      />
+ 
 
     </Stack.Navigator>
 
