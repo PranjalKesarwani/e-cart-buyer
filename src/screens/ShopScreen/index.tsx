@@ -3,21 +3,21 @@ import React from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { RootDrawerParamList, RootStackParamList } from '../../types';
 
-type ShopListProps = NativeStackScreenProps<RootStackParamList, "ShopListScreen">
+type ShopScreenProps = NativeStackScreenProps<RootStackParamList, "ShopScreen">
 
 
 
-const ShopListScreen = ({ navigation }: ShopListProps) => {
+const ShopScreen = ({ navigation }: ShopScreenProps) => {
 
     return (
         <View style={styles.container} >
             <View style={styles.textContainer} >
 
-                <Text style={styles.textStyle}>Shops list of particular category</Text>
+                <Text style={styles.textStyle}>Selected Shoe(say) shop</Text>
                 <Text style={styles.textStyle}>e.g. Shoes</Text>
                 <Button
-                    title='Go to Shop Screen'
-                    onPress={() => navigation.navigate("ShopScreen")}
+                    title='Go to Product Screen'
+                    onPress={() => navigation.navigate("ProductScreen")}
                 />
             </View>
 
@@ -25,7 +25,7 @@ const ShopListScreen = ({ navigation }: ShopListProps) => {
     );
 };
 
-export default ShopListScreen;
+export default ShopScreen;
 
 const styles = StyleSheet.create({
     container: {

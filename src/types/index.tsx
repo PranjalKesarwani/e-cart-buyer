@@ -9,12 +9,32 @@ export type RootStackParamList = {
     ShopsScreen:undefined;
     DrawerNavigator:undefined;
     ShopListScreen:undefined;
+    ShopScreen:undefined;
+    ProductScreen:undefined;
+    AllChatScreen:undefined;
+    CartScreen:undefined;
+    WishListScreen:undefined;
+    ChatScreen:undefined;
+    OrderDetailsScreen:undefined;
+    AddressScreen:undefined;
+    PaymentScreen: undefined;
 
 };
 
 export type RootDrawerParamList = {
     HomeScreen: undefined;
     ShopListScreen:undefined;
+    ShopScreen:undefined;
+    ProductScreen:undefined;
+    AllChatScreen:undefined;
+    CartScreen:undefined;
+    WishListScreen:undefined;
+    ChatScreen:undefined;
+    OrderDetailsScreen:undefined;
+    AddressScreen:undefined;
+    PaymentScreen:undefined;
+
+
    
   };
 
