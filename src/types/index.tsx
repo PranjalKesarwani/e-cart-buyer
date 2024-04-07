@@ -8,11 +8,13 @@ export type RootStackParamList = {
     NameInfoScreen:undefined;
     ShopsScreen:undefined;
     DrawerNavigator:undefined;
+    ShopListScreen:undefined;
 
 };
 
 export type RootDrawerParamList = {
     HomeScreen: undefined;
+    ShopListScreen:undefined;
    
   };
 

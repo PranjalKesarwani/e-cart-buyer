@@ -13,6 +13,7 @@ import OTPScreen from '../screens/OtpScreen';
 import LoginScreen from '../screens/LoginScreen';
 import NameInfoScreen from '../screens/NameInfoScreen';
 import DrawerNavigator from './DrawerNavigator';
+import ShopListScreen from '../screens/ShopListScreen';
 
 
 
@@ -73,6 +74,10 @@ const AppNavigator = () => {
       <Stack.Screen
         name='DrawerNavigator'
         component={DrawerNavigator}
+      />
+      <Stack.Screen
+        name='ShopListScreen'
+        component={ShopListScreen}
       />
 
     </Stack.Navigator>
