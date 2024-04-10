@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { RootStackParamList } from '../../types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import Title from '../../components/Title';
 
 type OtpProps = NativeStackScreenProps<RootStackParamList, "LoginScreen">;
 
@@ -14,6 +15,10 @@ const LoginScreen = ({ navigation }: OtpProps) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.appTitle}>
+      <Title fontSize={36} fontWeight={'bold'} />
+      </View>
+
       <TextInput
         style={styles.input}
         placeholder="Enter phone number"
@@ -22,7 +27,7 @@ const LoginScreen = ({ navigation }: OtpProps) => {
         onChangeText={setPhoneNumber}
       />
       <TouchableOpacity style={styles.button} onPress={handleSendOTP}>
-        <Text style={styles.buttonText}>Send OTP please</Text>
+        <Text style={styles.buttonText}>Send OTP to this mobile number</Text>
       </TouchableOpacity>
     </View>
   );
@@ -31,25 +36,29 @@ const LoginScreen = ({ navigation }: OtpProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
+    justifyContent: 'center', // Center elements vertically
+  },
+  appTitle: {
+   alignItems:"center",
   },
   input: {
-    height: 40,
-    width: '80%',
-    borderColor: 'gray',
-    borderWidth: 1,
+    backgroundColor: '#f2f2f2',
+    padding: 15,
     borderRadius: 5,
-    marginBottom: 20,
-    paddingHorizontal: 10,
+    fontSize: 16,
+    marginTop:30
   },
   button: {
-    backgroundColor: 'blue',
-    padding: 10,
+    backgroundColor: '#4CAF50', // Green color
+    padding: 15,
     borderRadius: 5,
+    marginTop: 10,
   },
   buttonText: {
-    color: 'white',
+    color: '#fff',
+    fontSize: 16,
     textAlign: 'center',
   },
 });
