@@ -9,6 +9,7 @@ import { RootStackParamList } from '../types';
 //Screens
 import SplashScreen from '../screens/SpalshScreen';
 import HomeScreen from '../screens/HomeScreen';
+
 import OTPScreen from '../screens/OtpScreen';
 import LoginScreen from '../screens/LoginScreen';
 import NameInfoScreen from '../screens/NameInfoScreen';

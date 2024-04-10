@@ -8,17 +8,18 @@ type SplashProps = NativeStackScreenProps<RootStackParamList, "SplashScreen">
 
 const SplashScreen = ({ navigation }: SplashProps) => {
 
-  const [isAuth,setIsAuth] = useState<boolean>(false);
+  const [isAuth,setIsAuth] = useState<boolean>(true);
 
   setTimeout(()=>{
     if(!isAuth)return navigation.replace("LoginScreen");
-    navigation.replace("HomeScreen")
+    navigation.replace("DrawerNavigator")
 
   },3000)
 
 
   return (
     <View style={styles.container}>
+      <Text>Amazex (Ek sheher ek dukaan)</Text>
       <Text>Authenticating User...</Text>
      {/* <Button
       title='Go to home screen'
