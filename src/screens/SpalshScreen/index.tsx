@@ -17,10 +17,7 @@ const SplashScreen = ({ navigation }: SplashProps) => {
 
   },3000)
 
-  const titleSizeDetails = {
-    fontSize: 36,
-    fontWeight: 'bold'
-  }
+
 
   return (
     <View style={styles.container}>
