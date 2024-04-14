@@ -37,11 +37,11 @@ const DrawerNavigator = () => {
         name="YourOrdersScreen"
         component={YourOrdersScreen}
       />
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="ShopListScreen"
         component={ShopListScreen}
         options={{ drawerLabel: () => null, drawerItemStyle: { height: 0 } }}
-      />
+      /> */}
       <Drawer.Screen
         name="ShopScreen"
         component={ShopScreen}
