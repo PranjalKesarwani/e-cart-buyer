@@ -5,6 +5,7 @@ import { RootStackParamList } from './src/types';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -14,15 +15,19 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function App(): React.JSX.Element {
   return (
 
-    <SafeAreaProvider>
+    <GestureHandlerRootView>
 
-      <NavigationContainer>
 
-        <AppNavigator/>
+      <SafeAreaProvider>
 
-      </NavigationContainer>
+        <NavigationContainer>
 
-    </SafeAreaProvider>
+          <AppNavigator />
+
+        </NavigationContainer>
+
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
 
