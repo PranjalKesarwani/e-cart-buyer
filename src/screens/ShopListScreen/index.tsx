@@ -98,14 +98,15 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     shopCard: {
-        margin: 6,
+        marginBottom: 40,
         padding: 20,
         backgroundColor: '#E5E5E5',
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
         height: 100,
-        width: "45%",
+        width: "100%",
+        minHeight:200
     },
     shopName: {
         fontSize: 18,

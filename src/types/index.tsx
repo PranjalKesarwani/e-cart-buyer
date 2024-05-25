@@ -6,7 +6,7 @@ export type RootStackParamList = {
     OtpScreen: {phoneNumber:string};
     LoginScreen:undefined;
     NameInfoScreen:undefined;
-    ShopsScreen:undefined;
+    SelectedProductScreen:undefined;
     DrawerNavigator:undefined;
     ShopListScreen:undefined;
     ShopScreen:undefined;
@@ -21,13 +21,13 @@ export type RootStackParamList = {
     OrderStatusScreen: undefined;
     YourOrdersScreen: undefined;
 
+
 };
 
 export type RootDrawerParamList = {
     HomeScreen: undefined;
     ShopListScreen:undefined;
     ShopScreen:undefined;
-    ProductScreen:undefined;
     AllChatScreen:undefined;
     CartScreen:undefined;
     WishListScreen:undefined;

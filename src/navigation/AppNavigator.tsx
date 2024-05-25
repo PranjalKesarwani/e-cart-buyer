@@ -15,6 +15,9 @@ import LoginScreen from '../screens/LoginScreen';
 import NameInfoScreen from '../screens/NameInfoScreen';
 import DrawerNavigator from './DrawerNavigator';
 import ShopListScreen from '../screens/ShopListScreen';
+import ShopScreen from '../screens/ShopScreen';
+import ProductScreen from '../screens/ProductScreen';
+import SelectedProductScreen from '../screens/SelectedProductScreen';
 
 
 
@@ -29,7 +32,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const AppNavigator = () => {
   return (
 
-    <Stack.Navigator initialRouteName='SplashScreen'  screenOptions={{
+    <Stack.Navigator initialRouteName='SplashScreen' screenOptions={{
       headerShown: false,
     }}>
       <Stack.Screen
@@ -76,11 +79,25 @@ const AppNavigator = () => {
         name='DrawerNavigator'
         component={DrawerNavigator}
       />
-       <Stack.Screen
+      <Stack.Screen
         name='ShopListScreen'
         component={ShopListScreen}
       />
- 
+      <Stack.Screen
+        name='ShopScreen'
+        component={ShopScreen}
+      />
+
+      <Stack.Screen
+        name='ProductScreen'
+        component={ProductScreen}
+      />
+      <Stack.Screen
+        name='SelectedProductScreen'
+        component={SelectedProductScreen}
+      />
+
+
 
     </Stack.Navigator>
 
