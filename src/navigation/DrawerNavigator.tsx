@@ -68,16 +68,16 @@ const DrawerNavigator = () => {
         options={{ drawerLabel: () => null, drawerItemStyle: { height: 0 } }}
       />
    
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="AddressScreen"
         component={AddressScreen}
         options={{ drawerLabel: () => null, drawerItemStyle: { height: 0 } }}
-      />
-      <Drawer.Screen
+      /> */}
+      {/* <Drawer.Screen
         name="PaymentScreen"
         component={PaymentScreen}
         options={{ drawerLabel: () => null, drawerItemStyle: { height: 0 } }}
-      />
+      /> */}
       <Drawer.Screen
         name="OrderStatusScreen"
         component={OrderStatusScreen}
