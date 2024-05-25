@@ -56,6 +56,9 @@ const AddressScreen = ({ navigation }: AddressScreenProps) => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalView}>
+            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+              <Icons name="close" size={24} color={'black'} />
+            </TouchableOpacity>
             <Text style={styles.modalHeader}>Add New Address</Text>
             <TextInput
               style={styles.input}
@@ -188,5 +191,10 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
   },
 });

@@ -37,21 +37,7 @@ const DrawerNavigator = () => {
         name="YourOrdersScreen"
         component={YourOrdersScreen}
       />
-      {/* <Drawer.Screen
-        name="ShopListScreen"
-        component={ShopListScreen}
-        options={{ drawerLabel: () => null, drawerItemStyle: { height: 0 } }}
-      /> */}
-      {/* <Drawer.Screen
-        name="ShopScreen"
-        component={ShopScreen}
-        options={{ drawerLabel: () => null, drawerItemStyle: { height: 0 } }}
-      /> */}
-      {/* <Drawer.Screen
-        name="ProductScreen"
-        component={ProductScreen}
-        options={{ drawerLabel: () => null, drawerItemStyle: { height: 0 } }}
-      /> */}
+  
 
       <Drawer.Screen
         name="ChatScreen"
@@ -68,21 +54,7 @@ const DrawerNavigator = () => {
         options={{ drawerLabel: () => null, drawerItemStyle: { height: 0 } }}
       />
    
-      {/* <Drawer.Screen
-        name="AddressScreen"
-        component={AddressScreen}
-        options={{ drawerLabel: () => null, drawerItemStyle: { height: 0 } }}
-      /> */}
-      {/* <Drawer.Screen
-        name="PaymentScreen"
-        component={PaymentScreen}
-        options={{ drawerLabel: () => null, drawerItemStyle: { height: 0 } }}
-      /> */}
-      <Drawer.Screen
-        name="OrderStatusScreen"
-        component={OrderStatusScreen}
-        options={{ drawerLabel: () => null, drawerItemStyle: { height: 0 } }}
-      />
+  
     </Drawer.Navigator>
   );
 };
