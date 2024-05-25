@@ -30,6 +30,9 @@ const ProductScreen = ({ navigation }: ProductScreenProps) => {
           <Icons name="left" size={17} color={'black'} />
           <Text>Back</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.cartButton} onPress={() => navigation.navigate('CartScreen')}>
+          <Icons name="shoppingcart" size={24} color={'black'} />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.contentContainer}>
@@ -87,11 +90,18 @@ const styles = StyleSheet.create({
   },
   navContainer: {
     width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   backButton: {
-    padding: 10,
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  cartButton: {
+    padding: 10,
   },
   contentContainer: {
     flex: 1,
@@ -161,5 +171,7 @@ const styles = StyleSheet.create({
   addToCartText: {
     color: 'white',
     fontWeight: 'bold',
+    textAlign:"center"
+
   },
 });
