@@ -18,6 +18,7 @@ import ShopListScreen from '../screens/ShopListScreen';
 import ShopScreen from '../screens/ShopScreen';
 import ProductScreen from '../screens/ProductScreen';
 import SelectedProductScreen from '../screens/SelectedProductScreen';
+import OrderDetailsScreen from '../screens/OrderDetailsScreen';
 
 
 
@@ -95,6 +96,10 @@ const AppNavigator = () => {
       <Stack.Screen
         name='SelectedProductScreen'
         component={SelectedProductScreen}
+      />
+      <Stack.Screen
+        name='OrderDetailsScreen'
+        component={OrderDetailsScreen}
       />
 
 

@@ -61,18 +61,13 @@ const DrawerNavigator = () => {
       <Drawer.Screen
         name="CartScreen"
         component={CartScreen}
-        options={{ drawerLabel: () => null, drawerItemStyle: { height: 0 } }}
       />
       <Drawer.Screen
         name="WishListScreen"
         component={WishListScreen}
         options={{ drawerLabel: () => null, drawerItemStyle: { height: 0 } }}
       />
-      <Drawer.Screen
-        name="OrderDetailsScreen"
-        component={OrderDetailsScreen}
-        options={{ drawerLabel: () => null, drawerItemStyle: { height: 0 } }}
-      />
+   
       <Drawer.Screen
         name="AddressScreen"
         component={AddressScreen}

@@ -32,7 +32,6 @@ export type RootDrawerParamList = {
     CartScreen:undefined;
     WishListScreen:undefined;
     ChatScreen:undefined;
-    OrderDetailsScreen:undefined;
     AddressScreen:undefined;
     PaymentScreen:undefined;
     OrderStatusScreen: undefined;
