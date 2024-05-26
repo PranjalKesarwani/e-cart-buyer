@@ -20,6 +20,7 @@ export type RootStackParamList = {
     PaymentScreen: undefined;
     OrderStatusScreen: undefined;
     YourOrdersScreen: undefined;
+    PersonalChatScreen: undefined;
 
 
 };

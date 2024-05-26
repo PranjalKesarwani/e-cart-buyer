@@ -22,6 +22,7 @@ import OrderDetailsScreen from '../screens/OrderDetailsScreen';
 import AddressScreen from '../screens/AddressScreen';
 import PaymentScreen from '../screens/PaymentScreen';
 import OrderStatusScreen from '../screens/OrderStatusScreen';
+import PersonalChatScreen from '../screens/PersonalChatScreen';
 
 
 
@@ -112,9 +113,13 @@ const AppNavigator = () => {
         name='PaymentScreen'
         component={PaymentScreen}
       />
-        <Stack.Screen
+      <Stack.Screen
         name='OrderStatusScreen'
         component={OrderStatusScreen}
+      />
+      <Stack.Screen
+        name='PersonalChatScreen'
+        component={PersonalChatScreen}
       />
 
 
