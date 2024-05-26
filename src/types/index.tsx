@@ -21,6 +21,7 @@ export type RootStackParamList = {
     OrderStatusScreen: undefined;
     YourOrdersScreen: undefined;
     PersonalChatScreen: undefined;
+    OrderedItemDetailScreen:undefined;
 
 
 };

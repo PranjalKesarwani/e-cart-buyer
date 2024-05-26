@@ -23,6 +23,7 @@ import AddressScreen from '../screens/AddressScreen';
 import PaymentScreen from '../screens/PaymentScreen';
 import OrderStatusScreen from '../screens/OrderStatusScreen';
 import PersonalChatScreen from '../screens/PersonalChatScreen';
+import OrderedItemDetailScreen from '../screens/OrderedItemDetailScreen';
 
 
 
@@ -120,6 +121,10 @@ const AppNavigator = () => {
       <Stack.Screen
         name='PersonalChatScreen'
         component={PersonalChatScreen}
+      />
+         <Stack.Screen
+        name='OrderedItemDetailScreen'
+        component={OrderedItemDetailScreen}
       />
 
 
