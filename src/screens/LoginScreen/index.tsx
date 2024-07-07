@@ -10,7 +10,9 @@ const LoginScreen = ({ navigation }: OtpProps) => {
   const [phoneNumber, setPhoneNumber] = useState('');
 
   const handleSendOTP = () => {
-    navigation.replace('OtpScreen', { phoneNumber });
+    // navigation.replace('OtpScreen', { phoneNumber });
+    console.log("hello world!")
+    navigation.navigate('NameInfoScreen')
   };
 
   return (
