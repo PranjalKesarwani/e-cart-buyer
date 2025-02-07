@@ -1,15 +1,18 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { RootStackParamList } from '../../types';
+import {View, Text, StyleSheet, FlatList} from 'react-native';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {RootStackParamList} from '../../types';
 
-type AllChatScreenProps = NativeStackScreenProps<RootStackParamList, 'AllChatScreen'>;
+type AllChatScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'AllChatScreen'
+>;
 
-const AllChatScreen = ({ navigation }: AllChatScreenProps) => {
-  const chatData = Array.from({ length: 20 }, (_, i) => `chat${i + 1}`);
+const AllChatScreen = ({navigation}: AllChatScreenProps) => {
+  const chatData = Array.from({length: 20}, (_, i) => `chat${i + 1}`);
 
-  const renderItem = ({ item }: { item: string }) => (
+  const renderItem = ({item}: {item: string}) => (
     <TouchableOpacity onPress={() => navigation.navigate('PersonalChatScreen')}>
       <View style={styles.card}>
         <Text style={styles.cardText}>{item}</Text>
@@ -22,7 +25,7 @@ const AllChatScreen = ({ navigation }: AllChatScreenProps) => {
       <FlatList
         data={chatData}
         renderItem={renderItem}
-        keyExtractor={(item) => item}
+        keyExtractor={item => item}
         contentContainerStyle={styles.listContent}
       />
     </View>
@@ -46,7 +49,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     shadowColor: '#000',
     shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: {width: 0, height: 1},
     shadowRadius: 1,
     elevation: 2,
   },
