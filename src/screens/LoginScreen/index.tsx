@@ -1,24 +1,31 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { RootStackParamList } from '../../types';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import React, {useState} from 'react';
+import {
+  View,
+  TextInput,
+  Button,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
+import {RootStackParamList} from '../../types';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import Title from '../../components/Title';
 
-type OtpProps = NativeStackScreenProps<RootStackParamList, "LoginScreen">;
+type OtpProps = NativeStackScreenProps<RootStackParamList, 'LoginScreen'>;
 
-const LoginScreen = ({ navigation }: OtpProps) => {
+const LoginScreen = ({navigation}: OtpProps) => {
   const [phoneNumber, setPhoneNumber] = useState('');
 
   const handleSendOTP = () => {
     // navigation.replace('OtpScreen', { phoneNumber });
-    console.log("hello world!")
-    navigation.navigate('NameInfoScreen')
+    console.log('hello world!');
+    navigation.navigate('NameInfoScreen');
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.appTitle}>
-      <Title fontSize={36} fontWeight={'bold'} />
+        <Title fontSize={36} fontWeight={'bold'} />
       </View>
 
       <TextInput
@@ -43,14 +50,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center', // Center elements vertically
   },
   appTitle: {
-   alignItems:"center",
+    alignItems: 'center',
   },
   input: {
     backgroundColor: '#f2f2f2',
     padding: 15,
     borderRadius: 5,
     fontSize: 16,
-    marginTop:30
+    marginTop: 30,
   },
   button: {
     backgroundColor: '#4CAF50', // Green color
