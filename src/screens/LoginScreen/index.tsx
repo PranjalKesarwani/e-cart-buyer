@@ -10,16 +10,25 @@ import {
 import {RootStackParamList} from '../../types';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import Title from '../../components/Title';
+import axios from 'axios';
+import {API_URL} from '../../config';
+import {request} from '../../services/api';
 
 type OtpProps = NativeStackScreenProps<RootStackParamList, 'LoginScreen'>;
 
 const LoginScreen = ({navigation}: OtpProps) => {
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  const handleSendOTP = () => {
-    // navigation.replace('OtpScreen', { phoneNumber });
-    console.log('hello world!');
-    navigation.navigate('NameInfoScreen');
+  const handleSendOTP = async () => {
+    try {
+      // navigation.replace('OtpScreen', { phoneNumber });
+      const data = await request('POST', '/auth/send-otp', {
+        mobile: phoneNumber,
+      });
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

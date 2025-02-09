@@ -9,8 +9,14 @@ export const api = axios.create({
 export const request = async (method: string, url: string, data?: any) => {
   try {
     const response = await api({method, url, data});
-    return response.data;
+    return {success: true, data: response.data};
   } catch (error: any) {
-    throw error.response?.data || error.message;
+    return {
+      success: false,
+      message:
+        error.response?.data?.message ||
+        'Something went wrong. Please try again.',
+      status: error.response?.status || 500,
+    };
   }
 };
