@@ -1,20 +1,29 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../types';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
-import { Image } from 'react-native';
+import {Image} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 
-type ProductScreenProps = NativeStackScreenProps<RootStackParamList, "ProductScreen">;
+type ProductScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'ProductScreen'
+>;
 
-const ProductScreen = ({ navigation }: ProductScreenProps) => {
+const ProductScreen = ({navigation}: ProductScreenProps) => {
   const dimension = Dimensions.get('window').width;
   const imgArr = [
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcsyip4SRoev3sHck-kvsQr7QOvOy-V3TlOVXAsydu4pYJKOoOCIBUPoZFQMv8wSO-RYs&usqp=CAU",
-    "https://target.scene7.com/is/image/Target/GUEST_b138b77e-5d2c-4d80-b264-87059549f298?wid=488&hei=488&fmt=pjpeg",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8tWSFv9V5stLQoAPcab_wYTG_DqVn97YhkQ&s",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSaFxc0DsmsospMssEpss9e_wkIBHonNtSYQ&s"
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcsyip4SRoev3sHck-kvsQr7QOvOy-V3TlOVXAsydu4pYJKOoOCIBUPoZFQMv8wSO-RYs&usqp=CAU',
+    'https://target.scene7.com/is/image/Target/GUEST_b138b77e-5d2c-4d80-b264-87059549f298?wid=488&hei=488&fmt=pjpeg',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8tWSFv9V5stLQoAPcab_wYTG_DqVn97YhkQ&s',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSaFxc0DsmsospMssEpss9e_wkIBHonNtSYQ&s',
   ];
 
   const [isFavorite, setIsFavorite] = useState(false);
@@ -26,11 +35,15 @@ const ProductScreen = ({ navigation }: ProductScreenProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.navContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}>
           <Icons name="left" size={17} color={'black'} />
           <Text>Back</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.cartButton} onPress={() => navigation.navigate('CartScreen')}>
+        <TouchableOpacity
+          style={styles.cartButton}
+          onPress={() => navigation.navigate('CartScreen')}>
           <Icons name="shoppingcart" size={24} color={'black'} />
         </TouchableOpacity>
       </View>
@@ -46,10 +59,12 @@ const ProductScreen = ({ navigation }: ProductScreenProps) => {
             autoPlay={true}
             data={imgArr}
             scrollAnimationDuration={1000}
-            onSnapToItem={(index: number) => console.log('current index:', index)}
-            renderItem={({ item }) => (
+            onSnapToItem={(index: number) =>
+              console.log('current index:', index)
+            }
+            renderItem={({item}) => (
               <View>
-                <Image source={{ uri: item }} style={styles.image} />
+                <Image source={{uri: item}} style={styles.image} />
               </View>
             )}
           />
@@ -57,7 +72,7 @@ const ProductScreen = ({ navigation }: ProductScreenProps) => {
 
         <View style={styles.chatBoxParent}>
           <View>
-            <Text style={styles.chatBox1}>AmazeX watches</Text>
+            <Text style={styles.chatBox1}>Boltix watches</Text>
           </View>
           <View style={styles.chatBox}>
             <Icons name="message1" size={20} color={'black'} />
@@ -122,10 +137,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   chatBoxParent: {
-    width: "95%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    width: '95%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginTop: 10,
   },
   chatBox1: {
@@ -145,7 +160,7 @@ const styles = StyleSheet.create({
     height: 220,
   },
   priceBox: {
-    width: "100%",
+    width: '100%',
     marginLeft: 15,
   },
   bottomButtonsContainer: {
@@ -171,7 +186,6 @@ const styles = StyleSheet.create({
   addToCartText: {
     color: 'white',
     fontWeight: 'bold',
-    textAlign:"center"
-
+    textAlign: 'center',
   },
 });

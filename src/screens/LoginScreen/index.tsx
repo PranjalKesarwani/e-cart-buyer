@@ -23,9 +23,10 @@ const LoginScreen = ({navigation}: OtpProps) => {
   const handleSendOTP = async () => {
     try {
       // navigation.replace('OtpScreen', { phoneNumber });
-      const res = await request('POST', '/auth/send-otp', {
+      const res = await request('POST', '/buyer/send-otp', {
         mobile: phoneNumber,
       });
+      console.log('res', res);
       if (res.data.success) {
         showToast(
           'success',

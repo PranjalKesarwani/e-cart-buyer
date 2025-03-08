@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, Button} from 'react-native';
+import {View, Text, StyleSheet, Button, Image} from 'react-native';
 import {NavigationProp} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 
@@ -10,14 +10,19 @@ type TitleProps = {
 
 const Title = ({fontSize, fontWeight}: TitleProps) => {
   return (
-    <Text style={{fontSize: fontSize, fontWeight: fontWeight}}>
-      <Text style={styles.red}>A</Text>
-      <Text style={styles.orange}>m</Text>
-      <Text style={styles.yellow}>a</Text>
-      <Text style={styles.green}>z</Text>
-      <Text style={styles.blue}>e</Text>
-      <Text style={styles.indigo}>X</Text>
-    </Text>
+    // <Text style={{fontSize: fontSize, fontWeight: fontWeight}}>
+    //   <Text style={styles.red}>B</Text>
+    //   <Text style={styles.orange}>o</Text>
+    //   <Text style={styles.yellow}>l</Text>
+    //   <Text style={styles.green}>t</Text>
+    //   <Text style={styles.blue}>i</Text>
+    //   <Text style={styles.indigo}>X</Text>
+    // </Text>
+    <Image
+      source={require('../../src/assets/images/boltix.png')} // Replace with your actual image path
+      style={styles.image}
+      resizeMode="contain"
+    />
   );
 };
 
@@ -45,5 +50,10 @@ const styles = StyleSheet.create({
   },
   indigo: {
     color: '#4b0082', // Indigo color
+  },
+  image: {
+    width: 300, // Adjust width as needed
+    height: 300, // Adjust height as needed
+    // marginTop: 20,
   },
 });
