@@ -17,6 +17,8 @@ import MapView, {Marker} from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import Title from '../../components/Title';
 import {FlatList} from 'react-native-gesture-handler';
+import {showToast} from '../../utils/toast';
+import {request} from '../../services/api';
 
 type HomeProps = NativeStackScreenProps<RootDrawerParamList, 'HomeScreen'>;
 
@@ -31,9 +33,24 @@ const HomeScreen = ({navigation}: HomeProps) => {
   const modalHeight = windowHeight;
   const [mLat, setMLat] = useState<number>(0);
   const [mLong, setMLong] = useState<number>(0);
+  const [globalCats, setGlobalCats] = useState<any>([]);
+
+  const getGlocalCategories = async () => {
+    try {
+      const res = await request('GET', '/admin/give-top-parent-categories');
+      console.log('res-----', res);
+      if (!res?.data.success) throw new Error(res?.data.message);
+      if (res.success) {
+        setGlobalCats(res.data.categories);
+      }
+    } catch (error: any) {
+      showToast('error', error.message);
+    }
+  };
 
   useEffect(() => {
     requestLocationPermission();
+    getGlocalCategories();
   }, []);
   const requestLocationPermission = async () => {
     try {
@@ -80,26 +97,6 @@ const HomeScreen = ({navigation}: HomeProps) => {
     }
   };
 
-  const data = [
-    {id: 1, text: 'Card 1'},
-    {id: 2, text: 'Card 2'},
-    {id: 3, text: 'Card 3'},
-    {id: 4, text: 'Card 4'},
-    {id: 5, text: 'Card 5'},
-    {id: 6, text: 'Card 6'},
-    {id: 7, text: 'Card 7'},
-    {id: 8, text: 'Card 8'},
-    {id: 9, text: 'Card 8'},
-    {id: 10, text: 'Card 8'},
-    {id: 11, text: 'Card 8'},
-    {id: 12, text: 'Card 8'},
-  ];
-
-  const renderItem = ({item}: any) => (
-    <View style={styles.card}>
-      <Text>{item.text}</Text>
-    </View>
-  );
   const handleCardPress = () => {
     navigation.navigate('ShopListScreen');
   };
@@ -132,13 +129,13 @@ const HomeScreen = ({navigation}: HomeProps) => {
       </View>
 
       <FlatList
-        data={data}
+        data={globalCats}
         renderItem={({item}) => (
           <TouchableOpacity
             style={styles.categoryContainer}
             onPress={handleCardPress}>
             <View style={styles.card}>
-              <Text>{item.text}</Text>
+              <Text>{item.name}</Text>
             </View>
           </TouchableOpacity>
         )}

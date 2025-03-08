@@ -49,7 +49,6 @@ const OTPScreen = ({route}: OtpProps) => {
         mobile: phoneNumber,
         otp: otp.join(''),
       });
-      console.log('res', res);
       if (!res?.success) throw new Error(res?.message);
       if (res.success) {
         console.log('OTP verified');
