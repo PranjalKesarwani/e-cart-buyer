@@ -122,15 +122,6 @@ const HomeScreen = ({navigation}: HomeProps) => {
               </Text>
             </View>
           </View>
-          <View
-            style={{
-              width: '42%',
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Title fontSize={23} fontWeight={'bold'} />
-          </View>
         </TouchableOpacity>
       </View>
 
@@ -233,9 +224,12 @@ const styles = StyleSheet.create({
   touchable: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10, // Adjust as needed
+    paddingHorizontal: 0, // Adjust as needed
     paddingVertical: 5, // Adjust as needed
     borderRadius: 5, // Example border radius
+    borderColor: 'red',
+    borderWidth: 2,
+    width: '60%',
   },
   card: {
     flex: 1,

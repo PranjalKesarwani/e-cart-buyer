@@ -52,8 +52,8 @@ const styles = StyleSheet.create({
     color: '#4b0082', // Indigo color
   },
   image: {
-    width: 300, // Adjust width as needed
-    height: 300, // Adjust height as needed
+    width: 150, // Adjust width as needed
+    height: 150, // Adjust height as needed
     // marginTop: 20,
   },
 });

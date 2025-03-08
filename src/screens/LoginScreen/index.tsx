@@ -27,7 +27,8 @@ const LoginScreen = ({navigation}: OtpProps) => {
         mobile: phoneNumber,
       });
       console.log('res', res);
-      if (res.data.success) {
+      if (!res.data.success) throw new Error(res?.data.message);
+      if (res?.data.success) {
         showToast(
           'success',
           'OTP Sent Successfully!',
@@ -36,9 +37,9 @@ const LoginScreen = ({navigation}: OtpProps) => {
         navigation.replace('OtpScreen', {phoneNumber});
       }
 
-      console.log('---------', res.data.message);
-    } catch (error) {
-      console.log(error);
+      console.log('---------', res?.data.message);
+    } catch (error: any) {
+      showToast('error', 'Error', error.message);
     }
   };
 

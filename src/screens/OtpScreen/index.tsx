@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
   Button,
+  Alert,
 } from 'react-native';
 import {RootStackParamList} from '../../types';
 import {useNavigation} from '@react-navigation/native';
@@ -44,17 +45,19 @@ const OTPScreen = ({route}: OtpProps) => {
 
   const handleSendOtp = async () => {
     try {
-      const res = await request('POST', '/auth/verify-otp', {
+      const res = await request('POST', '/buyer/verify-otp', {
         mobile: phoneNumber,
-        otp,
+        otp: otp.join(''),
       });
-      if (res.data.success) {
+      console.log('res', res);
+      if (!res?.success) throw new Error(res?.message);
+      if (res.success) {
         console.log('OTP verified');
         showToast('success', 'OTP Verified Successfully!', '');
-        navigation.navigate('NameInfoScreen');
+        navigation.navigate('DrawerNavigator');
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      showToast('error', error.message);
     }
   };
 
@@ -83,16 +86,6 @@ const OTPScreen = ({route}: OtpProps) => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={() => handleSendOtp()} style={styles.button}>
           <Text style={styles.buttonText}>SUBMIT OTP</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('NameInfoScreen')}
-          style={styles.button}>
-          <Text style={styles.buttonText}>New user: Go NameInfoScreen</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('DrawerNavigator')}
-          style={styles.button}>
-          <Text style={styles.buttonText}>Old user: Go to HomeScreen</Text>
         </TouchableOpacity>
       </View>
     </View>
