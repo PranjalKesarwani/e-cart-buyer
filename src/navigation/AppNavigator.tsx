@@ -1,10 +1,7 @@
 import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {
-  View,
-  Text
-} from 'react-native';
-import { RootStackParamList } from '../types';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {View, Text} from 'react-native';
+import {RootStackParamList} from '../types';
 
 //Screens
 import SplashScreen from '../screens/SpalshScreen';
@@ -25,112 +22,65 @@ import OrderStatusScreen from '../screens/OrderStatusScreen';
 import PersonalChatScreen from '../screens/PersonalChatScreen';
 import OrderedItemDetailScreen from '../screens/OrderedItemDetailScreen';
 
-
-
-
-
-
 const Stack = createNativeStackNavigator<RootStackParamList>();
-
-
-
 
 const AppNavigator = () => {
   return (
-
-    <Stack.Navigator initialRouteName='SplashScreen' screenOptions={{
-      headerShown: false,
-    }}>
+    <Stack.Navigator
+      initialRouteName="SplashScreen"
+      screenOptions={{
+        headerShown: false,
+      }}>
       <Stack.Screen
-        name='SplashScreen'
+        name="SplashScreen"
         component={SplashScreen}
-        options={
-          {
-            title: "Splash Screen"
-          }
-        }
+        options={{
+          title: 'Splash Screen',
+        }}
       />
 
-
       <Stack.Screen
-        name='LoginScreen'
+        name="LoginScreen"
         component={LoginScreen}
-        options={
-          {
-            title: "Login Screen"
-          }
-        }
+        options={{
+          title: 'Login Screen',
+        }}
       />
       <Stack.Screen
-        name='OtpScreen'
+        name="OtpScreen"
         component={OTPScreen}
-        options={
-          {
-            title: "OTP Screen"
-          }
-        }
+        options={{
+          title: 'OTP Screen',
+        }}
       />
 
       <Stack.Screen
-        name='NameInfoScreen'
+        name="NameInfoScreen"
         component={NameInfoScreen}
-        options={
-          {
-            title: "Name info Screen"
-          }
-        }
+        options={{
+          title: 'Name info Screen',
+        }}
       />
 
-      <Stack.Screen
-        name='DrawerNavigator'
-        component={DrawerNavigator}
-      />
-      <Stack.Screen
-        name='ShopListScreen'
-        component={ShopListScreen}
-      />
-      <Stack.Screen
-        name='ShopScreen'
-        component={ShopScreen}
-      />
+      <Stack.Screen name="DrawerNavigator" component={DrawerNavigator} />
+      <Stack.Screen name="ShopListScreen" component={ShopListScreen} />
+      <Stack.Screen name="ShopScreen" component={ShopScreen} />
 
+      <Stack.Screen name="ProductScreen" component={ProductScreen} />
       <Stack.Screen
-        name='ProductScreen'
-        component={ProductScreen}
-      />
-      <Stack.Screen
-        name='SelectedProductScreen'
+        name="SelectedProductScreen"
         component={SelectedProductScreen}
       />
+      <Stack.Screen name="OrderDetailsScreen" component={OrderDetailsScreen} />
+      <Stack.Screen name="AddressScreen" component={AddressScreen} />
+      <Stack.Screen name="PaymentScreen" component={PaymentScreen} />
+      <Stack.Screen name="OrderStatusScreen" component={OrderStatusScreen} />
+      <Stack.Screen name="PersonalChatScreen" component={PersonalChatScreen} />
       <Stack.Screen
-        name='OrderDetailsScreen'
-        component={OrderDetailsScreen}
-      />
-      <Stack.Screen
-        name='AddressScreen'
-        component={AddressScreen}
-      />
-      <Stack.Screen
-        name='PaymentScreen'
-        component={PaymentScreen}
-      />
-      <Stack.Screen
-        name='OrderStatusScreen'
-        component={OrderStatusScreen}
-      />
-      <Stack.Screen
-        name='PersonalChatScreen'
-        component={PersonalChatScreen}
-      />
-         <Stack.Screen
-        name='OrderedItemDetailScreen'
+        name="OrderedItemDetailScreen"
         component={OrderedItemDetailScreen}
       />
-
-
-
     </Stack.Navigator>
-
   );
 };
 

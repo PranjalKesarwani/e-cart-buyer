@@ -37,7 +37,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
 
   const getGlocalCategories = async () => {
     try {
-      const res = await request('GET', '/admin/give-top-parent-categories');
+      const res = await request('GET', '/buyer/categories');
       console.log('res-----', res);
       if (!res?.data.success) throw new Error(res?.data.message);
       if (res.success) {
@@ -97,8 +97,8 @@ const HomeScreen = ({navigation}: HomeProps) => {
     }
   };
 
-  const handleCardPress = () => {
-    navigation.navigate('ShopListScreen');
+  const handleCardPress = (item: any) => {
+    navigation.navigate('ShopListScreen', {category: item});
   };
 
   return (
@@ -133,7 +133,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
         renderItem={({item}) => (
           <TouchableOpacity
             style={styles.categoryContainer}
-            onPress={handleCardPress}>
+            onPress={() => handleCardPress(item)}>
             <View style={styles.card}>
               <Text>{item.name}</Text>
             </View>
