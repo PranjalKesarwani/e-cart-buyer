@@ -17,7 +17,8 @@ type ProductScreenProps = NativeStackScreenProps<
   'ProductScreen'
 >;
 
-const ProductScreen = ({navigation}: ProductScreenProps) => {
+const ProductScreen = ({route, navigation}: ProductScreenProps) => {
+  const {product}: any = route.params;
   const dimension = Dimensions.get('window').width;
   const imgArr = [
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcsyip4SRoev3sHck-kvsQr7QOvOy-V3TlOVXAsydu4pYJKOoOCIBUPoZFQMv8wSO-RYs&usqp=CAU',

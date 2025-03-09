@@ -9,7 +9,7 @@ export type RootStackParamList = {
   DrawerNavigator: {screen: keyof RootDrawerParamList} | undefined;
   ShopListScreen: undefined;
   ShopScreen: {shop: any};
-  ProductScreen: undefined;
+  ProductScreen: {product: any};
   AllChatScreen: undefined;
   CartScreen: undefined;
   WishListScreen: undefined;

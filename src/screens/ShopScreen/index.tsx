@@ -15,26 +15,27 @@ type ShopScreenProps = NativeStackScreenProps<RootStackParamList, 'ShopScreen'>;
 
 const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   const [shopCats, setShopCats] = useState<any>([]);
+  const [products, setProducts] = useState<any>([]);
   const {shop}: any = route.params;
-  const products = [
-    {id: 1, name: 'Item 1'},
-    {id: 2, name: 'Item 2'},
-    {id: 3, name: 'Item 3'},
-    {id: 4, name: 'Item 4'},
-    {id: 5, name: 'Item 5'},
-    {id: 6, name: 'Item 6'},
-    {id: 7, name: 'Item 7'},
-    {id: 8, name: 'Item 8'},
-    {id: 9, name: 'Item 9'},
-    {id: 10, name: 'Item 10'},
-    {id: 11, name: 'Item 11'},
-    {id: 12, name: 'Item 12'},
-    {id: 13, name: 'Item 13'},
-    {id: 14, name: 'Item 14'},
-  ];
+  // const products = [
+  //   {id: 1, name: 'Item 1'},
+  //   {id: 2, name: 'Item 2'},
+  //   {id: 3, name: 'Item 3'},
+  //   {id: 4, name: 'Item 4'},
+  //   {id: 5, name: 'Item 5'},
+  //   {id: 6, name: 'Item 6'},
+  //   {id: 7, name: 'Item 7'},
+  //   {id: 8, name: 'Item 8'},
+  //   {id: 9, name: 'Item 9'},
+  //   {id: 10, name: 'Item 10'},
+  //   {id: 11, name: 'Item 11'},
+  //   {id: 12, name: 'Item 12'},
+  //   {id: 13, name: 'Item 13'},
+  //   {id: 14, name: 'Item 14'},
+  // ];
 
-  const goToProductScreen = () => {
-    navigation.navigate('ProductScreen');
+  const goToProductScreen = (product: any) => {
+    navigation.navigate('ProductScreen', {product});
   };
 
   const getShopCats = async () => {
@@ -58,6 +59,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
       );
       if (!res?.data.success) throw new Error(res?.data.message);
       // console.log('res.data.products', res.data.products);
+      setProducts(res.data.products);
     } catch (error: any) {
       console.log('error', error.message);
       showToast('error', error.message);
@@ -121,12 +123,12 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
           </View>
 
           <View style={styles.shopListContainer}>
-            {products.map((shop, index) => (
+            {products.map((product: any, index: number) => (
               <TouchableOpacity
                 key={index}
                 style={styles.shopCard}
-                onPress={goToProductScreen}>
-                <Text style={styles.shopName}>{shop.name}</Text>
+                onPress={() => goToProductScreen(product)}>
+                <Text style={styles.shopName}>{product.productName}</Text>
               </TouchableOpacity>
             ))}
           </View>
