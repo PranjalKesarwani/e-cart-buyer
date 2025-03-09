@@ -16,7 +16,7 @@ type ShopScreenProps = NativeStackScreenProps<RootStackParamList, 'ShopScreen'>;
 const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   const [shopCats, setShopCats] = useState<any>([]);
   const {shop}: any = route.params;
-  const shops = [
+  const products = [
     {id: 1, name: 'Item 1'},
     {id: 2, name: 'Item 2'},
     {id: 3, name: 'Item 3'},
@@ -52,7 +52,6 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
 
   const getShopProducts = async (category: any) => {
     try {
-      console.log('------category-------', category);
       const res = await request(
         'GET',
         `/buyer/shops/${shop._id}/categories/${category._id}/products`,
@@ -111,15 +110,18 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
               horizontal
               showsHorizontalScrollIndicator={false}
               renderItem={({item}) => (
-                <View style={styles.catNav}>
+                <TouchableOpacity
+                  style={styles.catNav}
+                  key={item._id}
+                  onPress={() => getShopProducts(item)}>
                   <Text>{item.name}</Text>
-                </View>
+                </TouchableOpacity>
               )}
             />
           </View>
 
           <View style={styles.shopListContainer}>
-            {shops.map((shop, index) => (
+            {products.map((shop, index) => (
               <TouchableOpacity
                 key={index}
                 style={styles.shopCard}
