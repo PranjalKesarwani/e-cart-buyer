@@ -39,10 +39,6 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
 
   const [horizontalScrollOffset, setHorizontalScrollOffset] = useState(0);
 
-  const handleHorizontalScroll = ({event}: any) => {
-    setHorizontalScrollOffset(event.nativeEvent.contentOffset.x);
-  };
-
   const getShopCats = async () => {
     try {
       const res = await request('GET', `/buyer/shops/${shop._id}/categories`);
@@ -211,15 +207,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   catNav: {
-    width: 70,
     height: 40,
     borderRadius: 7,
-    flex: 1,
+    flexShrink: 1, // Allows the width to shrink if needed
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
     borderWidth: 1,
     borderColor: 'orange',
+    paddingHorizontal: 15, // Adds space around the text instead of a fixed width
+    marginTop: 5,
   },
   horizontalScrollView: {
     flex: 1,
