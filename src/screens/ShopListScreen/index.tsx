@@ -36,25 +36,9 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
       showToast('error', error.message);
     }
   };
-  // const shops = [
-  //   {id: 1, name: 'Shop 1'},
-  //   {id: 2, name: 'Shop 2'},
-  //   {id: 3, name: 'Shop 3'},
-  //   {id: 4, name: 'Shop 4'},
-  //   {id: 5, name: 'Shop 5'},
-  //   {id: 6, name: 'Shop 6'},
-  //   {id: 7, name: 'Shop 7'},
-  //   {id: 8, name: 'Shop 8'},
-  //   {id: 9, name: 'Shop 9'},
-  //   {id: 10, name: 'Shop 10'},
-  //   {id: 11, name: 'Shop 11'},
-  //   {id: 12, name: 'Shop 12'},
-  //   {id: 13, name: 'Shop 13'},
-  //   {id: 14, name: 'Shop 14'},
-  // ];
 
-  const goToShopScreen = () => {
-    navigation.navigate('ShopScreen');
+  const goToShopScreen = (shop: any) => {
+    navigation.navigate('ShopScreen', {shop});
   };
 
   useEffect(() => {
@@ -82,7 +66,7 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
               <TouchableOpacity
                 key={index}
                 style={styles.shopCard}
-                onPress={goToShopScreen}>
+                onPress={() => goToShopScreen(shop)}>
                 <Text style={styles.shopName}>{shop.shopName}</Text>
               </TouchableOpacity>
             ))
