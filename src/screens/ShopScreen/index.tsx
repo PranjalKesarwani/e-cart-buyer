@@ -37,8 +37,6 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
     navigation.navigate('ProductScreen');
   };
 
-  const [horizontalScrollOffset, setHorizontalScrollOffset] = useState(0);
-
   const getShopCats = async () => {
     try {
       const res = await request('GET', `/buyer/shops/${shop._id}/categories`);
@@ -51,6 +49,27 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
       showToast('error', error.message);
     }
   };
+
+  const getShopProducts = async (category: any) => {
+    try {
+      console.log('------category-------', category);
+      const res = await request(
+        'GET',
+        `/buyer/shops/${shop._id}/categories/${category._id}/products`,
+      );
+      if (!res?.data.success) throw new Error(res?.data.message);
+      // console.log('res.data.products', res.data.products);
+    } catch (error: any) {
+      console.log('error', error.message);
+      showToast('error', error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (shopCats.length > 0) {
+      getShopProducts(shopCats[0]);
+    }
+  }, [shopCats]);
 
   useEffect(() => {
     getShopCats();
@@ -86,35 +105,6 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
           />
 
           <View style={{width: '90%'}}>
-            {/* <ScrollView
-              horizontal
-              scrollEventThrottle={16}
-              style={styles.horizontalScrollView}>
-              <View style={styles.catNav}>
-                <Text>Item 1</Text>
-              </View>
-              <View style={styles.catNav}>
-                <Text>Item 2</Text>
-              </View>
-              <View style={styles.catNav}>
-                <Text>Item 3</Text>
-              </View>
-              <View style={styles.catNav}>
-                <Text>Item 3</Text>
-              </View>
-              <View style={styles.catNav}>
-                <Text>Item 3</Text>
-              </View>
-              <View style={styles.catNav}>
-                <Text>Item 3</Text>
-              </View>
-              <View style={styles.catNav}>
-                <Text>Item 3</Text>
-              </View>
-              <View style={styles.catNav}>
-                <Text>Item 3</Text>
-              </View>
-            </ScrollView> */}
             <FlatList
               data={shopCats}
               keyExtractor={item => item._id}
