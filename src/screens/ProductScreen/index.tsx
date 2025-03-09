@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -33,6 +33,10 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
     setIsFavorite(!isFavorite);
   };
 
+  useEffect(() => {
+    console.log('Product Screen Mounted--------', product.media.images);
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.navContainer}>
@@ -58,7 +62,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
             width={dimension}
             height={500}
             autoPlay={true}
-            data={imgArr}
+            data={product.media.images as string[]}
             scrollAnimationDuration={1000}
             onSnapToItem={(index: number) =>
               console.log('current index:', index)
@@ -73,7 +77,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
         <View style={styles.chatBoxParent}>
           <View>
-            <Text style={styles.chatBox1}>Boltix watches</Text>
+            <Text style={styles.chatBox1}>{product.productName}</Text>
           </View>
           <View style={styles.chatBox}>
             <Icons name="message1" size={20} color={'black'} />
@@ -81,7 +85,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
         </View>
 
         <View style={styles.priceBox}>
-          <Text>Price: 420$</Text>
+          <Text>Price: {product.price + ' ' + product.currency}</Text>
           <Text>Description: Pure leather watches</Text>
         </View>
       </View>
