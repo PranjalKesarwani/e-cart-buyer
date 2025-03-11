@@ -1,29 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
-import { NavigationProp } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../types';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, Button} from 'react-native';
+import {NavigationProp} from '@react-navigation/native';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../../types';
 import Title from '../../components/Title';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {fetchBuyer} from '../../redux/slices/buyerSlice';
 
-type SplashProps = NativeStackScreenProps<RootStackParamList, "SplashScreen">
+type SplashProps = NativeStackScreenProps<RootStackParamList, 'SplashScreen'>;
 
-const SplashScreen = ({ navigation }: SplashProps) => {
+const SplashScreen = ({navigation}: SplashProps) => {
+  const dispatch = useAppDispatch();
+  const {profile, loading, error} = useAppSelector(state => state.buyer);
 
-  const [isAuth,setIsAuth] = useState<boolean>(false);
+  useEffect(() => {
+    dispatch(fetchBuyer('get-buyer-info')); // Call API to fetch buyer info
+  }, [dispatch]);
 
-  setTimeout(()=>{
-    if(!isAuth)return navigation.replace("LoginScreen");
-    navigation.replace("DrawerNavigator")
+  const [isAuth, setIsAuth] = useState<boolean>(false);
 
-  },3000)
-
-
+  setTimeout(() => {
+    if (!isAuth) return navigation.replace('LoginScreen');
+    navigation.replace('DrawerNavigator');
+  }, 3000);
 
   return (
     <View style={styles.container}>
-    <Title  fontSize={36} fontWeight={"bold"} />
-    <Text style={styles.subtitle}>Authenticating User...</Text>
-  </View>
+      <Title fontSize={36} fontWeight={'bold'} />
+      <Text style={styles.subtitle}>Authenticating User...</Text>
+    </View>
   );
 };
 

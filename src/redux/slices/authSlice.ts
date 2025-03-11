@@ -1,95 +1,44 @@
-import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
-import {request} from '../../services/api';
+// src/features/auth/authSlice.ts
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {AuthState} from '../../types/index';
 
-// ✅ Define TypeScript Types
-interface AuthState {
-  user: any | null;
-  token: string | null;
-  loading: boolean;
-  error: string | null;
-}
-
-// ✅ Initial State
 const initialState: AuthState = {
   user: null,
   token: null,
+  isAuthenticated: false,
   loading: false,
   error: null,
 };
-
-// ✅ AsyncThunk for Login
-export const login = createAsyncThunk(
-  'auth/login',
-  async (
-    {email, password}: {email: string; password: string},
-    {rejectWithValue},
-  ) => {
-    try {
-      const data = await request('POST', '/auth/login', {email, password});
-      return data;
-    } catch (error: any) {
-      return rejectWithValue(error);
-    }
-  },
-);
-
-// ✅ AsyncThunk for Checking Authentication
-export const checkLoginStatus = createAsyncThunk(
-  'auth/checkLogin',
-  async (_, {getState, rejectWithValue}) => {
-    try {
-      const {auth} = getState() as {auth: {token: string | null}};
-      if (!auth.token) throw new Error('No token found');
-
-      const data = await request('GET', '/auth/check', null);
-      return data;
-    } catch (error: any) {
-      return rejectWithValue(error);
-    }
-  },
-);
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    loginStart: state => {
+      state.loading = true;
+      state.error = null;
+    },
+    loginSuccess: (
+      state,
+      action: PayloadAction<{user: any; token: string}>,
+    ) => {
+      state.loading = false;
+      state.isAuthenticated = true;
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+    },
+    loginFailure: (state, action: PayloadAction<string>) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
     logout: state => {
       state.user = null;
       state.token = null;
+      state.isAuthenticated = false;
     },
-  },
-  extraReducers: builder => {
-    builder
-      .addCase(login.pending, state => {
-        state.loading = true;
-      })
-      .addCase(
-        login.fulfilled,
-        (state, action: PayloadAction<{user: any; token: string}>) => {
-          state.loading = false;
-          state.user = action.payload.user;
-          state.token = action.payload.token;
-        },
-      )
-      .addCase(
-        login.rejected,
-        (state, action: PayloadAction<string | unknown>) => {
-          state.loading = false;
-          state.error = action.payload as string;
-        },
-      )
-      .addCase(
-        checkLoginStatus.fulfilled,
-        (state, action: PayloadAction<{user: any}>) => {
-          state.user = action.payload.user;
-        },
-      )
-      .addCase(checkLoginStatus.rejected, state => {
-        state.user = null;
-        state.token = null;
-      });
   },
 });
 
-export const {logout} = authSlice.actions;
+export const {loginStart, loginSuccess, loginFailure, logout} =
+  authSlice.actions;
 export default authSlice.reducer;

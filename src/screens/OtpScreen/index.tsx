@@ -12,7 +12,7 @@ import {RootStackParamList} from '../../types';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import Title from '../../components/Title';
-import {request} from '../../services/api';
+import {apiClient, request} from '../../services/api';
 import {showToast} from '../../utils/toast';
 
 type OtpProps = NativeStackScreenProps<RootStackParamList, 'OtpScreen'>;
@@ -45,18 +45,18 @@ const OTPScreen = ({route}: OtpProps) => {
 
   const handleSendOtp = async () => {
     try {
-      const res = await request('POST', '/buyer/verify-otp', {
+      const res = await apiClient.post('/buyer/verify-otp', {
         mobile: phoneNumber,
         otp: otp.join(''),
       });
-      if (!res?.success) throw new Error(res?.message);
-      if (res.success) {
+      if (!res?.data.success) throw new Error(res?.data.message);
+      if (res.data.success) {
         console.log('OTP verified');
-        showToast('success', 'OTP Verified Successfully!', '');
+        showToast('success', 'Success!', 'OTP Verified Successfully!');
         navigation.navigate('DrawerNavigator');
       }
     } catch (error: any) {
-      showToast('error', error.message);
+      showToast('error', 'Error', error.message);
     }
   };
 

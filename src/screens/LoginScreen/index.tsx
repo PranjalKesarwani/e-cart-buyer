@@ -12,7 +12,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import Title from '../../components/Title';
 import axios from 'axios';
 import {API_URL} from '../../config';
-import {request} from '../../services/api';
+import {apiClient, request} from '../../services/api';
 import {showToast} from '../../utils/toast';
 
 type OtpProps = NativeStackScreenProps<RootStackParamList, 'LoginScreen'>;
@@ -22,13 +22,14 @@ const LoginScreen = ({navigation}: OtpProps) => {
 
   const handleSendOTP = async () => {
     try {
-      // navigation.replace('OtpScreen', { phoneNumber });
-      const res = await request('POST', '/buyer/send-otp', {
+      console.log('ldksflksdfkl');
+      const res = await apiClient.post('/buyer/send-otp', {
         mobile: phoneNumber,
       });
-      console.log('res', res);
+      console.log('------>>>', res.data);
+
       if (!res.data.success) throw new Error(res?.data.message);
-      if (res?.data.success) {
+      if (res.data.success) {
         showToast(
           'success',
           'OTP Sent Successfully!',
@@ -39,6 +40,7 @@ const LoginScreen = ({navigation}: OtpProps) => {
 
       console.log('---------', res?.data.message);
     } catch (error: any) {
+      console.log('error', error);
       showToast('error', 'Error', error.message);
     }
   };

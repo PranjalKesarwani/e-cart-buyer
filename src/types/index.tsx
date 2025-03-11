@@ -33,3 +33,16 @@ export type RootDrawerParamList = {
   ChatScreen: undefined;
   YourOrdersScreen: undefined;
 };
+
+export interface AuthState {
+  user: any | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  loading: boolean;
+  error: string | null;
+}
+
+interface ApiResponse<T> {
+  data: T;
+  status: number;
+}

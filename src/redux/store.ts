@@ -1,17 +1,19 @@
-// import { configureStore } from "@reduxjs/toolkit";
-// import authReducer from "./slices/authSlice";
-// import categoryReducer from "./slices/categorySlice";
-// import userReducer from "./slices/userSlice";
-// import settingsReducer from "./slices/settingsSlice";
+// src/app/store.ts
+import {configureStore} from '@reduxjs/toolkit';
+import authReducer from '../redux/slices/authSlice';
+import buyerReducer from '../redux/slices/buyerSlice';
+// import { APP_ENV } from '@env';
 
-// export const store = configureStore({
-//   reducer: {
-//     auth: authReducer,
-//     category: categoryReducer,
-//     user: userReducer,
-//     settings: settingsReducer,
-//   },
-// });
+export const store = configureStore({
+  reducer: {
+    auth: authReducer,
+    buyer: buyerReducer,
+  },
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({serializableCheck: false}), // Allow non-serializable data if needed
+  devTools: process.env.APP_ENV !== 'production', // Enable Redux DevTools only in development
+});
 
-// export type RootState = ReturnType<typeof store.getState>;
-// export type AppDispatch = typeof store.dispatch;
+// ✅ RootState & AppDispatch Types
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
