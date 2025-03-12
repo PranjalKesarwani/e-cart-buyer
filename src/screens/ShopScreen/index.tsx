@@ -43,7 +43,6 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
       const res = await request('GET', `/buyer/shops/${shop._id}/categories`);
       if (!res?.data.success) throw new Error(res?.data.message);
 
-      console.log('res.data.categories', res.data.categories);
       setShopCats(res.data.categories);
     } catch (error: any) {
       console.log('error', error.message);

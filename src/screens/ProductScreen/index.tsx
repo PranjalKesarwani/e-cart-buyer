@@ -20,22 +20,11 @@ type ProductScreenProps = NativeStackScreenProps<
 const ProductScreen = ({route, navigation}: ProductScreenProps) => {
   const {product}: any = route.params;
   const dimension = Dimensions.get('window').width;
-  const imgArr = [
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcsyip4SRoev3sHck-kvsQr7QOvOy-V3TlOVXAsydu4pYJKOoOCIBUPoZFQMv8wSO-RYs&usqp=CAU',
-    'https://target.scene7.com/is/image/Target/GUEST_b138b77e-5d2c-4d80-b264-87059549f298?wid=488&hei=488&fmt=pjpeg',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8tWSFv9V5stLQoAPcab_wYTG_DqVn97YhkQ&s',
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSaFxc0DsmsospMssEpss9e_wkIBHonNtSYQ&s',
-  ];
-
   const [isFavorite, setIsFavorite] = useState(false);
 
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
   };
-
-  useEffect(() => {
-    console.log('Product Screen Mounted--------', product.media.images);
-  }, []);
 
   return (
     <View style={styles.container}>

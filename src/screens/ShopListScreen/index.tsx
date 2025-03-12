@@ -42,7 +42,6 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
   };
 
   useEffect(() => {
-    console.log('category', category);
     getShops();
   }, []);
 
