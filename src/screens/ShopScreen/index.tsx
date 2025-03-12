@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native-gesture-handler';
 import Icons from 'react-native-vector-icons/AntDesign';
-import {request} from '../../services/api';
+import {apiClient, request} from '../../services/api';
 import {showToast} from '../../utils/toast';
 
 type ShopScreenProps = NativeStackScreenProps<RootStackParamList, 'ShopScreen'>;
@@ -53,12 +53,11 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
 
   const getShopProducts = async (category: any) => {
     try {
-      const res = await request(
-        'GET',
+      const res = await apiClient.get(
         `/buyer/shops/${shop._id}/categories/${category._id}/products`,
       );
+
       if (!res?.data.success) throw new Error(res?.data.message);
-      // console.log('res.data.products', res.data.products);
       setProducts(res.data.products);
     } catch (error: any) {
       console.log('error', error.message);
