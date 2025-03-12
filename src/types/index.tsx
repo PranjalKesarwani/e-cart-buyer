@@ -42,7 +42,16 @@ export interface AuthState {
   error: string | null;
 }
 
-interface ApiResponse<T> {
+export interface ApiResponse<T> {
   data: T;
   status: number;
+}
+
+export interface Buyer {
+  id: string;
+  name: string;
+  loginStatus: boolean;
+  profilePic: string;
+  createdAt: string;
+  activeSessions: string[];
 }

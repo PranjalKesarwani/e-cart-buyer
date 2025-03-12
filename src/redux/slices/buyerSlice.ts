@@ -4,17 +4,12 @@ import axios from 'axios';
 import {API_URL} from '../../config';
 import {getBuyerToken} from '../../utils/helper';
 import {apiClient} from '../../services/api';
+import {Buyer} from '../../types';
 
 interface UserState {
   profile: any | null;
   loading: boolean;
   error: string | null;
-}
-
-interface Buyer {
-  id: string;
-  name: string;
-  email: string;
 }
 
 const initialState: UserState = {
@@ -23,7 +18,7 @@ const initialState: UserState = {
   error: null,
 };
 
-export const fetchBuyer = createAsyncThunk<Buyer, string>(
+export const fetchBuyer = createAsyncThunk<Buyer>(
   'buyer/fetchBuyer',
   async (_, {rejectWithValue}) => {
     try {

@@ -14,7 +14,25 @@ const SplashScreen = ({navigation}: SplashProps) => {
   const {profile, loading, error} = useAppSelector(state => state.buyer);
 
   useEffect(() => {
-    dispatch(fetchBuyer('get-buyer-info')); // Call API to fetch buyer info
+    const fetchData = async () => {
+      try {
+        const data = await dispatch(fetchBuyer()).unwrap();
+        if (data.loginStatus) {
+          navigation.replace('DrawerNavigator');
+        } else {
+          navigation.replace('LoginScreen');
+        }
+        console.log(
+          'I am inside splash screen component async thunk checking',
+          data,
+        );
+      } catch (error) {
+        console.log(error);
+        navigation.replace('LoginScreen');
+      }
+    };
+
+    fetchData();
   }, [dispatch]);
 
   const [isAuth, setIsAuth] = useState<boolean>(false);
