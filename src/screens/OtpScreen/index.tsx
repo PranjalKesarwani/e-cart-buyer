@@ -14,6 +14,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import Title from '../../components/Title';
 import {apiClient, request} from '../../services/api';
 import {showToast} from '../../utils/toast';
+import {setBuyToken} from '../../utils/helper';
 
 type OtpProps = NativeStackScreenProps<RootStackParamList, 'OtpScreen'>;
 
@@ -51,7 +52,8 @@ const OTPScreen = ({route}: OtpProps) => {
       });
       if (!res?.data.success) throw new Error(res?.data.message);
       if (res.data.success) {
-        console.log('OTP verified');
+        console.log('OTP verified', res.data);
+        setBuyToken(res.data.buyerToken);
         showToast('success', 'Success!', 'OTP Verified Successfully!');
         navigation.navigate('DrawerNavigator');
       }

@@ -27,14 +27,13 @@ export const fetchBuyer = createAsyncThunk<Buyer, string>(
   'buyer/fetchBuyer',
   async (_, {rejectWithValue}) => {
     try {
+      console.log('called this function thunk api of buyerslice');
       const token = await getBuyerToken();
-      const response = await apiClient.get<Buyer>(`/get-buyer-info`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await apiClient.get<any>(`/buyer/get-buyer-info`);
+      console.log('thunk api wala:', response.data);
       return response.data;
     } catch (error: any) {
+      console.log(error);
       return rejectWithValue(
         error.response?.data?.message || 'Something went wrong',
       );
