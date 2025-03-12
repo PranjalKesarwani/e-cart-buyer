@@ -18,7 +18,7 @@ import Geolocation from 'react-native-geolocation-service';
 import Title from '../../components/Title';
 import {FlatList} from 'react-native-gesture-handler';
 import {showToast} from '../../utils/toast';
-import {request} from '../../services/api';
+import {apiClient, request} from '../../services/api';
 
 type HomeProps = NativeStackScreenProps<RootDrawerParamList, 'HomeScreen'>;
 
@@ -35,14 +35,11 @@ const HomeScreen = ({navigation}: HomeProps) => {
   const [mLong, setMLong] = useState<number>(0);
   const [globalCats, setGlobalCats] = useState<any>([]);
 
-  const getGlocalCategories = async () => {
+  const getGlobalCategories = async () => {
     try {
-      const res = await request('GET', '/buyer/categories');
-      console.log('res-----', res);
+      const res = await apiClient.get('/buyer/categories');
       if (!res?.data.success) throw new Error(res?.data.message);
-      if (res.success) {
-        setGlobalCats(res.data.categories);
-      }
+      setGlobalCats(res.data.categories);
     } catch (error: any) {
       showToast('error', error.message);
     }
@@ -50,7 +47,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
 
   useEffect(() => {
     requestLocationPermission();
-    getGlocalCategories();
+    getGlobalCategories();
   }, []);
   const requestLocationPermission = async () => {
     try {
