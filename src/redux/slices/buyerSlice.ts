@@ -12,8 +12,13 @@ interface UserState {
   error: string | null;
 }
 
-const initialState: UserState = {
-  profile: null,
+const initialState: Buyer = {
+  _id: null,
+  name: null,
+  success: false,
+  profilePic: null,
+  createdAt: null,
+  activeSessions: [],
   loading: false,
   error: null,
 };
@@ -22,10 +27,8 @@ export const fetchBuyer = createAsyncThunk<Buyer>(
   'buyer/fetchBuyer',
   async (_, {rejectWithValue}) => {
     try {
-      console.log('called this function thunk api of buyerslice');
-      const token = await getBuyerToken();
       const response = await apiClient.get<any>(`/buyer/get-buyer-info`);
-      console.log('thunk api wala:', response.data);
+
       return response.data;
     } catch (error: any) {
       console.log(error);
@@ -44,14 +47,6 @@ const buyerSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    fetchUserSuccess: (state, action: PayloadAction<any>) => {
-      state.loading = false;
-      state.profile = action.payload;
-    },
-    fetchUserFailure: (state, action: PayloadAction<string>) => {
-      state.loading = false;
-      state.error = action.payload;
-    },
   },
   extraReducers: builder => {
     builder
@@ -60,8 +55,9 @@ const buyerSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchBuyer.fulfilled, (state, action: PayloadAction<any>) => {
+        Object.assign(state, action.payload); // Update state with API response
         state.loading = false;
-        state.profile = action.payload;
+        state.success = true;
       })
       .addCase(fetchBuyer.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
@@ -70,6 +66,5 @@ const buyerSlice = createSlice({
   },
 });
 
-export const {fetchUserStart, fetchUserSuccess, fetchUserFailure} =
-  buyerSlice.actions;
+export const {fetchUserStart} = buyerSlice.actions;
 export default buyerSlice.reducer;

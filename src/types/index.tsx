@@ -48,10 +48,12 @@ export interface ApiResponse<T> {
 }
 
 export interface Buyer {
-  id: string;
-  name: string;
-  loginStatus: boolean;
-  profilePic: string;
-  createdAt: string;
+  _id: string | null;
+  name: string | null;
+  success: boolean;
+  profilePic: string | null;
+  createdAt: string | null;
   activeSessions: string[];
+  loading: boolean;
+  error: any;
 }

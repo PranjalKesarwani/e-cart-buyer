@@ -11,21 +11,16 @@ type SplashProps = NativeStackScreenProps<RootStackParamList, 'SplashScreen'>;
 
 const SplashScreen = ({navigation}: SplashProps) => {
   const dispatch = useAppDispatch();
-  const {profile, loading, error} = useAppSelector(state => state.buyer);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await dispatch(fetchBuyer()).unwrap();
-        if (data.loginStatus) {
+        if (data.success) {
           navigation.replace('DrawerNavigator');
         } else {
           navigation.replace('LoginScreen');
         }
-        console.log(
-          'I am inside splash screen component async thunk checking',
-          data,
-        );
       } catch (error) {
         console.log(error);
         navigation.replace('LoginScreen');
@@ -36,11 +31,6 @@ const SplashScreen = ({navigation}: SplashProps) => {
   }, [dispatch]);
 
   const [isAuth, setIsAuth] = useState<boolean>(false);
-
-  setTimeout(() => {
-    if (!isAuth) return navigation.replace('LoginScreen');
-    navigation.replace('DrawerNavigator');
-  }, 3000);
 
   return (
     <View style={styles.container}>
