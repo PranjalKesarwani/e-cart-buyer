@@ -11,7 +11,7 @@ import Title from '../../components/Title';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../types';
 import {showToast} from '../../utils/toast';
-import {request} from '../../services/api';
+import {apiClient, request} from '../../services/api';
 
 type ShopListProps = NativeStackScreenProps<
   RootStackParamList,
@@ -24,10 +24,10 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
 
   const getShops = async () => {
     try {
-      const res = await request(
-        'GET',
+      const res = await apiClient.get(
         `/buyer/categories/${category.slug}/shops`,
       );
+
       if (!res?.data.success) throw new Error(res?.data.message);
 
       setShops(res.data.shops);
