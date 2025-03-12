@@ -17,7 +17,9 @@ const SplashScreen = ({navigation}: SplashProps) => {
       try {
         const data = await dispatch(fetchBuyer()).unwrap();
         if (data.success) {
-          navigation.replace('DrawerNavigator');
+          setTimeout(() => {
+            navigation.replace('DrawerNavigator');
+          }, 1500);
         } else {
           navigation.replace('LoginScreen');
         }
