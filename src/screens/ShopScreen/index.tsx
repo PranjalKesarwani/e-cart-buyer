@@ -40,7 +40,8 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
 
   const getShopCats = async () => {
     try {
-      const res = await request('GET', `/buyer/shops/${shop._id}/categories`);
+      // const res = await request('GET', `/buyer/shops/${shop._id}/categories`);
+      const res = await apiClient.get(`/buyer/shops/${shop._id}/categories`);
 
       if (!res?.data.success) throw new Error(res?.data.message);
 

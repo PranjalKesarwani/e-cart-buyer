@@ -1,16 +1,17 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
 import {Image} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
+import {
+  FlatList,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native-gesture-handler';
+import {showToast} from '../../utils/toast';
+import {apiClient} from '../../services/api';
 
 type ProductScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -21,9 +22,21 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
   const {product}: any = route.params;
   const dimension = Dimensions.get('window').width;
   const [isFavorite, setIsFavorite] = useState(false);
+  const [subCats, setSubCats] = useState<any[]>([]);
 
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
+  };
+
+  const getSubCats = async () => {
+    try {
+      const res = await apiClient.get(
+        `/buyer/shops/:shopId/categories/:categorySlug`,
+      );
+    } catch (error: any) {
+      console.log(error);
+      showToast('error', 'Error', error.message);
+    }
   };
 
   return (
@@ -78,6 +91,23 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
           <Text>Description: Pure leather watches</Text>
         </View>
       </View>
+
+      {/* <View style={{width: '90%'}}>
+                  <FlatList
+                    data={shopCats}
+                    keyExtractor={item => item._id}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={({item}) => (
+                      <TouchableOpacity
+                        style={styles.catNav}
+                        key={item._id}
+                        onPress={() => getShopProducts(item)}>
+                        <Text>{item.name}</Text>
+                      </TouchableOpacity>
+                    )}
+                  />
+                </View> */}
 
       <View style={styles.bottomButtonsContainer}>
         <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
