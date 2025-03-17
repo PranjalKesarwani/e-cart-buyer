@@ -16,6 +16,7 @@ type ShopScreenProps = NativeStackScreenProps<RootStackParamList, 'ShopScreen'>;
 const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   const [shopCats, setShopCats] = useState<any>([]);
   const [products, setProducts] = useState<any>([]);
+  const [selectedCat, setSelectedCat] = useState<any>(null);
   const {shop}: any = route.params;
   // const products = [
   //   {id: 1, name: 'Item 1'},
@@ -34,8 +35,8 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   //   {id: 14, name: 'Item 14'},
   // ];
 
-  const goToProductScreen = (product: any) => {
-    navigation.navigate('ProductScreen', {product});
+  const goToProductScreen = (product: any, category: any) => {
+    navigation.navigate('ProductScreen', {product, category});
   };
 
   const getShopCats = async () => {
@@ -46,6 +47,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
       if (!res?.data.success) throw new Error(res?.data.message);
 
       setShopCats(res.data.categories);
+      setSelectedCat(res.data.categories[0]);
     } catch (error: any) {
       console.log('error', error.message);
       showToast('error', 'Error', error.message);
@@ -115,7 +117,9 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
                 <TouchableOpacity
                   style={styles.catNav}
                   key={item._id}
-                  onPress={() => getShopProducts(item)}>
+                  onPress={() => {
+                    setSelectedCat(item), getShopProducts(item);
+                  }}>
                   <Text>{item.name}</Text>
                 </TouchableOpacity>
               )}
@@ -127,7 +131,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
               <TouchableOpacity
                 key={index}
                 style={styles.shopCard}
-                onPress={() => goToProductScreen(product)}>
+                onPress={() => goToProductScreen(product, selectedCat)}>
                 <Text style={styles.shopName}>{product.productName}</Text>
               </TouchableOpacity>
             ))}

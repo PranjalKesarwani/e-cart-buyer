@@ -19,7 +19,7 @@ type ProductScreenProps = NativeStackScreenProps<
 >;
 
 const ProductScreen = ({route, navigation}: ProductScreenProps) => {
-  const {product}: any = route.params;
+  const {product, category}: any = route.params;
   const dimension = Dimensions.get('window').width;
   const [isFavorite, setIsFavorite] = useState(false);
   const [subCats, setSubCats] = useState<any[]>([]);
@@ -31,13 +31,33 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
   const getSubCats = async () => {
     try {
       const res = await apiClient.get(
-        `/buyer/shops/:shopId/categories/:categorySlug`,
+        `/buyer/shops/${product.shopId}/categories/${category.slug}`,
       );
+      console.log('}}}}}}}}}}}}}}}}}}', res.data.subcategories);
+      setSubCats(res.data.subcategories);
     } catch (error: any) {
       console.log(error);
       showToast('error', 'Error', error.message);
     }
   };
+
+  //  const getShopProducts = async (category: any) => {
+  //     try {
+  //       const res = await apiClient.get(
+  //         `/buyer/shops/${shop._id}/categories/${category._id}/products`,
+  //       );
+
+  //       if (!res?.data.success) throw new Error(res?.data.message);
+  //       setProducts(res.data.products);
+  //     } catch (error: any) {
+  //       console.log('error', error.message);
+  //       showToast('error', error.message);
+  //     }
+  //   };
+
+  useEffect(() => {
+    getSubCats();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -66,9 +86,9 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
             autoPlay={true}
             data={product.media.images as string[]}
             scrollAnimationDuration={1000}
-            onSnapToItem={(index: number) =>
-              console.log('current index:', index)
-            }
+            // onSnapToItem={(index: number) =>
+            //   console.log('current index:', index)
+            // }
             renderItem={({item}) => (
               <View>
                 <Image source={{uri: item}} style={styles.image} />
@@ -92,22 +112,23 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
         </View>
       </View>
 
-      {/* <View style={{width: '90%'}}>
-                  <FlatList
-                    data={shopCats}
-                    keyExtractor={item => item._id}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    renderItem={({item}) => (
-                      <TouchableOpacity
-                        style={styles.catNav}
-                        key={item._id}
-                        onPress={() => getShopProducts(item)}>
-                        <Text>{item.name}</Text>
-                      </TouchableOpacity>
-                    )}
-                  />
-                </View> */}
+      <View style={{width: '90%'}}>
+        <FlatList
+          data={subCats}
+          keyExtractor={item => item._id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              style={styles.catNav}
+              key={item._id}
+              // onPress={() => getShopProducts(item)}
+            >
+              <Text>{item.name}</Text>
+            </TouchableOpacity>
+          )}
+        />
+      </View>
 
       <View style={styles.bottomButtonsContainer}>
         <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
@@ -166,6 +187,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: 10,
+  },
+  catNav: {
+    height: 40,
+    borderRadius: 7,
+    flexShrink: 1, // Allows the width to shrink if needed
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: 'orange',
+    paddingHorizontal: 15, // Adds space around the text instead of a fixed width
+    marginTop: 5,
   },
   chatBox1: {
     fontSize: 20,
