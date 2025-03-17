@@ -41,12 +41,13 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   const getShopCats = async () => {
     try {
       const res = await request('GET', `/buyer/shops/${shop._id}/categories`);
+
       if (!res?.data.success) throw new Error(res?.data.message);
 
       setShopCats(res.data.categories);
     } catch (error: any) {
       console.log('error', error.message);
-      showToast('error', error.message);
+      showToast('error', 'Error', error.message);
     }
   };
 
