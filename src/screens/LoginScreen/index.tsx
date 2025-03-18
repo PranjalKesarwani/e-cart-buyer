@@ -22,11 +22,11 @@ const LoginScreen = ({navigation}: OtpProps) => {
 
   const handleSendOTP = async () => {
     try {
-      console.log('ldksflksdfkl');
+      // console.log('ldksflksdfkl');
       const res = await apiClient.post('/buyer/send-otp', {
         mobile: phoneNumber,
       });
-      console.log('------>>>', res.data);
+      // console.log('------>>>', res.data);
 
       if (!res.data.success) throw new Error(res?.data.message);
       if (res.data.success) {
@@ -38,7 +38,7 @@ const LoginScreen = ({navigation}: OtpProps) => {
         navigation.replace('OtpScreen', {phoneNumber});
       }
 
-      console.log('---------', res?.data.message);
+      // console.log('---------', res?.data.message);
     } catch (error: any) {
       console.log('error', error);
       showToast('error', 'Error', error.message);

@@ -52,7 +52,7 @@ const OTPScreen = ({route}: OtpProps) => {
       });
       if (!res?.data.success) throw new Error(res?.data.message);
       if (res.data.success) {
-        console.log('OTP verified', res.data);
+        // console.log('OTP verified', res.data);
         setBuyToken(res.data.buyerToken);
         showToast('success', 'Success!', 'OTP Verified Successfully!');
         navigation.navigate('DrawerNavigator');

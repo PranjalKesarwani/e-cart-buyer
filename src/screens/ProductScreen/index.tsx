@@ -32,6 +32,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
   const getSubCats = async () => {
     try {
+      console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
       const res = await apiClient.get(
         `/buyer/shops/${product.shopId}/categories/${category.slug}`,
       );
@@ -49,7 +50,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
       const res = await apiClient.get(
         `/buyer/shops/${product.shopId}/categories/${category._id}/products`,
       );
-      console.log('***********', res.data.products);
+      // console.log('***********', res.data.products);
       if (!res?.data.success) throw new Error(res?.data.message);
       setProducts(res.data.products);
     } catch (error: any) {

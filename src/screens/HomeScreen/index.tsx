@@ -95,7 +95,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
   };
 
   const handleCardPress = (item: any) => {
-    console.log('item', item);
+    // console.log('item', item);
     navigation.navigate('ShopListScreen', {category: item});
   };
 
