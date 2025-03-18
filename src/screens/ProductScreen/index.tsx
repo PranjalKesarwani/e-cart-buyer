@@ -87,106 +87,110 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
       </View>
 
       {/* Main Content */}
-      <ScrollView contentContainerStyle={styles.contentContainer}>
-        {/* Product Name */}
-        <Text style={styles.shopName}>
-          {product.shop?.name || 'Prakash Watch Center'}
-        </Text>
-
-        {/* Image Carousel */}
-        <View style={styles.carouselContainer}>
-          <Carousel
-            loop
-            width={dimension}
-            height={340}
-            autoPlay={true}
-            data={product.media.images as string[]}
-            scrollAnimationDuration={1000}
-            renderItem={({item}) => (
-              <Image
-                source={{uri: item}}
-                style={styles.productImage}
-                resizeMode="contain"
-              />
-            )}
-          />
-        </View>
-
-        {/* Product Info */}
-        <View style={styles.productInfoContainer}>
-          <View style={styles.productHeader}>
-            <Text style={styles.productName}>{product.productName}</Text>
-            <TouchableOpacity style={styles.chatButton}>
-              <Icons name="message1" size={24} color={'#fff'} />
-            </TouchableOpacity>
-          </View>
-
-          {/* Price and Description */}
-          <View style={styles.priceContainer}>
-            <Text style={styles.priceText}>
-              ₹{product.price}
-              <Text style={styles.originalPrice}> ₹{product.mrp}</Text>
-              <Text style={styles.discount}>
-                {' '}
-                {product.discountPercentage}% off
-              </Text>
+      <FlatList
+        data={products} // Main data for related products
+        ListHeaderComponent={
+          <>
+            {/* Product Header Section */}
+            <Text style={styles.shopName}>
+              {product.shop?.name || 'Prakash Watch Center'}
             </Text>
-            <Text style={styles.description}>{product.description}</Text>
-          </View>
 
-          {/* Subcategories */}
-          <Text style={styles.sectionHeading}>Available Variants</Text>
-          <FlatList
-            data={subCats}
-            keyExtractor={item => item._id}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.subCatList}
-            renderItem={({item}) => (
-              <TouchableOpacity style={styles.variantButton}>
-                <Text style={styles.variantText}>{item.name}</Text>
-              </TouchableOpacity>
-            )}
-          />
+            {/* Image Carousel */}
+            <View style={styles.carouselContainer}>
+              <Carousel
+                loop
+                width={dimension}
+                height={340}
+                autoPlay={true}
+                data={product.media.images as string[]}
+                scrollAnimationDuration={1000}
+                renderItem={({item}) => (
+                  <Image
+                    source={{uri: item}}
+                    style={styles.productImage}
+                    resizeMode="contain"
+                  />
+                )}
+              />
+            </View>
 
-          <Text style={styles.sectionHeading}>Related Products</Text>
-          <FlatList
-            data={products}
-            keyExtractor={item => item._id}
-            numColumns={2}
-            columnWrapperStyle={styles.productsColumnWrapper}
-            showsVerticalScrollIndicator={false}
-            renderItem={({item}) => (
-              <TouchableOpacity
-                style={styles.productCard}
-                onPress={() =>
-                  navigation.navigate('ProductScreen', {
-                    product: item,
-                    category: selectedSubCat,
-                  })
-                }>
-                <Image
-                  source={{uri: item.media.images[0]}}
-                  style={styles.productThumbnail}
-                  resizeMode="contain"
-                />
-                <View style={styles.productDetails}>
-                  <Text style={styles.productTitle} numberOfLines={2}>
-                    {item.productName}
+            {/* Product Details */}
+            <View style={styles.productInfoContainer}>
+              <View style={styles.productHeader}>
+                <Text style={styles.productName}>{product.productName}</Text>
+                <TouchableOpacity style={styles.chatButton}>
+                  <Icons name="message1" size={24} color="#fff" />
+                </TouchableOpacity>
+              </View>
+
+              {/* Pricing Information */}
+              <View style={styles.priceContainer}>
+                <Text style={styles.priceText}>
+                  ₹{product.price}
+                  <Text style={styles.originalPrice}> ₹{product.mrp}</Text>
+                  <Text style={styles.discount}>
+                    {' '}
+                    {product.discountPercentage}% off
                   </Text>
-                  <View style={styles.priceContainer}>
-                    <Text style={styles.currentPrice}>₹{item.price}</Text>
-                    <Text style={styles.originalPrice}>₹{item.mrp}</Text>
-                    <Text style={styles.discountPercentage}>
-                      {item.discountPercentage}% off
-                    </Text>
-                  </View>
-                </View>
-              </TouchableOpacity>
-            )}
-          />
-        </View>
-      </ScrollView>
+                </Text>
+                <Text style={styles.description}>{product.description}</Text>
+              </View>
+
+              {/* Product Variants */}
+              <Text style={styles.sectionHeading}>Available Variants</Text>
+              <FlatList
+                horizontal
+                data={subCats}
+                keyExtractor={item => item._id}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.subCatList}
+                renderItem={({item}) => (
+                  <TouchableOpacity style={styles.variantButton}>
+                    <Text style={styles.variantText}>{item.name}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+
+              <Text style={styles.sectionHeading}>Related Products</Text>
+            </View>
+          </>
+        }
+        keyExtractor={item => item._id}
+        numColumns={2}
+        columnWrapperStyle={styles.productsColumnWrapper}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.contentContainer}
+        renderItem={({item}) => (
+          <TouchableOpacity
+            style={styles.productCard}
+            onPress={() =>
+              navigation.navigate('ProductScreen', {
+                product: item,
+                category: selectedSubCat,
+              })
+            }>
+            <Image
+              source={{uri: item.media.images[0]}}
+              style={styles.productThumbnail}
+              resizeMode="contain"
+            />
+            <View style={styles.productDetails}>
+              <Text style={styles.productTitle} numberOfLines={2}>
+                {item.productName}
+              </Text>
+              <View style={styles.priceContainer}>
+                <Text style={styles.currentPrice}>₹{item.price}</Text>
+                <Text style={styles.originalPrice}>₹{item.mrp}</Text>
+                <Text style={styles.discountPercentage}>
+                  {item.discountPercentage}% off
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        )}
+        ListFooterComponent={<View style={{height: 80}} />}
+      />
 
       {/* Fixed Footer */}
       <View style={styles.footer}>
