@@ -32,13 +32,19 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
   const getSubCats = async () => {
     try {
-      console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
+      console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%88888%%%%%%%%');
+
       const res = await apiClient.get(
         `/buyer/shops/${product.shopId}/categories/${category.slug}`,
       );
       // console.log('}}}}}}}}}}}}}}}}}}', res.data.subcategories);
       setSubCats(res.data.subcategories);
-      setSelectedSubCat(res.data.subcategories[0]);
+      if (res.data.subcategories.length === 0) {
+        setSelectedSubCat(null);
+        // setProducts([]);
+      } else {
+        setSelectedSubCat(res.data.subcategories[0]);
+      }
     } catch (error: any) {
       console.log(error);
       showToast('error', 'Error', error.message);
@@ -47,6 +53,11 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
   const getShopProducts = async (category: any) => {
     try {
+      console.log(
+        '%%%%%%%%%%%%%%%%%%%%%%7777%%%%%%%%%%%%%%%%%%%%%%%',
+        category.name,
+      );
+
       const res = await apiClient.get(
         `/buyer/shops/${product.shopId}/categories/${category._id}/products`,
       );
@@ -61,10 +72,12 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
   useEffect(() => {
     getSubCats();
-  }, []);
+  }, [product]);
 
   useEffect(() => {
-    if (selectedSubCat) getShopProducts(selectedSubCat);
+    if (selectedSubCat) {
+      getShopProducts(selectedSubCat);
+    }
   }, [selectedSubCat]);
 
   return (
@@ -139,7 +152,9 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
               </View>
 
               {/* Product Variants */}
-              <Text style={styles.sectionHeading}>Available Variants</Text>
+              {products.length > 0 && (
+                <Text style={styles.sectionHeading}>Related Products</Text>
+              )}
               <FlatList
                 horizontal
                 data={subCats}
@@ -154,8 +169,6 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
                   </TouchableOpacity>
                 )}
               />
-
-              <Text style={styles.sectionHeading}>Related Products</Text>
             </View>
           </>
         }
@@ -168,7 +181,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
           <TouchableOpacity
             style={styles.productCard}
             onPress={() =>
-              navigation.navigate('ProductScreen', {
+              navigation.push('ProductScreen', {
                 product: item,
                 category: selectedSubCat,
               })
