@@ -23,6 +23,8 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
   const dimension = Dimensions.get('window').width;
   const [isFavorite, setIsFavorite] = useState(false);
   const [subCats, setSubCats] = useState<any[]>([]);
+  const [selectedSubCat, setSelectedSubCat] = useState<any>(null);
+  const [products, setProducts] = useState<any>([]);
 
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
@@ -33,31 +35,36 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
       const res = await apiClient.get(
         `/buyer/shops/${product.shopId}/categories/${category.slug}`,
       );
-      console.log('}}}}}}}}}}}}}}}}}}', res.data.subcategories);
+      // console.log('}}}}}}}}}}}}}}}}}}', res.data.subcategories);
       setSubCats(res.data.subcategories);
+      setSelectedSubCat(res.data.subcategories[0]);
     } catch (error: any) {
       console.log(error);
       showToast('error', 'Error', error.message);
     }
   };
 
-  //  const getShopProducts = async (category: any) => {
-  //     try {
-  //       const res = await apiClient.get(
-  //         `/buyer/shops/${shop._id}/categories/${category._id}/products`,
-  //       );
-
-  //       if (!res?.data.success) throw new Error(res?.data.message);
-  //       setProducts(res.data.products);
-  //     } catch (error: any) {
-  //       console.log('error', error.message);
-  //       showToast('error', error.message);
-  //     }
-  //   };
+  const getShopProducts = async (category: any) => {
+    try {
+      const res = await apiClient.get(
+        `/buyer/shops/${product.shopId}/categories/${category._id}/products`,
+      );
+      console.log('***********', res.data.products);
+      if (!res?.data.success) throw new Error(res?.data.message);
+      setProducts(res.data.products);
+    } catch (error: any) {
+      console.log('error', error.message);
+      showToast('error', error.message);
+    }
+  };
 
   useEffect(() => {
     getSubCats();
   }, []);
+
+  useEffect(() => {
+    if (selectedSubCat) getShopProducts(selectedSubCat);
+  }, [selectedSubCat]);
 
   return (
     <View style={styles.container}>
@@ -138,6 +145,43 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
             renderItem={({item}) => (
               <TouchableOpacity style={styles.variantButton}>
                 <Text style={styles.variantText}>{item.name}</Text>
+              </TouchableOpacity>
+            )}
+          />
+
+          <Text style={styles.sectionHeading}>Related Products</Text>
+          <FlatList
+            data={products}
+            keyExtractor={item => item._id}
+            numColumns={2}
+            columnWrapperStyle={styles.productsColumnWrapper}
+            showsVerticalScrollIndicator={false}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                style={styles.productCard}
+                onPress={() =>
+                  navigation.navigate('ProductScreen', {
+                    product: item,
+                    category: selectedSubCat,
+                  })
+                }>
+                <Image
+                  source={{uri: item.media.images[0]}}
+                  style={styles.productThumbnail}
+                  resizeMode="contain"
+                />
+                <View style={styles.productDetails}>
+                  <Text style={styles.productTitle} numberOfLines={2}>
+                    {item.productName}
+                  </Text>
+                  <View style={styles.priceContainer}>
+                    <Text style={styles.currentPrice}>₹{item.price}</Text>
+                    <Text style={styles.originalPrice}>₹{item.mrp}</Text>
+                    <Text style={styles.discountPercentage}>
+                      {item.discountPercentage}% off
+                    </Text>
+                  </View>
+                </View>
               </TouchableOpacity>
             )}
           />
@@ -257,19 +301,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  priceContainer: {
-    marginBottom: 24,
-  },
+  // priceContainer: {
+  //   marginBottom: 24,
+  // },
   priceText: {
     fontSize: 24,
     fontWeight: '700',
     color: '#2e2e2e',
   },
-  originalPrice: {
-    fontSize: 18,
-    color: '#7e808c',
-    textDecorationLine: 'line-through',
-  },
+  // originalPrice: {
+  //   fontSize: 18,
+  //   color: '#7e808c',
+  //   textDecorationLine: 'line-through',
+  // },
   discount: {
     fontSize: 18,
     color: '#26a541',
@@ -335,5 +379,60 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     textAlign: 'center',
+  },
+  productsColumnWrapper: {
+    justifyContent: 'space-between',
+    marginBottom: 16,
+    paddingHorizontal: 8,
+  },
+  productCard: {
+    width: '48%',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 8,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  productThumbnail: {
+    width: '100%',
+    height: 150,
+    marginBottom: 12,
+    borderRadius: 8,
+  },
+  productDetails: {
+    paddingHorizontal: 4,
+  },
+  productTitle: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#2e2e2e',
+    marginBottom: 8,
+    lineHeight: 18,
+    height: 36,
+  },
+  currentPrice: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#2e2e2e',
+  },
+  originalPrice: {
+    fontSize: 12,
+    color: '#7e808c',
+    textDecorationLine: 'line-through',
+    marginLeft: 8,
+  },
+  discountPercentage: {
+    fontSize: 12,
+    color: '#26a541',
+    marginLeft: 8,
+  },
+  priceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
   },
 });
