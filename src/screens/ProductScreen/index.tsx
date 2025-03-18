@@ -61,80 +61,105 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
   return (
     <View style={styles.container}>
+      {/* Header Navigation */}
       <View style={styles.navContainer}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}>
-          <Icons name="left" size={17} color={'black'} />
-          <Text>Back</Text>
+          <Icons name="left" size={20} color={'black'} />
+          <Text style={styles.backText}>Back</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.cartButton}
           onPress={() => navigation.navigate('CartScreen')}>
-          <Icons name="shoppingcart" size={24} color={'black'} />
+          <View style={styles.cartBadge}>
+            <Text style={styles.cartBadgeText}>2</Text>
+          </View>
+          <Icons name="shoppingcart" size={28} color={'black'} />
         </TouchableOpacity>
       </View>
 
-      <View style={styles.contentContainer}>
-        <Text style={styles.headerText}>Prakash Watch Center</Text>
+      {/* Main Content */}
+      <ScrollView contentContainerStyle={styles.contentContainer}>
+        {/* Product Name */}
+        <Text style={styles.shopName}>
+          {product.shop?.name || 'Prakash Watch Center'}
+        </Text>
 
-        <View style={styles.imageContainerParent}>
+        {/* Image Carousel */}
+        <View style={styles.carouselContainer}>
           <Carousel
             loop
             width={dimension}
-            height={500}
+            height={340}
             autoPlay={true}
             data={product.media.images as string[]}
             scrollAnimationDuration={1000}
-            // onSnapToItem={(index: number) =>
-            //   console.log('current index:', index)
-            // }
             renderItem={({item}) => (
-              <View>
-                <Image source={{uri: item}} style={styles.image} />
-              </View>
+              <Image
+                source={{uri: item}}
+                style={styles.productImage}
+                resizeMode="contain"
+              />
             )}
           />
         </View>
 
-        <View style={styles.chatBoxParent}>
-          <View>
-            <Text style={styles.chatBox1}>{product.productName}</Text>
-          </View>
-          <View style={styles.chatBox}>
-            <Icons name="message1" size={20} color={'black'} />
-          </View>
-        </View>
-
-        <View style={styles.priceBox}>
-          <Text>Price: {product.price + ' ' + product.currency}</Text>
-          <Text>Description: Pure leather watches</Text>
-        </View>
-      </View>
-
-      <View style={{width: '90%'}}>
-        <FlatList
-          data={subCats}
-          keyExtractor={item => item._id}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          renderItem={({item}) => (
-            <TouchableOpacity
-              style={styles.catNav}
-              key={item._id}
-              // onPress={() => getShopProducts(item)}
-            >
-              <Text>{item.name}</Text>
+        {/* Product Info */}
+        <View style={styles.productInfoContainer}>
+          <View style={styles.productHeader}>
+            <Text style={styles.productName}>{product.productName}</Text>
+            <TouchableOpacity style={styles.chatButton}>
+              <Icons name="message1" size={24} color={'#fff'} />
             </TouchableOpacity>
-          )}
-        />
-      </View>
+          </View>
 
-      <View style={styles.bottomButtonsContainer}>
-        <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
-          <Icons name="heart" size={30} color={isFavorite ? 'red' : 'grey'} />
+          {/* Price and Description */}
+          <View style={styles.priceContainer}>
+            <Text style={styles.priceText}>
+              ₹{product.price}
+              <Text style={styles.originalPrice}> ₹{product.mrp}</Text>
+              <Text style={styles.discount}>
+                {' '}
+                {product.discountPercentage}% off
+              </Text>
+            </Text>
+            <Text style={styles.description}>{product.description}</Text>
+          </View>
+
+          {/* Subcategories */}
+          <Text style={styles.sectionHeading}>Available Variants</Text>
+          <FlatList
+            data={subCats}
+            keyExtractor={item => item._id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.subCatList}
+            renderItem={({item}) => (
+              <TouchableOpacity style={styles.variantButton}>
+                <Text style={styles.variantText}>{item.name}</Text>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      </ScrollView>
+
+      {/* Fixed Footer */}
+      <View style={styles.footer}>
+        <TouchableOpacity
+          style={styles.wishlistButton}
+          onPress={toggleFavorite}>
+          <Icons
+            name="heart"
+            size={28}
+            color={isFavorite ? '#ff3f6c' : '#94969f'}
+          />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.addToCartButton}>
+        <TouchableOpacity
+          style={styles.addToCartButton}
+          onPress={() => {
+            /* Add to cart logic */
+          }}>
           <Text style={styles.addToCartText}>Add to Cart</Text>
         </TouchableOpacity>
       </View>
@@ -147,102 +172,168 @@ export default ProductScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   navContainer: {
-    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    padding: 16,
+    backgroundColor: '#fff',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
   },
+  backText: {
+    fontSize: 16,
+    marginLeft: 8,
+    color: '#2e2e2e',
+  },
   cartButton: {
-    padding: 10,
+    position: 'relative',
+    padding: 8,
+  },
+  cartBadge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    backgroundColor: '#ff3f6c',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  cartBadgeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   contentContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    paddingBottom: 100,
   },
-  headerText: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  shopName: {
+    fontSize: 16,
+    color: '#7e808c',
     textAlign: 'center',
-    marginVertical: 10,
+    marginVertical: 8,
   },
-  image: {
-    width: '95%',
-    height: 200,
-    marginTop: 10,
-    alignSelf: 'center',
-    borderWidth: 1,
+  carouselContainer: {
+    height: 340,
+    backgroundColor: '#f5f5f6',
   },
-  chatBoxParent: {
-    width: '95%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  catNav: {
-    height: 40,
-    borderRadius: 7,
-    flexShrink: 1, // Allows the width to shrink if needed
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-    borderWidth: 1,
-    borderColor: 'orange',
-    paddingHorizontal: 15, // Adds space around the text instead of a fixed width
-    marginTop: 5,
-  },
-  chatBox1: {
-    fontSize: 20,
-    color: 'black',
-    fontWeight: 'bold',
-  },
-  chatBox: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#E5E5E5',
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  imageContainerParent: {
-    height: 220,
-  },
-  priceBox: {
+  productImage: {
     width: '100%',
-    marginLeft: 15,
+    height: '100%',
   },
-  bottomButtonsContainer: {
+  productInfoContainer: {
+    padding: 16,
+  },
+  productHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '100%',
+    marginBottom: 16,
+  },
+  productName: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#2e2e2e',
+    flex: 1,
+    marginRight: 16,
+  },
+  chatButton: {
+    backgroundColor: '#ff3f6c',
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  priceContainer: {
+    marginBottom: 24,
+  },
+  priceText: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#2e2e2e',
+  },
+  originalPrice: {
+    fontSize: 18,
+    color: '#7e808c',
+    textDecorationLine: 'line-through',
+  },
+  discount: {
+    fontSize: 18,
+    color: '#26a541',
+  },
+  description: {
+    fontSize: 16,
+    color: '#7e808c',
+    marginTop: 8,
+    lineHeight: 24,
+  },
+  sectionHeading: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#2e2e2e',
+    marginBottom: 12,
+  },
+  subCatList: {
+    paddingBottom: 8,
+  },
+  variantButton: {
+    backgroundColor: '#f5f5f6',
+    borderRadius: 8,
+    paddingVertical: 12,
     paddingHorizontal: 20,
-    position: 'absolute',
-    bottom: 20,
+    marginRight: 12,
+    borderWidth: 1,
+    borderColor: '#d4d5d9',
   },
-  heartButton: {
-    backgroundColor: '#E5E5E5',
-    borderRadius: 50,
-    padding: 10,
+  variantText: {
+    color: '#2e2e2e',
+    fontSize: 14,
+  },
+  footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#f5f5f6',
+    elevation: 8,
+  },
+  wishlistButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#f5f5f6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
   },
   addToCartButton: {
-    backgroundColor: 'black',
-    borderRadius: 25,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+    flex: 1,
+    backgroundColor: '#ff3f6c',
+    borderRadius: 28,
+    paddingVertical: 16,
   },
   addToCartText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
     textAlign: 'center',
   },
 });
