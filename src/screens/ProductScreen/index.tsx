@@ -146,7 +146,9 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.subCatList}
                 renderItem={({item}) => (
-                  <TouchableOpacity style={styles.variantButton}>
+                  <TouchableOpacity
+                    onPress={() => setSelectedSubCat(item)}
+                    style={styles.variantButton}>
                     <Text style={styles.variantText}>{item.name}</Text>
                   </TouchableOpacity>
                 )}
