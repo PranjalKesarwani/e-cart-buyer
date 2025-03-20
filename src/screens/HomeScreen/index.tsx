@@ -108,7 +108,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
           onPress={() => setModalVisible(true)}
           style={styles.locationSelector}>
           <View style={styles.locationContent}>
-            <Icons name="map-marker" size={20} color={colors.primary} />
+            <Icons name="enviromento" size={20} color={colors.primary} />
             <View style={styles.locationTextContainer}>
               <Text style={styles.locationTitle}>Current Store</Text>
               <Text
@@ -139,11 +139,13 @@ const HomeScreen = ({navigation}: HomeProps) => {
               onPress={() => handleCardPress(item)}>
               <View style={styles.categoryContent}>
                 {/* Display Image Instead of Icon */}
-                <Image
-                  source={{uri: item.image}}
-                  style={styles.categoryImage}
-                  resizeMode="contain"
-                />
+                <View style={styles.imageContainer}>
+                  <Image
+                    style={styles.categoryImage}
+                    source={{uri: item.image}}
+                    resizeMode="contain"
+                  />
+                </View>
                 <Text style={styles.categoryName}>{item.name}</Text>
               </View>
             </TouchableOpacity>
@@ -323,11 +325,17 @@ const styles = StyleSheet.create({
   },
   categoryContent: {
     alignItems: 'center',
+    width: '100%',
+  },
+  imageContainer: {
+    width: '100%',
+    height: 70,
+    marginBottom: 2,
   },
   categoryImage: {
-    width: 50, // Adjust size based on design
-    height: 50,
-    marginBottom: 8,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   categoryName: {
     fontSize: 14,
