@@ -140,7 +140,8 @@ const styles = StyleSheet.create({
   },
   shopCard: {
     backgroundColor: '#fff',
-    width: '48%',
+    width: '100%',
+    height: 200,
     marginBottom: 20,
     borderRadius: 10,
     padding: 15,
@@ -153,14 +154,14 @@ const styles = StyleSheet.create({
   },
   shopImageContainer: {
     width: '100%',
-    height: 100,
+    height: 'auto',
     borderRadius: 5,
     overflow: 'hidden',
     marginBottom: 10,
   },
   shopImage: {
     width: '100%',
-    height: '100%',
+    height: '90%',
     resizeMode: 'cover',
   },
   shopName: {
@@ -168,6 +169,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#333',
     textAlign: 'center',
+    marginBottom: 5,
   },
   noShopsText: {
     fontSize: 16,
