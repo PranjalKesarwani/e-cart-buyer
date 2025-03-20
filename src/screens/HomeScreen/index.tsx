@@ -258,9 +258,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 32,
   },
-  gridContainer: {
-    paddingBottom: 24,
-  },
+  // gridContainer: {
+  //   paddingBottom: 24,
+  // },
   categoryIcon: {
     backgroundColor: '#F0F2FE',
     padding: 16,
@@ -312,34 +312,36 @@ const styles = StyleSheet.create({
   categoryCard: {
     flex: 1,
     margin: 8,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 4,
+    borderWidth: 1, // Subtle border
+    borderColor: '#E0E0E0', // Light gray for professionalism
+    borderRadius: 8, // Rounded corners
+    backgroundColor: '#FFFFFF', // Clean white background
+    elevation: 2, // Subtle shadow for depth
+    padding: 10, // Internal spacing
   },
   categoryContent: {
     alignItems: 'center',
     width: '100%',
+    paddingBottom: 10, // Space at the bottom
   },
   imageContainer: {
     width: '100%',
-    height: 70,
-    marginBottom: 2,
+    height: 100, // Increased height for better image visibility
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   categoryImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
+    width: '90%', // Slightly less than full width for padding
+    height: '90%', // Maintains aspect ratio
+    resizeMode: 'contain', // Ensures image fits without distortion
   },
   categoryName: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: '600', // Slightly bold for a polished look
+    color: '#333', // Dark gray for readability
+    marginTop: 8, // Space between image and text
+  },
+  gridContainer: {
+    padding: 10, // Padding around the grid
   },
 });
