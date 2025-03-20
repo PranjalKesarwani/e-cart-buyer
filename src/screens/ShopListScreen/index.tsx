@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Image,
 } from 'react-native';
 import Icons from 'react-native-vector-icons/AntDesign';
 import Title from '../../components/Title';
@@ -46,31 +47,44 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
   }, []);
 
   return (
-    <View style={{flex: 1}}>
+    <View style={styles.screenContainer}>
+      {/* Navigation / Back Button */}
       <View style={styles.navContainer}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}>
-          <Icons name="left" size={17} color={'black'} />
-          <Text>Back</Text>
+          <Icons name="left" size={20} color="#333" />
+          <Text style={styles.backText}>Back</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView stickyHeaderIndices={[1]}>
-        <View style={styles.container}>
-          <Text style={{fontSize: 20}}>{category.name}</Text>
+
+      <ScrollView
+        stickyHeaderIndices={[1]}
+        contentContainerStyle={{flexGrow: 1}}>
+        {/* Header Section */}
+        <View style={styles.headerContainer}>
+          <Text style={styles.headerTitle}>{category.name}</Text>
         </View>
+
+        {/* Shop List Section */}
         <View style={styles.shopListContainer}>
           {Array.isArray(shops) && shops.length > 0 ? (
-            shops.map((shop: any, index: number) => (
+            shops.map((shop, index) => (
               <TouchableOpacity
                 key={index}
                 style={styles.shopCard}
                 onPress={() => goToShopScreen(shop)}>
+                <View style={styles.shopImageContainer}>
+                  <Image
+                    source={{uri: shop.shopPic}}
+                    style={styles.shopImage}
+                  />
+                </View>
                 <Text style={styles.shopName}>{shop.shopName}</Text>
               </TouchableOpacity>
             ))
           ) : (
-            <Text>No shops found.</Text>
+            <Text style={styles.noShopsText}>No shops found.</Text>
           )}
         </View>
       </ScrollView>
@@ -79,63 +93,87 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
 };
 
 export default ShopListScreen;
-
 const styles = StyleSheet.create({
-  container: {
+  screenContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  header: {
-    padding: 20,
-    width: '100%',
+    backgroundColor: '#f5f5f5',
   },
   navContainer: {
     width: '100%',
+    backgroundColor: '#fff',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: {width: 0, height: 2},
+    shadowRadius: 2,
   },
   backButton: {
-    padding: 10,
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  backText: {
+    fontSize: 16,
+    color: '#333',
+    marginLeft: 5,
+  },
+  headerContainer: {
+    backgroundColor: '#fff',
+    paddingVertical: 20,
+    paddingHorizontal: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    alignSelf: 'center',
   },
   shopListContainer: {
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 20,
+    justifyContent: 'space-between',
   },
   shopCard: {
-    marginBottom: 40,
-    padding: 20,
-    backgroundColor: '#E5E5E5',
+    backgroundColor: '#fff',
+    width: '48%',
+    marginBottom: 20,
     borderRadius: 10,
-    justifyContent: 'center',
+    padding: 15,
     alignItems: 'center',
-    height: 100,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: {width: 0, height: 2},
+    shadowRadius: 2,
+  },
+  shopImageContainer: {
     width: '100%',
-    minHeight: 200,
+    height: 100,
+    borderRadius: 5,
+    overflow: 'hidden',
+    marginBottom: 10,
+  },
+  shopImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   shopName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  touchable: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 5,
-  },
-  headerText: {
     fontSize: 16,
-    fontWeight: '500',
-    marginLeft: 3,
+    fontWeight: '600',
+    color: '#333',
+    textAlign: 'center',
   },
-  subHeaderText: {
-    fontSize: 12,
+  noShopsText: {
+    fontSize: 16,
+    color: '#999',
+    textAlign: 'center',
+    width: '100%',
+    marginTop: 20,
   },
 });
