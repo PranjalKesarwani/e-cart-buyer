@@ -10,6 +10,7 @@ import {
   Modal,
   TouchableOpacity,
   Dimensions,
+  Image,
 } from 'react-native';
 import {RootDrawerParamList} from '../../types'; // Assuming you only need RootDrawerParamList
 import Icons from 'react-native-vector-icons/AntDesign';
@@ -101,60 +102,76 @@ const HomeScreen = ({navigation}: HomeProps) => {
 
   return (
     <View style={styles.container}>
+      {/* Header Section */}
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => setModalVisible(true)}
-          style={styles.touchable}>
-          <View style={{flexDirection: 'row', width: '58%'}}>
-            <Icons name="down" size={17} color={'black'} />
-            <View>
-              <Text style={styles.headerText}>Sahson</Text>
+          style={styles.locationSelector}>
+          <View style={styles.locationContent}>
+            <Icons name="map-marker" size={20} color={colors.primary} />
+            <View style={styles.locationTextContainer}>
+              <Text style={styles.locationTitle}>Current Store</Text>
               <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
-                style={styles.subHeaderText}>
-                Opposite Ramleela maidan, 221507
+                style={styles.locationAddress}>
+                Opposite Ramleela Maidan, 221507
               </Text>
             </View>
+            <Icons name="down" size={16} color={colors.darkGray} />
           </View>
         </TouchableOpacity>
       </View>
 
-      <View style={{alignItems: 'center', marginTop: 10}}>
-        <Text style={{fontSize: 20, width: '80%', textAlign: 'center'}}>
-          Hey! What are you looking for?{' '}
+      {/* Main Content */}
+      <View style={styles.contentContainer}>
+        <Text style={styles.welcomeMessage}>
+          Discover something amazing today!
         </Text>
+
+        {/* Categories Grid */}
+        <FlatList
+          data={globalCats}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              style={styles.categoryCard}
+              activeOpacity={0.9}
+              onPress={() => handleCardPress(item)}>
+              <View style={styles.categoryContent}>
+                {/* Display Image Instead of Icon */}
+                <Image
+                  source={{uri: item.image}}
+                  style={styles.categoryImage}
+                  resizeMode="contain"
+                />
+                <Text style={styles.categoryName}>{item.name}</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+          keyExtractor={item => item.id.toString()}
+          numColumns={2}
+          contentContainerStyle={styles.gridContainer}
+        />
       </View>
 
-      <FlatList
-        data={globalCats}
-        renderItem={({item}) => (
-          <TouchableOpacity
-            style={styles.categoryContainer}
-            onPress={() => handleCardPress(item)}>
-            <View style={styles.card}>
-              <Text>{item.name}</Text>
-            </View>
-          </TouchableOpacity>
-        )}
-        keyExtractor={item => item.id.toString()}
-        numColumns={2}
-      />
-
+      {/* Location Modal */}
       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}>
-        <View style={[styles.modalView, {height: modalHeight}]}>
-          <Button
-            title="Close"
-            onPress={() => setModalVisible(!modalVisible)}
-          />
+        onRequestClose={() => setModalVisible(false)}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>Select Location</Text>
+            <TouchableOpacity
+              onPress={() => setModalVisible(false)}
+              style={styles.closeButton}>
+              <Icons name="close" size={24} color={colors.darkGray} />
+            </TouchableOpacity>
+          </View>
+
           <MapView
-            style={{width: '80%', height: '50%'}}
+            style={styles.map}
             initialRegion={{
               latitude: 28.68344961110582,
               longitude: 77.21538250329944,
@@ -163,19 +180,12 @@ const HomeScreen = ({navigation}: HomeProps) => {
             }}>
             <Marker coordinate={{latitude: mLat, longitude: mLong}} />
           </MapView>
+
           <TouchableOpacity
-            onPress={() => getCurrentLocation()}
-            style={{
-              width: '70%',
-              height: 40,
-              alignSelf: 'center',
-              position: 'absolute',
-              bottom: 20,
-              backgroundColor: 'orange',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Text style={{color: '#fff'}}>Get current location</Text>
+            onPress={getCurrentLocation}
+            style={styles.currentLocationButton}>
+            <Icons name="enviromento" size={30} color="#003366" />
+            <Text style={styles.locationButtonText}>Use Current Location</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -185,61 +195,143 @@ const HomeScreen = ({navigation}: HomeProps) => {
 
 export default HomeScreen;
 
+const colors = {
+  primary: '#6C5CE7', // Sophisticated purple
+  secondary: '#FF9F43', // Warm orange
+  background: '#F8F9FA', // Light background
+  text: '#2D3436', // Dark text
+  darkGray: '#636E72', // Secondary text
+  lightGray: '#DFE6E9', // Borders
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.background,
   },
   header: {
-    padding: 20,
-  },
-  headerText: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginLeft: 3,
-  },
-  subHeaderText: {
-    fontSize: 12,
-  },
-
-  modalView: {
+    padding: 16,
     backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    marginTop: 'auto',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.lightGray,
   },
-  touchable: {
+  locationSelector: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  locationContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 0, // Adjust as needed
-    paddingVertical: 5, // Adjust as needed
-    borderRadius: 5, // Example border radius
-    borderColor: 'red',
-    borderWidth: 2,
-    width: '60%',
   },
-  card: {
+  locationTextContainer: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  locationTitle: {
+    fontSize: 14,
+    color: colors.darkGray,
+    fontWeight: '500',
+  },
+  locationAddress: {
+    fontSize: 16,
+    color: colors.text,
+    fontWeight: '600',
+    marginTop: 4,
+  },
+  contentContainer: {
+    flex: 1,
+    paddingHorizontal: 16,
+  },
+  welcomeMessage: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.text,
+    marginVertical: 24,
+    textAlign: 'center',
+    lineHeight: 32,
+  },
+  gridContainer: {
+    paddingBottom: 24,
+  },
+  categoryIcon: {
+    backgroundColor: '#F0F2FE',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.lightGray,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.text,
+  },
+  closeButton: {
+    padding: 8,
+  },
+  map: {
+    flex: 1,
+  },
+  currentLocationButton: {
+    flexDirection: 'row',
+    backgroundColor: colors.primary,
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 16,
+    position: 'absolute',
+    bottom: 0,
+    left: 16,
+    right: 16,
+  },
+  locationButtonText: {
+    color: 'white',
+    fontWeight: '600',
+    marginLeft: 8,
+    fontSize: 16,
+  },
+  categoryCard: {
     flex: 1,
     margin: 8,
-    padding: 16,
-    borderRadius: 8,
-    justifyContent: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 10,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#B4B4B8',
-    height: 100,
+    justifyContent: 'center',
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 4,
   },
-  categoryContainer: {
-    width: '40%',
-
-    flex: 1,
+  categoryContent: {
+    alignItems: 'center',
+  },
+  categoryImage: {
+    width: 50, // Adjust size based on design
+    height: 50,
+    marginBottom: 8,
+  },
+  categoryName: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
   },
 });

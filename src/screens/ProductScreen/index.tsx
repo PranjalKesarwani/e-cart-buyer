@@ -32,7 +32,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
   const getSubCats = async () => {
     try {
-      console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%88888%%%%%%%%');
+      // console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%88888%%%%%%%%');
 
       const res = await apiClient.get(
         `/buyer/shops/${product.shopId}/categories/${category.slug}`,
@@ -53,10 +53,10 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
   const getShopProducts = async (category: any) => {
     try {
-      console.log(
-        '%%%%%%%%%%%%%%%%%%%%%%7777%%%%%%%%%%%%%%%%%%%%%%%',
-        category.name,
-      );
+      // console.log(
+      //   '%%%%%%%%%%%%%%%%%%%%%%7777%%%%%%%%%%%%%%%%%%%%%%%',
+      //   category.name,
+      // );
 
       const res = await apiClient.get(
         `/buyer/shops/${product.shopId}/categories/${category._id}/products`,
