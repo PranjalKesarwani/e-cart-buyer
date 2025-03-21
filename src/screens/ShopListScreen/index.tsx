@@ -153,63 +153,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
   },
-  // headerTitle: {
-  //   fontSize: 24,
-  //   fontWeight: 'bold',
-  //   color: '#333',
-  //   textAlign: 'center',
-  // },
-  // shopListContainer: {
-  //   padding: 15,
-  //   flexGrow: 1,
-  // },
-  // shopCard: {
-  //   backgroundColor: '#fff',
-  //   marginBottom: CARD_MARGIN,
-  //   borderRadius: 10,
-  //   overflow: 'hidden',
-  //   elevation: 3,
-  //   shadowColor: '#000',
-  //   shadowOpacity: 0.1,
-  //   shadowOffset: {width: 0, height: 2},
-  //   shadowRadius: 2,
-  // },
-  // shopImageContainer: {
-  //   width: '100%',
-  //   height: 160, // Adjust based on your needs
-  //   position: 'relative',
-  // },
-  // shopImage: {
-  //   width: '100%',
-  //   height: '100%',
-  // },
-  // distanceBadge: {
-  //   position: 'absolute',
-  //   top: 10,
-  //   right: 10,
-  //   backgroundColor: 'rgba(0,0,0,0.8)',
-  //   paddingHorizontal: 12,
-  //   paddingVertical: 6,
-  //   borderRadius: 20,
-  // },
-  // distanceText: {
-  //   color: '#fff',
-  //   fontSize: 15,
-  //   fontWeight: '600',
-  // },
-  // shopInfoContainer: {
-  //   padding: 12,
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  //   alignItems: 'center',
-  // },
-  // shopName: {
-  //   fontSize: 16,
-  //   fontWeight: '600',
-  //   color: '#333',
-  //   flex: 1,
-  //   marginRight: 8,
-  // },
   noShopsText: {
     fontSize: 16,
     color: '#999',
