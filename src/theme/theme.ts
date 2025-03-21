@@ -1,9 +1,17 @@
+import {StyleSheet} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 // theme.ts
 export const Theme = {
   colors: {
-    primary: '#2E3192',
-    secondary: '#E63946',
-    background: '#F8F9FA',
+    saffron: '#FF9933', // Energy, Hinduism
+    chakraBlue: '#000080', // Trust, Ashoka Chakra
+    harvestGreen: '#138808', // Agriculture, Growth
+    bharatPurple: '#6D327D', // Royalty, Tradition
+    festivalRed: '#E21717', // Urgency, Festivals
+    earthBrown: '#6D4C3D', // Village connection
+    purityWhite: '#FFFFFF',
   },
   spacing: {
     s: 8,
@@ -19,9 +27,5 @@ export const Theme = {
       fontSize: 16,
       lineHeight: 24,
     },
-  },
-  showBorder: {
-    borderWidth: 1,
-    borderColor: 'red',
   },
 };
