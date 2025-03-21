@@ -111,7 +111,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
           <View style={styles.locationContent}>
             <Icons name="enviromento" size={20} color={colors.primary} />
             <View style={styles.locationTextContainer}>
-              <Text style={styles.locationTitle}>Current Store</Text>
+              <Text style={styles.locationTitle}>Username</Text>
               <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    paddingHorizontal: 16,
+    paddingHorizontal: 7,
   },
   welcomeMessage: {
     fontSize: 24,
@@ -338,10 +338,11 @@ const styles = StyleSheet.create({
     resizeMode: 'cover', // Ensures image fits without distortion
   },
   categoryName: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600', // Slightly bold for a polished look
     color: '#333', // Dark gray for readability
     marginTop: 8, // Space between image and text
+    textAlign: 'center', // Center text for consistency
   },
   gridContainer: {
     padding: 10, // Padding around the grid
