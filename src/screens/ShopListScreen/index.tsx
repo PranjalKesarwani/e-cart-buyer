@@ -62,8 +62,10 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
       {/* Main Content */}
       <FlatList
         ListHeaderComponent={
-          <View style={styles.headerContainer}>
-            <Text style={styles.headerTitle}>{category.name}</Text>
+          <View style={[styles.headerContainer]}>
+            <Text style={[styles.headerTitle, {textAlign: 'center'}]}>
+              {category.name}
+            </Text>
           </View>
         }
         stickyHeaderIndices={[0]}
@@ -152,6 +154,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
+    // textAlign: 'center',
   },
   noShopsText: {
     fontSize: 16,
