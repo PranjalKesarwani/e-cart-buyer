@@ -4,20 +4,25 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
   Image,
+  FlatList,
+  Dimensions,
 } from 'react-native';
 import Icons from 'react-native-vector-icons/AntDesign';
-import Title from '../../components/Title';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../types';
 import {showToast} from '../../utils/toast';
-import {apiClient, request} from '../../services/api';
+import {apiClient} from '../../services/api';
+import {Theme} from '../../theme/theme';
 
 type ShopListProps = NativeStackScreenProps<
   RootStackParamList,
   'ShopListScreen'
 >;
+
+const {width} = Dimensions.get('window');
+const CARD_MARGIN = 10;
+const CARD_WIDTH = width - 30 - CARD_MARGIN; // 15 padding on each side
 
 const ShopListScreen = ({route, navigation}: ShopListProps) => {
   const {category}: any = route.params;
@@ -28,12 +33,8 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
       const res = await apiClient.get(
         `/buyer/categories/${category.slug}/shops`,
       );
-
-      if (!res?.data.success) throw new Error(res?.data.message);
-
-      setShops(res.data.shops);
+      setShops(res.data.shops || []);
     } catch (error: any) {
-      console.log('error', error.message);
       showToast('error', error.message);
     }
   };
@@ -48,7 +49,7 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
 
   return (
     <View style={styles.screenContainer}>
-      {/* Navigation / Back Button */}
+      {/* Navigation Header */}
       <View style={styles.navContainer}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -58,51 +59,60 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
         </TouchableOpacity>
       </View>
 
-      <ScrollView
-        stickyHeaderIndices={[1]}
-        contentContainerStyle={{flexGrow: 1}}>
-        {/* Header Section */}
-        <View style={styles.headerContainer}>
-          <Text style={styles.headerTitle}>{category.name}</Text>
-        </View>
+      {/* Main Content */}
+      <FlatList
+        ListHeaderComponent={
+          <View style={styles.headerContainer}>
+            <Text style={styles.headerTitle}>{category.name}</Text>
+          </View>
+        }
+        stickyHeaderIndices={[0]}
+        data={shops}
+        style={[]}
+        renderItem={({item}) => (
+          <TouchableOpacity
+            style={[styles.shopCard, {width: CARD_WIDTH}]}
+            onPress={() => goToShopScreen(item)}>
+            {/* Image Container with Distance Badge */}
+            <View style={styles.shopImageContainer}>
+              <Image
+                resizeMode="cover"
+                source={{uri: item.shopPic}}
+                style={styles.shopImage}
+              />
+              <View style={styles.distanceBadge}>
+                <Text style={styles.distanceText}>4 km</Text>
+              </View>
+            </View>
 
-        {/* Shop List Section */}
-        <View style={styles.shopListContainer}>
-          {Array.isArray(shops) && shops.length > 0 ? (
-            shops.map((shop, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.shopCard}
-                onPress={() => goToShopScreen(shop)}>
-                <View style={styles.shopImageContainer}>
-                  <Image
-                    source={{uri: shop.shopPic}}
-                    style={styles.shopImage}
-                  />
-                </View>
-                <Text style={styles.shopName}>{shop.shopName}</Text>
-              </TouchableOpacity>
-            ))
-          ) : (
-            <Text style={styles.noShopsText}>No shops found.</Text>
-          )}
-        </View>
-      </ScrollView>
+            {/* Shop Info Container */}
+            <View style={styles.shopInfoContainer}>
+              <Text style={styles.shopName} numberOfLines={1}>
+                {item.shopName}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        )}
+        keyExtractor={(item, index) => index.toString()}
+        numColumns={2}
+        ListEmptyComponent={
+          <Text style={styles.noShopsText}>No shops found.</Text>
+        }
+        contentContainerStyle={[styles.shopListContainer]}
+        columnWrapperStyle={{justifyContent: 'space-between'}}
+      />
     </View>
   );
 };
 
-export default ShopListScreen;
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
   navContainer: {
-    width: '100%',
     backgroundColor: '#fff',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    padding: 15,
     elevation: 4,
     shadowColor: '#000',
     shadowOpacity: 0.1,
@@ -121,7 +131,6 @@ const styles = StyleSheet.create({
   headerContainer: {
     backgroundColor: '#fff',
     paddingVertical: 20,
-    paddingHorizontal: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
   },
@@ -129,23 +138,17 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
-    alignSelf: 'center',
+    textAlign: 'center',
   },
   shopListContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingHorizontal: 15,
-    paddingVertical: 20,
-    justifyContent: 'space-between',
+    padding: 15,
+    flexGrow: 1,
   },
   shopCard: {
     backgroundColor: '#fff',
-    width: '100%',
-    height: 200,
-    marginBottom: 20,
+    marginBottom: CARD_MARGIN,
     borderRadius: 10,
-    padding: 15,
-    alignItems: 'center',
+    overflow: 'hidden',
     elevation: 3,
     shadowColor: '#000',
     shadowOpacity: 0.1,
@@ -154,28 +157,46 @@ const styles = StyleSheet.create({
   },
   shopImageContainer: {
     width: '100%',
-    height: 'auto',
-    borderRadius: 5,
-    overflow: 'hidden',
-    marginBottom: 10,
+    height: 160, // Adjust based on your needs
+    position: 'relative',
   },
   shopImage: {
     width: '100%',
-    height: '90%',
-    resizeMode: 'cover',
+    height: '100%',
+  },
+  distanceBadge: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  distanceText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  shopInfoContainer: {
+    padding: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   shopName: {
     fontSize: 16,
     fontWeight: '600',
     color: '#333',
-    textAlign: 'center',
-    marginBottom: 5,
+    flex: 1,
+    marginRight: 8,
   },
   noShopsText: {
     fontSize: 16,
     color: '#999',
     textAlign: 'center',
-    width: '100%',
     marginTop: 20,
   },
 });
+
+export default ShopListScreen;
