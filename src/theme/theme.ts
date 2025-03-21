@@ -20,4 +20,8 @@ export const Theme = {
       lineHeight: 24,
     },
   },
+  showBorder: {
+    borderWidth: 1,
+    borderColor: 'red',
+  },
 };

@@ -20,6 +20,7 @@ import Title from '../../components/Title';
 import {FlatList} from 'react-native-gesture-handler';
 import {showToast} from '../../utils/toast';
 import {apiClient, request} from '../../services/api';
+import {Theme} from '../../theme/theme';
 
 type HomeProps = NativeStackScreenProps<RootDrawerParamList, 'HomeScreen'>;
 
@@ -134,16 +135,16 @@ const HomeScreen = ({navigation}: HomeProps) => {
           data={globalCats}
           renderItem={({item}) => (
             <TouchableOpacity
-              style={styles.categoryCard}
+              style={[styles.categoryCard]}
               activeOpacity={0.9}
               onPress={() => handleCardPress(item)}>
-              <View style={styles.categoryContent}>
+              <View style={[styles.categoryContent]}>
                 {/* Display Image Instead of Icon */}
-                <View style={styles.imageContainer}>
+                <View style={[styles.imageContainer]}>
                   <Image
-                    style={styles.categoryImage}
+                    style={[styles.categoryImage, {borderTopRightRadius: 5.6}]}
                     source={{uri: item.image}}
-                    resizeMode="contain"
+                    resizeMode="cover"
                   />
                 </View>
                 <Text style={styles.categoryName}>{item.name}</Text>
@@ -317,23 +318,24 @@ const styles = StyleSheet.create({
     borderRadius: 8, // Rounded corners
     backgroundColor: '#FFFFFF', // Clean white background
     elevation: 2, // Subtle shadow for depth
-    padding: 10, // Internal spacing
+    paddingBottom: 3, // Internal spacing
   },
   categoryContent: {
     alignItems: 'center',
     width: '100%',
-    paddingBottom: 10, // Space at the bottom
+    paddingBottom: 8, // Space at the bottom
   },
   imageContainer: {
     width: '100%',
     height: 100, // Increased height for better image visibility
     justifyContent: 'center',
     alignItems: 'center',
+    borderTopEndRadius: 8, // Rounded top corners
   },
   categoryImage: {
-    width: '90%', // Slightly less than full width for padding
-    height: '90%', // Maintains aspect ratio
-    resizeMode: 'contain', // Ensures image fits without distortion
+    width: '100%', // Slightly less than full width for padding
+    height: '100%', // Maintains aspect ratio
+    resizeMode: 'cover', // Ensures image fits without distortion
   },
   categoryName: {
     fontSize: 14,
