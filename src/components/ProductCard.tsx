@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {
   View,
   Image,
@@ -8,23 +8,32 @@ import {
   Dimensions,
 } from 'react-native';
 import Icons from 'react-native-vector-icons/AntDesign';
+import {Category, Product} from '../types';
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  description: string;
-  imageUrl: string;
-  rating: number;
-}
+// interface Product {
+//   id: string;
+//   name: string;
+//   price: number;
+//   description: string;
+//   imageUrl: string;
+//   rating: number;
+// }
 
-interface ProductCardProps {
-  product: Product;
-  onAddToCart: (productId: string) => void;
-}
+// interface ProductCardProps {
+//   product: Product;
+//   onAddToCart: (productId: string) => void;
+// }
 const {width} = Dimensions.get('window');
 const CARD_WIDTH = (width - 40) / 2 - 10;
-const ProductCard: React.FC<any> = ({product}: any) => {
+const ProductCard: React.FC<any> = ({
+  product,
+  selectedCat,
+  goToProductScreen,
+}: {
+  product: Product;
+  selectedCat: Category;
+  goToProductScreen: any;
+}) => {
   const renderRating = () => {
     return (
       <View style={styles.ratingContainer}>
@@ -35,7 +44,9 @@ const ProductCard: React.FC<any> = ({product}: any) => {
   };
 
   return (
-    <View style={styles.productCard}>
+    <TouchableOpacity
+      style={styles.productCard}
+      onPress={() => goToProductScreen(product, selectedCat!)}>
       <Image
         source={{uri: product.media.images[0]}}
         style={styles.productImage}
@@ -56,7 +67,7 @@ const ProductCard: React.FC<any> = ({product}: any) => {
           </Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

@@ -184,32 +184,10 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
         }
         columnWrapperStyle={styles.productsWrapper}
         renderItem={({item}) => (
-          // <TouchableOpacity
-          //   style={styles.productCard}
-          //   onPress={() => goToProductScreen(item, selectedCat!)}>
-          //   <Image
-          //     source={{uri: item.media.images[0]}}
-          //     style={styles.productImage}
-          //     resizeMode="contain"
-          //   />
-          // <View style={styles.productDetails}>
-          //   <Text style={styles.productName} numberOfLines={2}>
-          //     {item.productName}
-          //   </Text>
-          //   <Text style={styles.productPrice}>
-          //     ₹{item.price.toLocaleString()}
-          //   </Text>
-          //   <View style={styles.ratingContainer}>
-          //     <Icons name="star" size={14} color="#FFD700" />
-          //     <Text style={styles.ratingText}>
-          //       {item.rating?.toFixed(1) || '4.5'}
-          //     </Text>
-          //   </View>
-          // </View>
-          // </TouchableOpacity>
           <ProductCard
             product={item}
-            onPress={() => goToProductScreen(item, selectedCat!)}
+            selectedCat={selectedCat}
+            goToProductScreen={goToProductScreen}
           />
         )}
         keyExtractor={item => item._id}

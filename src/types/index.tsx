@@ -61,10 +61,11 @@ export interface Buyer {
 export type Product = {
   _id: string;
   productName: string;
-  productPrice: number;
+  price: number;
   description: string;
   imageUrls: string[];
   rating: number;
+  media: any;
 };
 
 export type Category = {
