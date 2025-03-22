@@ -33,6 +33,10 @@ export const Theme = {
       lineHeight: 24,
     },
   },
+  showBorder: {
+    borderColor: 'red',
+    borderWidth: 1,
+  },
 
   gradients: {
     primary: {

@@ -15,6 +15,7 @@ import {apiClient} from '../../services/api';
 import {showToast} from '../../utils/toast';
 import {Category, Product, RootStackParamList} from '../../types';
 import ProductCard from '../../components/ProductCard';
+import {Theme} from '../../theme/theme';
 
 type ShopScreenProps = NativeStackScreenProps<RootStackParamList, 'ShopScreen'>;
 
@@ -109,7 +110,13 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
           style={styles.backButton}>
           <Icons name="left" size={24} color="#1A1A1A" />
         </TouchableOpacity>
-        <Text style={styles.shopTitle}>{shop.name}</Text>
+        <Text
+          style={[
+            styles.shopTitle,
+            {width: '100%', textAlign: 'left', paddingLeft: 5},
+          ]}>
+          {shop.shopName}
+        </Text>
       </View>
 
       {/* Main Content */}
@@ -228,7 +235,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#EEE',
   },
   backButton: {
-    marginRight: 16,
+    marginRight: 10,
   },
   shopTitle: {
     fontSize: 20,
