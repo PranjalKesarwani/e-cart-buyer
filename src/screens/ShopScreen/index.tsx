@@ -1,17 +1,24 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useCallback, useEffect, useState} from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
-import {Category, Product, RootStackParamList} from '../../types';
 import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Dimensions,
   FlatList,
   ScrollView,
   TouchableOpacity,
-} from 'react-native-gesture-handler';
+} from 'react-native';
 import Icons from 'react-native-vector-icons/AntDesign';
-import {apiClient, request} from '../../services/api';
+import {apiClient} from '../../services/api';
 import {showToast} from '../../utils/toast';
+import {Category, Product, RootStackParamList} from '../../types';
 
 type ShopScreenProps = NativeStackScreenProps<RootStackParamList, 'ShopScreen'>;
+
+const {width} = Dimensions.get('window');
+const CARD_WIDTH = (width - 40) / 2 - 10;
 
 const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   const [shopCats, setShopCats] = useState<any>([]);
@@ -93,65 +100,109 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   // }, []);
 
   return (
-    <View style={{flex: 1}}>
-      <View style={styles.navContainer}>
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}>
-          <Icons name="left" size={17} color={'black'} />
-          <Text>Back</Text>
+          <Icons name="left" size={24} color="#1A1A1A" />
         </TouchableOpacity>
+        <Text style={styles.shopTitle}>{shop.name}</Text>
       </View>
-      <ScrollView stickyHeaderIndices={[1]}>
-        <View style={styles.container}>
-          <View>
-            <Text style={styles.textStyle}>Prakash Watch Center</Text>
-            <Text style={styles.textStyle}>Mon-Sun(10am - 9pm)</Text>
-            <Text style={styles.textStyle}>
-              Address: Sahson, Opp. Ram Janaki Mandir
-            </Text>
-            <Text style={styles.textStyle}>Voice Message?</Text>
-          </View>
 
-          <Image
-            source={{
-              uri: 'https://d27k8xmh3cuzik.cloudfront.net/wp-content/uploads/2018/03/street-shopping-in-india-cover.jpg',
-            }}
-            style={styles.image}
-            resizeMode="cover"
-          />
+      {/* Main Content */}
+      <FlatList
+        data={products}
+        numColumns={2}
+        ListHeaderComponent={
+          <>
+            {/* Shop Info Section */}
+            <View style={styles.shopInfoContainer}>
+              <Image
+                source={{
+                  uri:
+                    shop.imageUrl ||
+                    'https://d27k8xmh3cuzik.cloudfront.net/wp-content/uploads/2018/03/street-shopping-in-india-cover.jpg',
+                }}
+                style={styles.shopImage}
+                resizeMode="cover"
+              />
 
-          <View style={{width: '90%'}}>
+              <View style={styles.infoContainer}>
+                <View style={styles.infoRow}>
+                  <Icons name="clockcircleo" size={16} color="#666" />
+                  <Text style={styles.infoText}>Mon-Sun (10am - 9pm)</Text>
+                </View>
+                <View style={styles.infoRow}>
+                  <Icons name="enviromento" size={16} color="#666" />
+                  <Text style={styles.infoText}>
+                    Sahson, Opp. Ram Janaki Mandir
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Categories */}
             <FlatList
-              data={shopCats}
-              keyExtractor={item => item._id}
               horizontal
+              data={shopCats}
               showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.categoriesContainer}
               renderItem={({item}) => (
                 <TouchableOpacity
-                  style={styles.catNav}
-                  key={item._id}
+                  style={[
+                    styles.categoryButton,
+                    selectedCat?._id === item._id && styles.selectedCategory,
+                  ]}
                   onPress={() => {
-                    setSelectedCat(item), getShopProducts(item);
+                    setSelectedCat(item);
+                    getShopProducts(item);
                   }}>
-                  <Text>{item.name}</Text>
+                  <Text
+                    style={[
+                      styles.categoryText,
+                      selectedCat?._id === item._id &&
+                        styles.selectedCategoryText,
+                    ]}>
+                    {item.name}
+                  </Text>
                 </TouchableOpacity>
               )}
+              keyExtractor={item => item._id}
+              nestedScrollEnabled // Add this for Android
             />
-          </View>
-
-          <View style={styles.shopListContainer}>
-            {products.map((product: any, index: number) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.shopCard}
-                onPress={() => goToProductScreen(product, selectedCat)}>
-                <Text style={styles.shopName}>{product.productName}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-      </ScrollView>
+          </>
+        }
+        columnWrapperStyle={styles.productsWrapper}
+        renderItem={({item}) => (
+          <TouchableOpacity
+            style={styles.productCard}
+            onPress={() => goToProductScreen(item, selectedCat!)}>
+            <Image
+              source={{uri: item.media.images[0]}}
+              style={styles.productImage}
+              resizeMode="contain"
+            />
+            <View style={styles.productDetails}>
+              <Text style={styles.productName} numberOfLines={2}>
+                {item.productName}
+              </Text>
+              <Text style={styles.productPrice}>
+                ₹{item.price.toLocaleString()}
+              </Text>
+              <View style={styles.ratingContainer}>
+                <Icons name="star" size={14} color="#FFD700" />
+                <Text style={styles.ratingText}>
+                  {item.rating?.toFixed(1) || '4.5'}
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        )}
+        keyExtractor={item => item._id}
+        contentContainerStyle={styles.scrollContent}
+      />
     </View>
   );
 };
@@ -161,82 +212,132 @@ export default ShopScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    backgroundColor: '#F5F5F5',
   },
   header: {
-    padding: 20,
-    width: '100%',
-  },
-  navContainer: {
-    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEE',
   },
   backButton: {
-    padding: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
+    marginRight: 16,
   },
-  shopListContainer: {
-    paddingHorizontal: 10,
-    paddingTop: 20,
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-    borderColor: 'black',
+  shopTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#1A1A1A',
   },
-  shopCard: {
-    margin: 6,
-    padding: 20,
-    backgroundColor: '#E5E5E5',
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 100,
-    width: 150,
+  // scrollContent: {
+  //   paddingBottom: 20,
+  // },
+  shopInfoContainer: {
+    backgroundColor: '#FFF',
+    marginBottom: 16,
+    paddingBottom: 16,
   },
-  shopName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  touchable: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 5,
-  },
-  headerText: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginLeft: 3,
-  },
-  subHeaderText: {
-    fontSize: 12,
-  },
-  textStyle: {
-    textAlign: 'center',
-  },
-  catNav: {
-    height: 40,
-    borderRadius: 7,
-    flexShrink: 1, // Allows the width to shrink if needed
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-    borderWidth: 1,
-    borderColor: 'orange',
-    paddingHorizontal: 15, // Adds space around the text instead of a fixed width
-    marginTop: 5,
-  },
-  horizontalScrollView: {
-    flex: 1,
-    marginTop: 20,
-  },
-  image: {
-    width: '95%',
+  shopImage: {
+    width: '100%',
     height: 200,
-    marginTop: 10,
+    borderBottomLeftRadius: 12,
+    borderBottomRightRadius: 12,
+  },
+  infoContainer: {
+    paddingHorizontal: 16,
+    marginTop: 16,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  infoText: {
+    fontSize: 14,
+    color: '#666',
+    marginLeft: 8,
+  },
+  // categoriesContainer: {
+  //   paddingHorizontal: 16,
+  //   paddingVertical: 12,
+  //   backgroundColor: '#FFF',
+  // },
+  categoryButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+    backgroundColor: '#F5F5F5',
+    marginRight: 12,
+  },
+  selectedCategory: {
+    backgroundColor: '#FF6B6B',
+  },
+  categoryText: {
+    fontSize: 14,
+    color: '#666',
+    fontWeight: '500',
+  },
+  selectedCategoryText: {
+    color: '#FFF',
+  },
+  // productsWrapper: {
+  //   justifyContent: 'space-between',
+  //   paddingHorizontal: 16,
+  // },
+  productCard: {
+    width: CARD_WIDTH,
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    marginBottom: 16,
+    padding: 12,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  productImage: {
+    width: '100%',
+    height: 150,
+    borderRadius: 8,
+    marginBottom: 12,
+  },
+  productDetails: {
+    paddingHorizontal: 4,
+  },
+  productName: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#1A1A1A',
+    marginBottom: 8,
+    height: 40,
+  },
+  productPrice: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#2A59FE',
+    marginBottom: 4,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  ratingText: {
+    fontSize: 12,
+    color: '#666',
+    marginLeft: 4,
+  },
+  scrollContent: {
+    paddingBottom: 20,
+    // Remove flexGrow: 1 if present
+  },
+  productsWrapper: {
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+  },
+  // Ensure categoriesContainer has no height constraint
+  categoriesContainer: {
+    paddingVertical: 12,
   },
 });
