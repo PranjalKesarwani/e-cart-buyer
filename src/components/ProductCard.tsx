@@ -1,5 +1,13 @@
 import React from 'react';
-import {View, Image, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
+import Icons from 'react-native-vector-icons/AntDesign';
 
 interface Product {
   id: string;
@@ -14,47 +22,57 @@ interface ProductCardProps {
   product: Product;
   onAddToCart: (productId: string) => void;
 }
-
-const ProductCard: React.FC<any> = ({product, onAddToCart}: any) => {
+const {width} = Dimensions.get('window');
+const CARD_WIDTH = (width - 40) / 2 - 10;
+const ProductCard: React.FC<any> = ({product}: any) => {
   const renderRating = () => {
     return (
       <View style={styles.ratingContainer}>
-        <Text style={styles.ratingText}>{product.rating.toFixed(1)}</Text>
+        <Text style={styles.ratingText}>{product.rating}</Text>
         <Text style={styles.ratingStar}>★</Text>
       </View>
     );
   };
 
   return (
-    <View style={styles.cardContainer}>
+    <View style={styles.productCard}>
       <Image
-        source={{uri: product.imageUrl}}
+        source={{uri: product.media.images[0]}}
         style={styles.productImage}
         resizeMode="cover"
       />
 
-      <View style={styles.detailsContainer}>
-        <Text style={styles.productName}>{product.name}</Text>
-        <Text style={styles.productDescription} numberOfLines={2}>
-          {product.description}
+      <View style={styles.productDetails}>
+        <Text style={styles.productName} numberOfLines={2}>
+          {product.productName}
         </Text>
-
-        <View style={styles.priceContainer}>
-          <Text style={styles.productPrice}>${product.price.toFixed(2)}</Text>
-          {renderRating()}
+        <Text style={styles.productPrice}>
+          ₹{product.price.toLocaleString()}
+        </Text>
+        <View style={styles.ratingContainer}>
+          <Icons name="star" size={14} color="#FFD700" />
+          <Text style={styles.ratingText}>
+            {product.rating?.toFixed(1) || '4.5'}
+          </Text>
         </View>
-
-        <TouchableOpacity
-          style={styles.addToCartButton}
-          onPress={() => onAddToCart(product.id)}>
-          <Text style={styles.buttonText}>Add to Cart</Text>
-        </TouchableOpacity>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  productCard: {
+    width: CARD_WIDTH,
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    marginBottom: 16,
+    padding: 12,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
   cardContainer: {
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
@@ -69,16 +87,18 @@ const styles = StyleSheet.create({
   productImage: {
     width: '100%',
     height: 150,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    borderRadius: 8,
+    marginBottom: 12,
   },
-  detailsContainer: {
-    padding: 12,
+  productDetails: {
+    paddingHorizontal: 4,
   },
   productName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 4,
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#1A1A1A',
+    marginBottom: 8,
+    height: 40,
   },
   productDescription: {
     fontSize: 12,
