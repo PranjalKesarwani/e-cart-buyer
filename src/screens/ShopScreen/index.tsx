@@ -97,9 +97,9 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
     fetchData();
   }, [getShopCats, getShopProducts, shopCats.length]);
 
-  // useEffect(() => {
-  //   getShopCats();
-  // }, []);
+  useEffect(() => {
+    console.log('||||||||||||||||||||||', shop.shopPic);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -126,14 +126,14 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
         ListHeaderComponent={
           <>
             {/* Shop Info Section */}
-            <View style={styles.shopInfoContainer}>
+            <View style={[styles.shopInfoContainer, Theme.showBorder]}>
               <Image
                 source={{
                   uri:
-                    shop.imageUrl ||
+                    shop?.shopPic ||
                     'https://d27k8xmh3cuzik.cloudfront.net/wp-content/uploads/2018/03/street-shopping-in-india-cover.jpg',
                 }}
-                style={styles.shopImage}
+                style={[styles.shopImage, Theme.showBorder]}
                 resizeMode="cover"
               />
 
