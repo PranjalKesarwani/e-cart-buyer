@@ -57,3 +57,22 @@ export interface Buyer {
   loading: boolean;
   error: any;
 }
+
+export type Product = {
+  _id: string;
+  productName: string;
+  productPrice: number;
+  description: string;
+  imageUrls: string[];
+  rating: number;
+};
+
+export type Category = {
+  _id: string;
+  name: string;
+  slug: string;
+  parentCatId: string;
+  image: string;
+  status: Boolean;
+  path: string;
+};

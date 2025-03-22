@@ -1,7 +1,7 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Image} from 'react-native';
-import {RootStackParamList} from '../../types';
+import {Category, Product, RootStackParamList} from '../../types';
 import {
   FlatList,
   ScrollView,
@@ -19,47 +19,78 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   const [selectedCat, setSelectedCat] = useState<any>(null);
   const {shop}: any = route.params;
 
-  const goToProductScreen = (product: any, category: any) => {
-    navigation.navigate('ProductScreen', {product, category});
-  };
+  const goToProductScreen = useCallback(
+    (product: Product, category: Category) => {
+      navigation.navigate('ProductScreen', {product, category});
+    },
+    [navigation],
+  );
 
-  const getShopCats = async () => {
+  const getShopCats = useCallback(async () => {
+    const abortController = new AbortController();
+
     try {
-      const res = await apiClient.get(`/buyer/shops/${shop._id}/categories`);
+      const res = await apiClient.get(`/buyer/shops/${shop._id}/categories`, {
+        signal: abortController.signal,
+      });
 
-      if (!res?.data.success) throw new Error(res?.data.message);
-
-      setShopCats(res.data.categories);
-      setSelectedCat(res.data.categories[0]);
+      if (res.data.success) {
+        const categories = res.data.categories as Category[];
+        setShopCats(categories);
+        setSelectedCat(categories[0] || null);
+      }
     } catch (error: any) {
-      console.log('error', error.message);
-      showToast('error', 'Error', error.message);
+      if (!abortController.signal.aborted) {
+        console.error('Error fetching categories:', error);
+        showToast('error', 'Error', error.message);
+      }
     }
-  };
 
-  const getShopProducts = async (category: any) => {
-    try {
-      const res = await apiClient.get(
-        `/buyer/shops/${shop._id}/categories/${category._id}/products`,
-      );
+    return () => abortController.abort();
+  }, [shop._id]);
 
-      if (!res?.data.success) throw new Error(res?.data.message);
-      setProducts(res.data.products);
-    } catch (error: any) {
-      console.log('error', error.message);
-      showToast('error', error.message);
-    }
-  };
+  const getShopProducts = useCallback(
+    async (category: Category | null) => {
+      if (!category) return;
+
+      const abortController = new AbortController();
+
+      try {
+        const res = await apiClient.get(
+          `/buyer/shops/${shop._id}/categories/${category._id}/products`,
+          {
+            signal: abortController.signal,
+          },
+        );
+
+        if (res.data.success) {
+          setProducts(res.data.products as Product[]);
+        }
+      } catch (error: any) {
+        if (!abortController.signal.aborted) {
+          console.error('Error fetching products:', error);
+          showToast('error', error.message);
+        }
+      }
+
+      return () => abortController.abort();
+    },
+    [shop._id],
+  );
 
   useEffect(() => {
-    if (shopCats.length > 0) {
-      getShopProducts(shopCats[0]);
-    }
-  }, [shopCats]);
+    const fetchData = async () => {
+      await getShopCats();
+      if (shopCats.length > 0) {
+        getShopProducts(shopCats[0]);
+      }
+    };
+    fetchData();
+  }, [getShopCats, getShopProducts, shopCats.length]);
 
-  useEffect(() => {
-    getShopCats();
-  }, []);
+  // useEffect(() => {
+  //   getShopCats();
+  // }, []);
 
   return (
     <View style={{flex: 1}}>
