@@ -157,18 +157,24 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
               <View style={[styles.priceContainer]}>
                 <Text style={styles.priceText}>
                   ₹{product.price}
-                  <Text style={styles.originalPrice}>
-                    {' '}
-                    ₹{product.productMrp}
-                  </Text>
-                  <Text style={styles.discount}>
-                    {' '}
-                    {product.discountPercentage}% off
-                  </Text>
+                  {product.price < product.productMrp && (
+                    <>
+                      <Text style={styles.originalPrice}>
+                        {' '}
+                        ₹{product.productMrp}
+                      </Text>
+                      <Text style={styles.discount}>
+                        {' '}
+                        {product.discountPercentage}% off
+                      </Text>
+                    </>
+                  )}
                 </Text>
-                <Text style={styles.description}>
-                  {product.productShortDescription}
-                </Text>
+                {product.productShortDescription.length > 0 && (
+                  <Text style={styles.description}>
+                    {product.productShortDescription}
+                  </Text>
+                )}
               </View>
 
               {/* Product Variants */}
