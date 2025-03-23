@@ -176,14 +176,13 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
                   </Text>
                 )}
                 {Object.entries(product.attributes).length > 0 && (
-                  <View style={styles.specsContainer}>
+                  <View style={[styles.specsContainer]}>
                     <Text style={styles.sectionTitle}>
                       Product Specifications
                     </Text>
 
                     {Object.entries(product.attributes).map(
                       ([key, value]: any, index) => {
-                        console.log('checking |||||||', key, value);
                         return (
                           <View
                             key={key}
@@ -544,6 +543,7 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.1,
     shadowRadius: 2,
+    width: '100%',
   },
   sectionTitle: {
     fontSize: 18,
