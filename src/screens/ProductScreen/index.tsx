@@ -176,32 +176,6 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.contentContainer}
         renderItem={({item}) => (
-          // <TouchableOpacity
-          //   style={styles.productCard}
-          //   onPress={() =>
-          // navigation.push('ProductScreen', {
-          //   product: item,
-          //   category: selectedSubCat,
-          // })
-          //   }>
-          //   <Image
-          //     source={{uri: item.media.images[0]}}
-          //     style={styles.productThumbnail}
-          //     resizeMode="contain"
-          //   />
-          //   <View style={styles.productDetails}>
-          //     <Text style={styles.productTitle} numberOfLines={2}>
-          //       {item.productName}
-          //     </Text>
-          //     <View style={styles.priceContainer}>
-          //       <Text style={styles.currentPrice}>₹{item.price}</Text>
-          //       <Text style={styles.originalPrice}>₹{item.mrp}</Text>
-          //       <Text style={styles.discountPercentage}>
-          //         {item.discountPercentage}% off
-          //       </Text>
-          //     </View>
-          //   </View>
-          // </TouchableOpacity>
           <ProductCard
             product={item}
             selectedCat={selectedSubCat}
