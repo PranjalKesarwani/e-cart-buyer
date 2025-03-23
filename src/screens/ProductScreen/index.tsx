@@ -157,13 +157,18 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
               <View style={[styles.priceContainer]}>
                 <Text style={styles.priceText}>
                   ₹{product.price}
-                  <Text style={styles.originalPrice}> ₹{product.mrp}</Text>
+                  <Text style={styles.originalPrice}>
+                    {' '}
+                    ₹{product.productMrp}
+                  </Text>
                   <Text style={styles.discount}>
                     {' '}
                     {product.discountPercentage}% off
                   </Text>
                 </Text>
-                <Text style={styles.description}>{product.description}</Text>
+                <Text style={styles.description}>
+                  {product.productShortDescription}
+                </Text>
               </View>
 
               {/* Product Variants */}
@@ -488,8 +493,9 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   priceContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    marginTop: 2,
   },
 });
