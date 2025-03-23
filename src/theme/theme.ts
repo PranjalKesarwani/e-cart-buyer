@@ -12,6 +12,8 @@ const BASE_COLORS = {
   festivalRed: '#E21717',
   earthBrown: '#6D4C3D',
   purityWhite: '#FFFFFF',
+  baseYellow: '#FFD65A',
+  mainYellow: '#FFB200',
 };
 
 export const Theme = {
@@ -36,6 +38,26 @@ export const Theme = {
   showBorder: {
     borderColor: 'red',
     borderWidth: 1,
+  },
+  buttons: {
+    primary: {
+      backgroundColor: BASE_COLORS.baseYellow,
+      paddingHorizontal: 20,
+      paddingVertical: 10,
+      borderRadius: 8,
+      marginRight: 12,
+    },
+    secondary: {
+      backgroundColor: BASE_COLORS.bharatPurple,
+      padding: 16,
+      borderRadius: 8,
+      alignItems: 'center',
+    },
+    text: {
+      color: BASE_COLORS.purityWhite,
+      fontSize: 16,
+      fontWeight: '700',
+    },
   },
 
   gradients: {

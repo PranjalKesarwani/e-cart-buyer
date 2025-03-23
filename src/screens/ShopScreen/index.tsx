@@ -198,7 +198,8 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
               renderItem={({item}) => (
                 <TouchableOpacity
                   style={[
-                    styles.categoryButton,
+                    // styles.categoryButton,
+                    Theme.buttons.primary,
                     selectedCat?._id === item._id && styles.selectedCategory,
                   ]}
                   onPress={() => {
@@ -295,19 +296,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 8,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FFD65A',
     marginRight: 12,
   },
   selectedCategory: {
-    backgroundColor: '#FF6B6B',
+    backgroundColor: Theme.colors.mainYellow,
   },
   categoryText: {
     fontSize: 14,
-    color: '#666',
+    color: 'black',
     fontWeight: '500',
   },
   selectedCategoryText: {
-    color: '#FFF',
+    color: 'black',
   },
   // productsWrapper: {
   //   justifyContent: 'space-between',
@@ -367,5 +368,6 @@ const styles = StyleSheet.create({
   // Ensure categoriesContainer has no height constraint
   categoriesContainer: {
     paddingVertical: 12,
+    paddingLeft: 10,
   },
 });
