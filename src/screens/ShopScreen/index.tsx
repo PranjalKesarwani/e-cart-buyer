@@ -123,7 +123,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
           <>
             {/* Shop Info Section */}
             <View style={[styles.shopInfoContainer]}>
-              <View style={[styles.shopImage]}>
+              <View style={[styles.shopImage, {position: 'relative'}]}>
                 <Image
                   source={{
                     uri:
@@ -133,6 +133,40 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
                   style={[styles.shopImage]}
                   resizeMode="cover"
                 />
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: 16,
+                    right: 16,
+                    zIndex: 1,
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    padding: 7,
+                    borderRadius: 50,
+                  }}>
+                  <Icons
+                    name="hearto"
+                    size={20}
+                    color="#FFF"
+                    // style={{position: 'absolute', top: 16, right: 16}}
+                  />
+                </View>
+                <View
+                  style={{
+                    position: 'absolute',
+                    bottom: 16,
+                    right: 16,
+                    zIndex: 1,
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    padding: 7,
+                    borderRadius: 50,
+                  }}>
+                  <Icons
+                    name="message1"
+                    size={20}
+                    color="#FFF"
+                    // style={{position: 'absolute', top: 16, right: 16}}
+                  />
+                </View>
               </View>
 
               <View style={styles.infoContainer}>
