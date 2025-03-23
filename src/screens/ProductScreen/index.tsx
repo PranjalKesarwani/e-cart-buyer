@@ -12,6 +12,7 @@ import {
 } from 'react-native-gesture-handler';
 import {showToast} from '../../utils/toast';
 import {apiClient} from '../../services/api';
+import ProductCard from '../../components/ProductCard';
 
 type ProductScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -32,16 +33,12 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
   const getSubCats = async () => {
     try {
-      // console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%88888%%%%%%%%');
-
       const res = await apiClient.get(
         `/buyer/shops/${product.shopId}/categories/${category.slug}`,
       );
-      // console.log('}}}}}}}}}}}}}}}}}}', res.data.subcategories);
       setSubCats(res.data.subcategories);
       if (res.data.subcategories.length === 0) {
         setSelectedSubCat(null);
-        // setProducts([]);
       } else {
         setSelectedSubCat(res.data.subcategories[0]);
       }
@@ -53,15 +50,9 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
   const getShopProducts = async (category: any) => {
     try {
-      // console.log(
-      //   '%%%%%%%%%%%%%%%%%%%%%%7777%%%%%%%%%%%%%%%%%%%%%%%',
-      //   category.name,
-      // );
-
       const res = await apiClient.get(
         `/buyer/shops/${product.shopId}/categories/${category._id}/products`,
       );
-      // console.log('***********', res.data.products);
       if (!res?.data.success) throw new Error(res?.data.message);
       setProducts(res.data.products);
     } catch (error: any) {
@@ -79,6 +70,13 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
       getShopProducts(selectedSubCat);
     }
   }, [selectedSubCat]);
+
+  const goToProductNestedProductScreen = (product: any) => {
+    navigation.push('ProductScreen', {
+      product,
+      category: selectedSubCat,
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -178,32 +176,37 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.contentContainer}
         renderItem={({item}) => (
-          <TouchableOpacity
-            style={styles.productCard}
-            onPress={() =>
-              navigation.push('ProductScreen', {
-                product: item,
-                category: selectedSubCat,
-              })
-            }>
-            <Image
-              source={{uri: item.media.images[0]}}
-              style={styles.productThumbnail}
-              resizeMode="contain"
-            />
-            <View style={styles.productDetails}>
-              <Text style={styles.productTitle} numberOfLines={2}>
-                {item.productName}
-              </Text>
-              <View style={styles.priceContainer}>
-                <Text style={styles.currentPrice}>₹{item.price}</Text>
-                <Text style={styles.originalPrice}>₹{item.mrp}</Text>
-                <Text style={styles.discountPercentage}>
-                  {item.discountPercentage}% off
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
+          // <TouchableOpacity
+          //   style={styles.productCard}
+          //   onPress={() =>
+          // navigation.push('ProductScreen', {
+          //   product: item,
+          //   category: selectedSubCat,
+          // })
+          //   }>
+          //   <Image
+          //     source={{uri: item.media.images[0]}}
+          //     style={styles.productThumbnail}
+          //     resizeMode="contain"
+          //   />
+          //   <View style={styles.productDetails}>
+          //     <Text style={styles.productTitle} numberOfLines={2}>
+          //       {item.productName}
+          //     </Text>
+          //     <View style={styles.priceContainer}>
+          //       <Text style={styles.currentPrice}>₹{item.price}</Text>
+          //       <Text style={styles.originalPrice}>₹{item.mrp}</Text>
+          //       <Text style={styles.discountPercentage}>
+          //         {item.discountPercentage}% off
+          //       </Text>
+          //     </View>
+          //   </View>
+          // </TouchableOpacity>
+          <ProductCard
+            product={item}
+            selectedCat={selectedSubCat}
+            goToProductScreen={goToProductNestedProductScreen}
+          />
         )}
         ListFooterComponent={<View style={{height: 80}} />}
       />
