@@ -287,11 +287,6 @@ const styles = StyleSheet.create({
     color: '#666',
     marginLeft: 8,
   },
-  // categoriesContainer: {
-  //   paddingHorizontal: 16,
-  //   paddingVertical: 12,
-  //   backgroundColor: '#FFF',
-  // },
   categoryButton: {
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -310,10 +305,6 @@ const styles = StyleSheet.create({
   selectedCategoryText: {
     color: 'black',
   },
-  // productsWrapper: {
-  //   justifyContent: 'space-between',
-  //   paddingHorizontal: 16,
-  // },
   productCard: {
     width: CARD_WIDTH,
     backgroundColor: '#FFF',

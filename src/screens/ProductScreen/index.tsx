@@ -13,6 +13,7 @@ import {
 import {showToast} from '../../utils/toast';
 import {apiClient} from '../../services/api';
 import ProductCard from '../../components/ProductCard';
+import {Theme} from '../../theme/theme';
 
 type ProductScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -162,7 +163,12 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
                 renderItem={({item}) => (
                   <TouchableOpacity
                     onPress={() => setSelectedSubCat(item)}
-                    style={styles.variantButton}>
+                    style={[
+                      Theme.buttons.primary,
+                      selectedSubCat?._id === item._id && {
+                        backgroundColor: Theme.colors.mainYellow,
+                      },
+                    ]}>
                     <Text style={styles.variantText}>{item.name}</Text>
                   </TouchableOpacity>
                 )}
