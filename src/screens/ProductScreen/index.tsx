@@ -89,6 +89,18 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
           <Icons name="left" size={20} color={'black'} />
           <Text style={styles.backText}>Back</Text>
         </TouchableOpacity>
+        <Text
+          style={{
+            textAlign: 'center',
+            fontSize: 15,
+            color: 'black',
+            fontWeight: '500',
+            maxWidth: '50%',
+          }}
+          numberOfLines={1}
+          ellipsizeMode="tail">
+          Om Prakash General Store
+        </Text>
         <TouchableOpacity
           style={styles.cartButton}
           onPress={() => navigation.navigate('CartScreen')}>
@@ -104,11 +116,6 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
         data={products} // Main data for related products
         ListHeaderComponent={
           <>
-            {/* Product Header Section */}
-            <Text style={styles.shopName}>
-              {product.shop?.name || 'Prakash Watch Center'}
-            </Text>
-
             {/* Image Carousel */}
             <View style={styles.carouselContainer}>
               <Carousel
