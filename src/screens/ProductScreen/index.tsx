@@ -146,7 +146,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
             {/* Product Details */}
             <View style={styles.productInfoContainer}>
-              <View style={[styles.productHeader, Theme.showBorder]}>
+              <View style={[styles.productHeader]}>
                 <Text style={styles.productName}>{product.productName}</Text>
                 <TouchableOpacity style={styles.chatButton}>
                   <Icons name="message1" size={24} color="#fff" />
@@ -154,7 +154,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
               </View>
 
               {/* Pricing Information */}
-              <View style={[styles.priceContainer, Theme.showBorder]}>
+              <View style={[styles.priceContainer]}>
                 <Text style={styles.priceText}>
                   ₹{product.price}
                   <Text style={styles.originalPrice}> ₹{product.mrp}</Text>
@@ -208,23 +208,25 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
       />
 
       {/* Fixed Footer */}
-      <View style={styles.footer}>
-        {/* <TouchableOpacity
-          style={styles.wishlistButton}
-          onPress={toggleFavorite}>
-          <Icons
-            name="heart"
-            size={28}
-            color={isFavorite ? '#ff3f6c' : '#94969f'}
-          />
-        </TouchableOpacity> */}
-        <TouchableOpacity
-          style={styles.addToCartButton}
-          onPress={() => {
-            /* Add to cart logic */
-          }}>
-          <Text style={styles.addToCartText}>Add to Cart</Text>
-        </TouchableOpacity>
+      <View style={[styles.footer]}>
+        <View style={{width: '50%'}}>
+          <TouchableOpacity
+            style={[styles.addToCartButton]}
+            onPress={() => {
+              /* Add to cart logic */
+            }}>
+            <Text style={styles.addToCartText}>Add to Cart</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={{width: '50%'}}>
+          <TouchableOpacity
+            style={[styles.buyNowButton]}
+            onPress={() => {
+              /* Add to cart logic */
+            }}>
+            <Text style={styles.buyNowText}>Add to Cart</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -368,19 +370,19 @@ const styles = StyleSheet.create({
   },
   footer: {
     position: 'absolute',
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'space-between',
     bottom: 0,
     left: 0,
     right: 0,
     flexDirection: 'row',
-    padding: 0,
+    justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor: '#fff',
     borderTopWidth: 1,
     borderTopColor: '#f5f5f6',
     elevation: 8,
+    paddingVertical: 10,
   },
+
   wishlistButton: {
     width: 40,
     height: 40,
@@ -402,23 +404,39 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#fff',
+    // borderRadius: 28,
+    paddingVertical: 12,
+    marginHorizontal: 5,
+    borderWidth: 1,
+    borderColor: '#ccc', // Border for white button
+    width: '100%',
+  },
+  addToCartText: {
+    color: '#333', // Text color for Add to Cart
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  buyNowButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: Theme.colors.mainYellow,
-    borderRadius: 28,
-    paddingVertical: 8, // Increased padding for better touch area
-    paddingHorizontal: 16, // Increased padding for better touch area
-    marginVertical: 10, // Added margin for spacing
+    // borderRadius: 28,
+    paddingVertical: 12,
+    marginHorizontal: 5,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 3,
-    elevation: 3, // For Android shadow
+    elevation: 3,
   },
-  addToCartText: {
-    color: '#333', // Slightly darker text color for readability
-    fontSize: 16, // Increased font size for better visibility
-    fontWeight: 'bold', // Bold for emphasis
+  buyNowText: {
+    color: '#333', // Text color for Buy Now
+    fontSize: 16,
+    fontWeight: 'bold',
     textAlign: 'center',
-    letterSpacing: 0.5, // Letter spacing for a cleaner look
   },
   productsColumnWrapper: {
     justifyContent: 'space-between',
