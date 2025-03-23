@@ -123,31 +123,33 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
           <>
             {/* Shop Info Section */}
             <View style={[styles.shopInfoContainer]}>
-              <Image
-                source={{
-                  uri:
-                    shop?.shopPic ||
-                    'https://d27k8xmh3cuzik.cloudfront.net/wp-content/uploads/2018/03/street-shopping-in-india-cover.jpg',
-                }}
-                style={[styles.shopImage]}
-                resizeMode="cover"
-              />
+              <View style={[styles.shopImage]}>
+                <Image
+                  source={{
+                    uri:
+                      shop?.shopPic ||
+                      'https://d27k8xmh3cuzik.cloudfront.net/wp-content/uploads/2018/03/street-shopping-in-india-cover.jpg',
+                  }}
+                  style={[styles.shopImage]}
+                  resizeMode="cover"
+                />
+              </View>
 
               <View style={styles.infoContainer}>
                 <View style={styles.infoRow}>
-                  <Icons name="clockcircleo" size={16} color="#666" />
+                  <Icons name="clockcircleo" size={16} color="#FFA725" />
                   <Text style={styles.infoText}>
                     {shop.shopTiming.open} - {shop.shopTiming.close}
                   </Text>
                 </View>
                 <View style={styles.infoRow}>
-                  <Icons name="enviromento" size={16} color="#666" />
+                  <Icons name="enviromento" size={16} color="#1F7D53" />
                   <Text style={styles.infoText}>
                     {shop.sellerId.address.street}, {shop.sellerId.address.city}
                   </Text>
                 </View>
                 <View style={styles.infoRow}>
-                  <Icons name="play" size={16} color="#666" />
+                  <Icons name="play" size={16} color="#AC1754" />
                   <Text style={styles.infoText}>{shop.titleMsg}</Text>
                 </View>
               </View>
