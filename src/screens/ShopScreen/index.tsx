@@ -97,10 +97,6 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
     fetchData();
   }, [getShopCats, getShopProducts, shopCats.length]);
 
-  useEffect(() => {
-    console.log('||||||||||||||||||||||', shop.shopPic);
-  }, []);
-
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -140,13 +136,19 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
               <View style={styles.infoContainer}>
                 <View style={styles.infoRow}>
                   <Icons name="clockcircleo" size={16} color="#666" />
-                  <Text style={styles.infoText}>Mon-Sun (10am - 9pm)</Text>
+                  <Text style={styles.infoText}>
+                    {shop.shopTiming.open} - {shop.shopTiming.close}
+                  </Text>
                 </View>
                 <View style={styles.infoRow}>
                   <Icons name="enviromento" size={16} color="#666" />
                   <Text style={styles.infoText}>
-                    Sahson, Opp. Ram Janaki Mandir
+                    {shop.sellerId.address.street}, {shop.sellerId.address.city}
                   </Text>
+                </View>
+                <View style={styles.infoRow}>
+                  <Icons name="play" size={16} color="#666" />
+                  <Text style={styles.infoText}>{shop.titleMsg}</Text>
                 </View>
               </View>
             </View>
