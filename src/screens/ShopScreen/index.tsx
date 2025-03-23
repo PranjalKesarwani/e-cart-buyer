@@ -183,7 +183,11 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
                   </Text>
                 </View>
                 <View style={styles.infoRow}>
-                  <Icons name="play" size={16} color="#AC1754" />
+                  <Icons
+                    name="play"
+                    size={16}
+                    color={Theme.colors.mainYellow}
+                  />
                   <Text style={styles.infoText}>{shop.titleMsg}</Text>
                 </View>
               </View>

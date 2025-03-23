@@ -224,7 +224,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
             onPress={() => {
               /* Add to cart logic */
             }}>
-            <Text style={styles.buyNowText}>Add to Cart</Text>
+            <Text style={styles.buyNowText}>Buy Now</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -380,7 +380,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#f5f5f6',
     elevation: 8,
-    paddingVertical: 10,
   },
 
   wishlistButton: {
