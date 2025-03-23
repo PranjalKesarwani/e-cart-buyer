@@ -126,14 +126,14 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
         ListHeaderComponent={
           <>
             {/* Shop Info Section */}
-            <View style={[styles.shopInfoContainer, Theme.showBorder]}>
+            <View style={[styles.shopInfoContainer]}>
               <Image
                 source={{
                   uri:
                     shop?.shopPic ||
                     'https://d27k8xmh3cuzik.cloudfront.net/wp-content/uploads/2018/03/street-shopping-in-india-cover.jpg',
                 }}
-                style={[styles.shopImage, Theme.showBorder]}
+                style={[styles.shopImage]}
                 resizeMode="cover"
               />
 
