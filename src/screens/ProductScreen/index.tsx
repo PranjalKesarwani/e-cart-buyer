@@ -133,11 +133,20 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
                   />
                 )}
               />
+              <TouchableOpacity
+                style={styles.wishlistButton}
+                onPress={toggleFavorite}>
+                <Icons
+                  name="heart"
+                  size={24}
+                  color={isFavorite ? '#ff3f6c' : '#94969f'}
+                />
+              </TouchableOpacity>
             </View>
 
             {/* Product Details */}
             <View style={styles.productInfoContainer}>
-              <View style={styles.productHeader}>
+              <View style={[styles.productHeader, Theme.showBorder]}>
                 <Text style={styles.productName}>{product.productName}</Text>
                 <TouchableOpacity style={styles.chatButton}>
                   <Icons name="message1" size={24} color="#fff" />
@@ -145,7 +154,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
               </View>
 
               {/* Pricing Information */}
-              <View style={styles.priceContainer}>
+              <View style={[styles.priceContainer, Theme.showBorder]}>
                 <Text style={styles.priceText}>
                   ₹{product.price}
                   <Text style={styles.originalPrice}> ₹{product.mrp}</Text>
@@ -200,7 +209,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
       {/* Fixed Footer */}
       <View style={styles.footer}>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.wishlistButton}
           onPress={toggleFavorite}>
           <Icons
@@ -208,7 +217,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
             size={28}
             color={isFavorite ? '#ff3f6c' : '#94969f'}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity
           style={styles.addToCartButton}
           onPress={() => {
@@ -257,7 +266,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -4,
     right: -4,
-    backgroundColor: '#ff3f6c',
+    backgroundColor: Theme.colors.mainYellow,
     borderRadius: 10,
     width: 20,
     height: 20,
@@ -266,7 +275,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   cartBadgeText: {
-    color: '#fff',
+    color: '#000',
     fontSize: 12,
     fontWeight: 'bold',
   },
@@ -282,6 +291,7 @@ const styles = StyleSheet.create({
   carouselContainer: {
     height: 340,
     backgroundColor: '#f5f5f6',
+    position: 'relative',
   },
   productImage: {
     width: '100%',
@@ -294,19 +304,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 5,
   },
   productName: {
-    fontSize: 22,
+    fontSize: 19,
     fontWeight: '600',
     color: '#2e2e2e',
     flex: 1,
     marginRight: 16,
   },
   chatButton: {
-    backgroundColor: '#ff3f6c',
-    width: 48,
-    height: 48,
+    backgroundColor: 'green',
+    width: 40,
+    height: 40,
     borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
@@ -315,7 +325,7 @@ const styles = StyleSheet.create({
   //   marginBottom: 24,
   // },
   priceText: {
-    fontSize: 24,
+    fontSize: 19,
     fontWeight: '700',
     color: '#2e2e2e',
   },
@@ -358,37 +368,57 @@ const styles = StyleSheet.create({
   },
   footer: {
     position: 'absolute',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between',
     bottom: 0,
     left: 0,
     right: 0,
     flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
+    padding: 0,
     backgroundColor: '#fff',
     borderTopWidth: 1,
     borderTopColor: '#f5f5f6',
     elevation: 8,
   },
   wishlistButton: {
-    width: 56,
-    height: 56,
+    width: 40,
+    height: 40,
     borderRadius: 28,
     backgroundColor: '#f5f5f6',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 16,
+    marginRight: 4,
+    position: 'absolute',
+    bottom: 10,
+    right: 16,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   addToCartButton: {
     flex: 1,
-    backgroundColor: '#ff3f6c',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Theme.colors.mainYellow,
     borderRadius: 28,
-    paddingVertical: 16,
+    paddingVertical: 8, // Increased padding for better touch area
+    paddingHorizontal: 16, // Increased padding for better touch area
+    marginVertical: 10, // Added margin for spacing
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 3, // For Android shadow
   },
   addToCartText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
+    color: '#333', // Slightly darker text color for readability
+    fontSize: 16, // Increased font size for better visibility
+    fontWeight: 'bold', // Bold for emphasis
     textAlign: 'center',
+    letterSpacing: 0.5, // Letter spacing for a cleaner look
   },
   productsColumnWrapper: {
     justifyContent: 'space-between',

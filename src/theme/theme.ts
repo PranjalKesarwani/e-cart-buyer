@@ -48,7 +48,7 @@ export const Theme = {
       marginRight: 12,
     },
     secondary: {
-      backgroundColor: BASE_COLORS.bharatPurple,
+      backgroundColor: BASE_COLORS.mainYellow,
       padding: 16,
       borderRadius: 8,
       alignItems: 'center',
