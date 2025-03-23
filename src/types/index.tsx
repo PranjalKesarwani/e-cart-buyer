@@ -77,3 +77,7 @@ export type Category = {
   status: Boolean;
   path: string;
 };
+
+export interface ProductAttribute {
+  attributes: Map<string, any>;
+}

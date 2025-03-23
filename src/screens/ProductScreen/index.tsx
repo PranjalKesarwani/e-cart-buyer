@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../types';
+import {ProductAttribute, RootStackParamList} from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
 import {Image} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
@@ -174,6 +174,35 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
                   <Text style={styles.description}>
                     {product.productShortDescription}
                   </Text>
+                )}
+                {Object.entries(product.attributes).length > 0 && (
+                  <View style={styles.specsContainer}>
+                    <Text style={styles.sectionTitle}>
+                      Product Specifications
+                    </Text>
+
+                    {Object.entries(product.attributes).map(
+                      ([key, value]: any, index) => {
+                        console.log('checking |||||||', key, value);
+                        return (
+                          <View
+                            key={key}
+                            style={[
+                              styles.specRow,
+                              index % 2 !== 0 && {backgroundColor: '#f9f9f9'},
+                              index ===
+                                Object.entries(product.attributes).length -
+                                  1 && {
+                                borderBottomWidth: 0,
+                              },
+                            ]}>
+                            <Text style={styles.specKey}>{key}</Text>
+                            <Text style={styles.specValue}>{value}</Text>
+                          </View>
+                        );
+                      },
+                    )}
+                  </View>
                 )}
               </View>
 
@@ -503,5 +532,44 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'center',
     marginTop: 2,
+    marginBottom: 10,
+  },
+  specsContainer: {
+    marginTop: 16,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#2E2E2E',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  specRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F5F5F5',
+  },
+  specKey: {
+    flex: 1,
+    color: '#666',
+    fontSize: 14,
+  },
+  specValue: {
+    flex: 1,
+    color: '#2E2E2E',
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'right',
   },
 });
