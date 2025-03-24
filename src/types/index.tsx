@@ -32,8 +32,13 @@ export type RootDrawerParamList = {
   WishListScreen: undefined;
   ChatScreen: undefined;
   YourOrdersScreen: undefined;
+  MainTabsNavigator: undefined;
 };
-
+export type MainTabsParamList = {
+  AllChatScreen: undefined;
+  Status: undefined;
+  Bid: undefined;
+};
 export interface AuthState {
   user: any | null;
   token: string | null;
