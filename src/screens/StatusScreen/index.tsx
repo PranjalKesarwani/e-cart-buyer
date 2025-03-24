@@ -84,7 +84,7 @@ const StatusScreen = () => {
       </TouchableOpacity>
 
       {/* Header Icons */}
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <Text style={styles.headerTitle}>Status</Text>
         <View style={styles.headerIcons}>
           <TouchableOpacity style={styles.iconButton}>
@@ -94,7 +94,7 @@ const StatusScreen = () => {
             <Icon name="more-vert" size={24} color="white" />
           </TouchableOpacity>
         </View>
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 };
