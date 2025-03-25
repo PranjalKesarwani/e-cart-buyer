@@ -1,23 +1,28 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
-import { RootStackParamList } from '../../types';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import {View, Text, StyleSheet, ScrollView, Dimensions} from 'react-native';
+import {Product, RootStackParamList} from '../../types';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import Icons from 'react-native-vector-icons/AntDesign';
 
-type CartScreenProps = NativeStackScreenProps<RootStackParamList, "CartScreen">;
+type CartScreenProps = NativeStackScreenProps<RootStackParamList, 'CartScreen'>;
 
-const CartScreen = ({ navigation }: CartScreenProps) => {
-  const shops = Array(20).fill({ name: "Prakash Watch Center", items: ["Watch 1", "Watch 2", "Watch 3"] });
+const CartScreen = ({navigation}: CartScreenProps) => {
+  const shops = Array(20).fill({
+    name: 'Prakash Watch Center',
+    items: ['Watch 1', 'Watch 2', 'Watch 3'],
+  });
   const dimension = Dimensions.get('window').width;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {shops.map((shop, index) => (
-        <View key={index} style={[styles.card, { width: dimension * 0.9 }]}>
+        <View key={index} style={[styles.card, {width: dimension * 0.9}]}>
           <Text style={styles.shopName}>{shop.name}</Text>
-          {shop.items.map(({item, itemIndex}:{item:string, itemIndex:number}) => (
-            <Text key={itemIndex} style={styles.itemText}>{item}</Text>
+          {shop.items.map((item: any, itemIndex: number) => (
+            <Text key={itemIndex} style={styles.itemText}>
+              {item}
+            </Text>
           ))}
           <TouchableOpacity
             onPress={() => navigation.navigate('OrderDetailsScreen')}
@@ -44,7 +49,7 @@ const styles = StyleSheet.create({
     padding: 15,
     marginVertical: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 5,

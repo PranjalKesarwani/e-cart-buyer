@@ -6,12 +6,6 @@ import {getBuyerToken} from '../../utils/helper';
 import {apiClient} from '../../services/api';
 import {Buyer} from '../../types';
 
-interface UserState {
-  profile: any | null;
-  loading: boolean;
-  error: string | null;
-}
-
 const initialState: Buyer = {
   _id: null,
   name: null,
