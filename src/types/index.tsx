@@ -65,28 +65,11 @@ export interface TBuyer {
   wishlist: TProduct[];
 }
 
-export type TWishlistItem = {
-  productId: string | TProduct; // Can be either ObjectId or populated Product
-  addedAt: number;
-};
-
 export type TWishlist = {
   _id: string;
-  buyerId: string;
-  shopId: string | TShop; // Can be either ObjectId or populated Shop
-  items: TWishlistItem[];
-  createdAt: string;
-  updatedAt: string;
+  addedAt: number;
+  productId: TProduct;
 };
-// export type Product = {
-//   _id: string;
-//   productName: string;
-//   price: number;
-//   description: string;
-//   imageUrls: string[];
-//   rating: number;
-//   media: any;
-// };
 
 export type TCartItem = {
   productId: string | TProduct; // Can be either the ObjectId or populated Product
@@ -152,19 +135,19 @@ export type DeliveryOptions = Record<string, any>;
 export type Warranty = Record<string, any>;
 
 export type TProduct = {
-  _id: string;
-  sellerId: string;
-  shopId: string;
+  _id?: string | any;
+  sellerId?: string | any;
+  shopId?: string | any;
   productName: string;
   productShortDescription?: string;
-  productId: number;
-  slug: string;
+  productId?: number | any;
+  slug?: string;
   price: number;
   productMrp: number;
   discountPercentage?: number;
-  currency: string;
+  currency?: string;
   sku?: string;
-  categories: {categoryId: string}[];
+  categories?: {categoryId: string}[];
   attributes: Record<string, any>;
   media: TMedia;
   variants?: TVariant[];
@@ -173,7 +156,7 @@ export type TProduct = {
   offers?: any[];
   deliveryOptions?: DeliveryOptions;
   warranty?: Warranty;
-  version: number;
+  version?: number;
   previousVersions?: any[];
   requiredAttributes?: string[];
 };

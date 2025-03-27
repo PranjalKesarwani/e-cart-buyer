@@ -55,7 +55,9 @@ export const getWishlists = createAsyncThunk<[] | TWishlist[]>(
   'buyer/getWishlists',
   async (_, {rejectWithValue}) => {
     try {
-      const response = await apiClient.post<any>(`/buyer/action-wishlist`);
+      const response = await apiClient.post<any>(`/buyer/action-wishlist`, {
+        action: 'GET',
+      });
       ``;
       return response.data;
     } catch (error: any) {
