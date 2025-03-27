@@ -22,25 +22,29 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
     {
       name: 'Rolex Cosmograph Daytona Stainless Steel',
       qty: 1,
-      itemPrice: '₹325,000',
+      originalPrice: '₹425,000',
+      sellingPrice: '₹325,000',
       totalPrice: '₹325,000',
     },
     {
       name: 'Omega Seamaster Professional 300M',
       qty: 2,
-      itemPrice: '₹285,000',
+      originalPrice: '₹350,000',
+      sellingPrice: '₹285,000',
       totalPrice: '₹570,000',
     },
     {
       name: 'Tag Heuer Carrera Chronograph',
       qty: 1,
-      itemPrice: '₹175,000',
+      originalPrice: '₹210,000',
+      sellingPrice: '₹175,000',
       totalPrice: '₹175,000',
     },
     {
       name: 'Breitling Navitimer Automatic 41',
       qty: 3,
-      itemPrice: '₹300,000',
+      originalPrice: '₹350,000',
+      sellingPrice: '₹300,000',
       totalPrice: '₹900,000',
     },
   ];
@@ -68,7 +72,6 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
           <View style={styles.tableHeader}>
             <Text style={[styles.headerCell, styles.itemColumn]}>Item</Text>
             <Text style={[styles.headerCell, styles.qtyColumn]}>Qty</Text>
-            <Text style={[styles.headerCell, styles.priceColumn]}>Price</Text>
             <Text style={[styles.headerCell, styles.amountColumn]}>Amount</Text>
           </View>
 
@@ -81,17 +84,13 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
                 {item.name}
               </Text>
               <Text style={[styles.rowCell, styles.qtyColumn]}>{item.qty}</Text>
-              <Text style={[styles.rowCell, styles.priceColumn]}>
-                {item.itemPrice}
-              </Text>
-              <Text
-                style={[
-                  styles.rowCell,
-                  styles.amountColumn,
-                  styles.amountCell,
-                ]}>
-                {item.totalPrice}
-              </Text>
+              <View style={[styles.amountColumn, styles.priceContainer]}>
+                <View style={styles.priceComparison}>
+                  <Text style={styles.originalPrice}>{item.originalPrice}</Text>
+                  {/* <View style={styles.dashLine} /> */}
+                </View>
+                <Text style={styles.sellingPrice}>{item.sellingPrice}</Text>
+              </View>
             </View>
           ))}
 
@@ -218,39 +217,12 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 5,
   },
-  tableHeader: {
-    flexDirection: 'row',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EDEFF2',
-    marginBottom: 8,
-  },
-  headerCell: {
-    fontSize: 12, // Reduced size for better mobile fit
-    fontWeight: '600',
-    color: '#4F4F4F',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8, // Increased letter spacing
-    paddingHorizontal: 4, // Added horizontal padding
-  },
-  itemColumn: {
-    flex: 3,
-    textAlign: 'left',
-    paddingRight: 12,
-  },
-  qtyColumn: {
-    flex: 0.7,
-    textAlign: 'right', // Right align numbers
-  },
+
   priceColumn: {
     flex: 1.2,
     textAlign: 'right',
   },
-  amountColumn: {
-    flex: 1.3,
-    textAlign: 'right',
-    paddingRight: 4,
-  },
+
   tableRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -262,5 +234,59 @@ const styles = StyleSheet.create({
     fontSize: 14, // Slightly reduced size
     color: '#2A2A2A',
     paddingHorizontal: 4, // Added cell padding
+  },
+  tableHeader: {
+    flexDirection: 'row',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EDEFF2',
+    marginBottom: 8,
+  },
+  headerCell: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#4F4F4F',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
+  itemColumn: {
+    flex: 4,
+    paddingRight: 12,
+  },
+  qtyColumn: {
+    flex: 0.8,
+    textAlign: 'center',
+  },
+  amountColumn: {
+    flex: 2,
+    alignItems: 'flex-end',
+  },
+  priceContainer: {
+    justifyContent: 'space-between',
+    height: 40, // Fixed height for price alignment
+  },
+  priceComparison: {
+    position: 'relative',
+    marginBottom: 4,
+    textDecorationLine: 'line-through',
+    color: 'black',
+  },
+  originalPrice: {
+    fontSize: 12,
+    color: '#6B7280',
+  },
+  dashLine: {
+    position: 'absolute',
+    top: '50%',
+    width: '100%',
+    height: 1,
+    backgroundColor: '#EF4444',
+    borderStyle: 'dashed',
+    borderWidth: 1,
+  },
+  sellingPrice: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#2A2A2A',
   },
 });
