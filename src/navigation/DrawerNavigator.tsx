@@ -41,7 +41,7 @@ const DrawerNavigator = () => {
       <Drawer.Screen
         name="WishListScreen"
         component={WishListScreen}
-        options={{drawerLabel: () => null, drawerItemStyle: {height: 0}}}
+        options={{drawerLabel: 'Wishlist'}} // Visible in the drawer
       />
     </Drawer.Navigator>
   );
