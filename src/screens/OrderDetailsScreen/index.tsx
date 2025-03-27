@@ -268,12 +268,12 @@ const styles = StyleSheet.create({
   priceComparison: {
     position: 'relative',
     marginBottom: 4,
-    textDecorationLine: 'line-through',
     color: 'black',
   },
   originalPrice: {
     fontSize: 12,
-    color: '#6B7280',
+    color: 'red',
+    textDecorationLine: 'line-through',
   },
   dashLine: {
     position: 'absolute',
@@ -287,6 +287,6 @@ const styles = StyleSheet.create({
   sellingPrice: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#2A2A2A',
+    color: 'green',
   },
 });
