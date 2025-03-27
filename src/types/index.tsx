@@ -52,7 +52,7 @@ export interface ApiResponse<T> {
   status: number;
 }
 
-export interface Buyer {
+export interface TBuyer {
   _id: string | null;
   name: string | null;
   success: boolean;
@@ -62,19 +62,19 @@ export interface Buyer {
   loading: boolean;
   error: any;
   cart: TCart[];
-  wishlist: Product[];
+  wishlist: TProduct[];
 }
 
-export type WishlistItem = {
-  productId: string | Product; // Can be either ObjectId or populated Product
+export type TWishlistItem = {
+  productId: string | TProduct; // Can be either ObjectId or populated Product
   addedAt: number;
 };
 
-export type Wishlist = {
+export type TWishlist = {
   _id: string;
   buyerId: string;
-  shopId: string | Shop; // Can be either ObjectId or populated Shop
-  items: WishlistItem[];
+  shopId: string | TShop; // Can be either ObjectId or populated Shop
+  items: TWishlistItem[];
   createdAt: string;
   updatedAt: string;
 };
@@ -88,8 +88,8 @@ export type Wishlist = {
 //   media: any;
 // };
 
-export type CartItem = {
-  productId: string | Product; // Can be either the ObjectId or populated Product
+export type TCartItem = {
+  productId: string | TProduct; // Can be either the ObjectId or populated Product
   quantity: number;
   priceSnapshot?: number | null;
   addedAt: number;
@@ -98,14 +98,14 @@ export type CartItem = {
 export type TCart = {
   _id: string;
   buyerId: string;
-  items: CartItem[];
+  items: TCartItem[];
   shopId: string;
   couponCode?: string;
   createdAt: string;
   updatedAt: string;
 };
 
-export type Category = {
+export type TCategory = {
   _id: string;
   name: string;
   slug: string;
@@ -115,11 +115,11 @@ export type Category = {
   path: string;
 };
 
-export interface ProductAttribute {
+export interface TProductAttribute {
   attributes: Map<string, any>;
 }
 
-export type Media = {
+export type TMedia = {
   images: string[];
   videos?: string[];
   documents?: string[];
@@ -127,7 +127,7 @@ export type Media = {
   voiceDescriptions?: string[];
 };
 
-export type Variant = {
+export type TVariant = {
   sku: string;
   attributes: Record<string, any>;
   priceOffset?: number;
@@ -151,7 +151,7 @@ export type SEO = {
 export type DeliveryOptions = Record<string, any>;
 export type Warranty = Record<string, any>;
 
-export type Product = {
+export type TProduct = {
   _id: string;
   sellerId: string;
   shopId: string;
@@ -166,8 +166,8 @@ export type Product = {
   sku?: string;
   categories: {categoryId: string}[];
   attributes: Record<string, any>;
-  media: Media;
-  variants?: Variant[];
+  media: TMedia;
+  variants?: TVariant[];
   searchTerms?: SearchTerms;
   seo?: SEO;
   offers?: any[];
@@ -178,23 +178,23 @@ export type Product = {
   requiredAttributes?: string[];
 };
 
-export type ChosenCategory = {
+export type TChosenCategory = {
   categoryId: string; // Can be ObjectId or populated Category
 };
 
-export enum DeliveryService {
+export enum TDeliveryService {
   Self = 'self',
   ThirdParty = 'thirdParty',
   NoDelivery = 'noDelivery',
   Both = 'both',
 }
 
-export type ShopLocation = {
+export type TShopLocation = {
   type: 'Point';
   coordinates: [number, number];
 };
 
-export type Shop = {
+export type TShop = {
   _id: string;
   sellerId: string;
   shopName: string;
@@ -204,12 +204,12 @@ export type Shop = {
   };
   slug: string;
   dailyShopStatus: 'open' | 'closed';
-  chosenCategories: ChosenCategory[];
-  deliveryService: DeliveryService;
+  chosenCategories: TChosenCategory[];
+  deliveryService: TDeliveryService;
   titleMsg: string;
   shopVoiceDescription: string;
   featuredCategories: string[]; // Can be ObjectIds or populated Categories
-  location: ShopLocation;
+  location: TShopLocation;
   shopPic: string;
   createdAt: string;
   updatedAt: string;

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {ProductAttribute, RootStackParamList} from '../../types';
+import {TProductAttribute, RootStackParamList} from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
 import {Image} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';

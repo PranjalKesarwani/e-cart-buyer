@@ -4,9 +4,9 @@ import axios from 'axios';
 import {API_URL} from '../../config';
 import {getBuyerToken} from '../../utils/helper';
 import {apiClient} from '../../services/api';
-import {Buyer} from '../../types';
+import {TBuyer, TCart, TWishlist} from '../../types';
 
-const initialState: Buyer = {
+const initialState: TBuyer = {
   _id: null,
   name: null,
   success: false,
@@ -19,7 +19,7 @@ const initialState: Buyer = {
   wishlist: [],
 };
 
-export const fetchBuyer = createAsyncThunk<Buyer>(
+export const fetchBuyer = createAsyncThunk<TBuyer>(
   'buyer/fetchBuyer',
   async (_, {rejectWithValue}) => {
     try {
@@ -35,7 +35,7 @@ export const fetchBuyer = createAsyncThunk<Buyer>(
   },
 );
 
-export const getCarts = createAsyncThunk<Buyer>(
+export const getCarts = createAsyncThunk<[] | TCart[]>(
   'buyer/getCarts',
   async (_, {rejectWithValue}) => {
     try {
@@ -51,7 +51,7 @@ export const getCarts = createAsyncThunk<Buyer>(
   },
 );
 
-export const getWishlists = createAsyncThunk<Buyer>(
+export const getWishlists = createAsyncThunk<[] | TWishlist[]>(
   'buyer/getWishlists',
   async (_, {rejectWithValue}) => {
     try {
