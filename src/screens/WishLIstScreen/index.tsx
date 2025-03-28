@@ -148,8 +148,6 @@ const WishListScreen = ({navigation}: WishListScreenProps) => {
           </Text>
         </View>
 
-        <Text style={styles.deliveryText}>Delivery by Today</Text>
-
         {/* {item.variants && item.variants > 0 && (
           <TouchableOpacity style={styles.variantButton}>
             <Text style={styles.variantText}>{item.variants}+ Options</Text>
