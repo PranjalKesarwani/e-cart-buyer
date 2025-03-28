@@ -1,7 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {TProductAttribute, RootStackParamList} from '../../types';
+import {
+  TProductAttribute,
+  RootStackParamList,
+  TProduct,
+  TCategory,
+} from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
 import {Image} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
@@ -21,15 +26,17 @@ type ProductScreenProps = NativeStackScreenProps<
 >;
 
 const ProductScreen = ({route, navigation}: ProductScreenProps) => {
-  const {product, category}: any = route.params;
+  const {product, category}: {product: TProduct; category: TCategory} =
+    route.params;
   const dimension = Dimensions.get('window').width;
   const [isFavorite, setIsFavorite] = useState(false);
   const [subCats, setSubCats] = useState<any[]>([]);
-  const [selectedSubCat, setSelectedSubCat] = useState<any>(null);
-  const [products, setProducts] = useState<any>([]);
+  const [selectedSubCat, setSelectedSubCat] = useState<null | TCategory>(null);
+  const [products, setProducts] = useState<[] | TProduct[]>([]);
 
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
+    addItemInWishlist(product, !isFavorite);
   };
 
   const getSubCats = async () => {
@@ -72,11 +79,44 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
     }
   }, [selectedSubCat]);
 
-  const goToProductNestedProductScreen = (product: any) => {
+  const goToProductNestedProductScreen = (product: TProduct) => {
     navigation.push('ProductScreen', {
       product,
       category: selectedSubCat,
     });
+  };
+
+  const addItemInCart = async (product: TProduct) => {
+    try {
+      const res: any = await apiClient.post('/buyer/action-cart', {
+        productId: product._id,
+        shopId: product.shopId,
+        action: 'ADD',
+        quantity: 1,
+      });
+      if (!res?.data.success) throw new Error(res?.data.message);
+      showToast('success', res.data.message, '');
+      // console.log('ressssssss', res);
+    } catch (error: any) {
+      console.log(error);
+      showToast('error', 'Error', error.message);
+    }
+  };
+
+  const addItemInWishlist = async (product: TProduct, isFavorite: Boolean) => {
+    try {
+      const res: any = await apiClient.post('/buyer/action-wishlist', {
+        productId: product._id,
+        shopId: product.shopId,
+        action: isFavorite ? 'ADD' : 'REMOVE',
+      });
+
+      if (!res?.data.success) throw new Error(res?.data.message);
+      showToast('success', res.data.message, '');
+    } catch (error: any) {
+      console.log(error);
+      showToast('error', 'Error', error.message);
+    }
   };
 
   return (
@@ -170,11 +210,12 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
                     </>
                   )}
                 </Text>
-                {product.productShortDescription.length > 0 && (
-                  <Text style={styles.description}>
-                    {product.productShortDescription}
-                  </Text>
-                )}
+                {product.productShortDescription &&
+                  product.productShortDescription.length > 0 && (
+                    <Text style={styles.description}>
+                      {product.productShortDescription}
+                    </Text>
+                  )}
                 {Object.entries(product.attributes).length > 0 && (
                   <View style={[styles.specsContainer]}>
                     <Text style={styles.sectionTitle}>
@@ -252,7 +293,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
           <TouchableOpacity
             style={[styles.addToCartButton]}
             onPress={() => {
-              /* Add to cart logic */
+              addItemInCart(product as TProduct);
             }}>
             <Text style={styles.addToCartText}>Add to Cart</Text>
           </TouchableOpacity>
