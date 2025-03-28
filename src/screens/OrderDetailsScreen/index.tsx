@@ -91,7 +91,7 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
 
           <View style={styles.totalContainer}>
             <Text style={styles.totalLabel}>Grand Total</Text>
-            <Text style={styles.totalValue}>{totalPrice}</Text>
+            <Text style={styles.totalValue}>₹{totalPrice}</Text>
           </View>
         </View>
       </ScrollView>
