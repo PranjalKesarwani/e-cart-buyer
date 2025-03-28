@@ -19,9 +19,9 @@ type CartScreenProps = NativeStackScreenProps<RootStackParamList, 'CartScreen'>;
 
 const CartScreen = ({navigation}: CartScreenProps) => {
   const dispatch = useAppDispatch();
-  // const stateData = useAppSelector(state => state.buyer.cart);
-  // console.log('------------------------------------', stateData);
+
   const [carts, setCarts] = useState<[] | TCart[]>([]);
+  const [total, setTotal] = useState<number>(0);
   const shops = Array(5).fill({
     name: 'Prakash Watch Center',
     items: ['Rolex Daytona', 'Omega Seamaster', 'Tag Heuer Carrera'],
@@ -37,6 +37,7 @@ const CartScreen = ({navigation}: CartScreenProps) => {
         const data: any = await dispatch(getCarts()).unwrap();
         if (data.success) {
           setCarts(data.cart);
+          giveCartTotalSum(data.cart);
         }
       } catch (error: any) {
         console.log(error);
@@ -44,6 +45,22 @@ const CartScreen = ({navigation}: CartScreenProps) => {
     };
     fetchCart();
   }, []);
+
+  const giveCartTotalSum = (carts: TCart[]) => {
+    let totalSum = 0; // Initialize total sum
+
+    for (const cart of carts) {
+      totalSum += cart.items.reduce((accumulator, currentValue) => {
+        return (
+          accumulator +
+          currentValue.quantity *
+            Number((currentValue.productId as TProduct).price)
+        );
+      }, 0);
+    }
+
+    setTotal(totalSum); // Return the total sum
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -110,7 +127,7 @@ const CartScreen = ({navigation}: CartScreenProps) => {
 
         <View style={[styles.totalCard, {width: cardWidth}]}>
           <Text style={styles.totalText}>Estimated Total</Text>
-          <Text style={styles.totalPrice}>₹785,000</Text>
+          <Text style={styles.totalPrice}>₹ {total}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
