@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -9,13 +9,19 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
-import {RootStackParamList} from '../../types';
+import {RootStackParamList, TCart, TCartItem, TProduct} from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {getCarts} from '../../redux/slices/buyerSlice';
 
 type CartScreenProps = NativeStackScreenProps<RootStackParamList, 'CartScreen'>;
 
 const CartScreen = ({navigation}: CartScreenProps) => {
+  const dispatch = useAppDispatch();
+  // const stateData = useAppSelector(state => state.buyer.cart);
+  // console.log('------------------------------------', stateData);
+  const [carts, setCarts] = useState<[] | TCart[]>([]);
   const shops = Array(5).fill({
     name: 'Prakash Watch Center',
     items: ['Rolex Daytona', 'Omega Seamaster', 'Tag Heuer Carrera'],
@@ -24,6 +30,20 @@ const CartScreen = ({navigation}: CartScreenProps) => {
 
   const {width} = Dimensions.get('window');
   const cardWidth = width * 0.9;
+
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const data: any = await dispatch(getCarts()).unwrap();
+        if (data.success) {
+          setCarts(data.cart);
+        }
+      } catch (error: any) {
+        console.log(error);
+      }
+    };
+    fetchCart();
+  }, []);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -40,12 +60,12 @@ const CartScreen = ({navigation}: CartScreenProps) => {
       <ScrollView
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}>
-        {shops.map((shop, index) => (
+        {carts.map((cart: TCart, index) => (
           <View
             key={index}
             style={[styles.card, {width: cardWidth}]}
             accessible
-            accessibilityLabel={`Cart items from ${shop.name}`}>
+            accessibilityLabel={`Cart items from ${cart.shopId.shopName}`}>
             <View style={styles.shopHeader}>
               <MaterialIcons
                 name="storefront"
@@ -53,17 +73,20 @@ const CartScreen = ({navigation}: CartScreenProps) => {
                 color="#4A90E2"
                 style={styles.storeIcon}
               />
-              <Text style={styles.shopName}>{shop.name}</Text>
+              <Text style={styles.shopName}>{cart.shopId.shopName}</Text>
             </View>
 
             <View style={styles.itemsContainer}>
-              {shop.items.map((item: string, itemIndex: number) => (
+              {cart.items.map((item: TCartItem, itemIndex: number) => (
                 <View key={itemIndex} style={styles.itemRow}>
                   <View style={styles.bullet} />
                   <View style={styles.itemDetails}>
-                    <Text style={styles.itemName}>{item}</Text>
+                    <Text style={styles.itemName}>
+                      {(item.productId as TProduct).productName}
+                    </Text>
                     <Text style={styles.itemPrice}>
-                      {shop.prices[itemIndex]}
+                      {(item.productId as TProduct).currency}
+                      {(item.productId as TProduct).price}
                     </Text>
                   </View>
                 </View>

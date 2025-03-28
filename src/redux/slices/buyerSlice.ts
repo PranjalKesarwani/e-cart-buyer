@@ -39,7 +39,9 @@ export const getCarts = createAsyncThunk<[] | TCart[]>(
   'buyer/getCarts',
   async (_, {rejectWithValue}) => {
     try {
-      const response = await apiClient.post<any>(`/buyer/action-cart`);
+      const response = await apiClient.post<any>(`/buyer/action-cart`, {
+        action: 'GET',
+      });
 
       return response.data;
     } catch (error: any) {

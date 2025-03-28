@@ -72,7 +72,7 @@ export type TWishlist = {
 };
 
 export type TCartItem = {
-  productId: string | TProduct; // Can be either the ObjectId or populated Product
+  productId: TProduct | string; // Can be either the ObjectId or populated Product
   quantity: number;
   priceSnapshot?: number | null;
   addedAt: number;
@@ -82,7 +82,7 @@ export type TCart = {
   _id: string;
   buyerId: string;
   items: TCartItem[];
-  shopId: string;
+  shopId: TShop;
   couponCode?: string;
   createdAt: string;
   updatedAt: string;
