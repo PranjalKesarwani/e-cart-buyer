@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -8,9 +8,10 @@ import {
   SafeAreaView,
   ScrollView,
 } from 'react-native';
-import {RootStackParamList} from '../../types';
+import {RootStackParamList, TProduct} from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {useAppSelector} from '../../redux/hooks';
 
 type OrderDetailsScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -18,37 +19,23 @@ type OrderDetailsScreenProps = NativeStackScreenProps<
 >;
 
 const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
-  const items = [
-    {
-      name: 'Rolex Cosmograph Daytona Stainless Steel',
-      qty: 1,
-      originalPrice: '₹425,000',
-      sellingPrice: '₹325,000',
-      totalPrice: '₹325,000',
-    },
-    {
-      name: 'Omega Seamaster Professional 300M',
-      qty: 2,
-      originalPrice: '₹350,000',
-      sellingPrice: '₹285,000',
-      totalPrice: '₹570,000',
-    },
-    {
-      name: 'Tag Heuer Carrera Chronograph',
-      qty: 1,
-      originalPrice: '₹210,000',
-      sellingPrice: '₹175,000',
-      totalPrice: '₹175,000',
-    },
-    {
-      name: 'Breitling Navitimer Automatic 41',
-      qty: 3,
-      originalPrice: '₹350,000',
-      sellingPrice: '₹300,000',
-      totalPrice: '₹900,000',
-    },
-  ];
-  const totalPrice = '₹1,970,000';
+  const {selectedCart} = useAppSelector(state => state.buyer);
+  const [totalPrice, setTotalPrice] = useState<number>(0);
+
+  // const totalPrice = '₹1,970,000';
+  const giveTotalPriceSum = () => {
+    let sum = 0;
+    selectedCart?.items?.forEach(item => {
+      sum += (item.productId as TProduct).price * item.quantity;
+    });
+    setTotalPrice(sum);
+  };
+
+  useEffect(() => {
+    if (selectedCart) {
+      giveTotalPriceSum();
+    }
+  }, []);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -65,7 +52,7 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.storeHeader}>
           <MaterialIcons name="storefront" size={24} color="#4A90E2" />
-          <Text style={styles.storeName}>Prakash Watch Center</Text>
+          <Text style={styles.storeName}>{selectedCart?.shopId.shopName}</Text>
         </View>
 
         <View style={styles.tableContainer}>
@@ -75,21 +62,29 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
             <Text style={[styles.headerCell, styles.amountColumn]}>Amount</Text>
           </View>
 
-          {items.map((item, index) => (
+          {selectedCart?.items.map((item, index) => (
             <View key={index} style={styles.tableRow}>
               <Text
                 style={[styles.rowCell, styles.itemColumn]}
                 numberOfLines={2}
                 ellipsizeMode="tail">
-                {item.name}
+                {(item.productId as TProduct).productName}
               </Text>
-              <Text style={[styles.rowCell, styles.qtyColumn]}>{item.qty}</Text>
+              <Text style={[styles.rowCell, styles.qtyColumn]}>
+                {item.quantity}
+              </Text>
               <View style={[styles.amountColumn, styles.priceContainer]}>
                 <View style={styles.priceComparison}>
-                  <Text style={styles.originalPrice}>{item.originalPrice}</Text>
+                  <Text style={styles.originalPrice}>
+                    {(item.productId as TProduct).currency}
+                    {(item.productId as TProduct).productMrp}
+                  </Text>
                   {/* <View style={styles.dashLine} /> */}
                 </View>
-                <Text style={styles.sellingPrice}>{item.sellingPrice}</Text>
+                <Text style={styles.sellingPrice}>
+                  {(item.productId as TProduct).currency}
+                  {(item.productId as TProduct).price}
+                </Text>
               </View>
             </View>
           ))}

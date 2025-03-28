@@ -13,7 +13,7 @@ import {RootStackParamList, TCart, TCartItem, TProduct} from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
-import {getCarts} from '../../redux/slices/buyerSlice';
+import {getCarts, setSelectedCart} from '../../redux/slices/buyerSlice';
 
 type CartScreenProps = NativeStackScreenProps<RootStackParamList, 'CartScreen'>;
 
@@ -55,6 +55,11 @@ const CartScreen = ({navigation}: CartScreenProps) => {
     }
 
     setTotal(totalSum); // Return the total sum
+  };
+
+  const goToCartDetail = (cart: TCart) => {
+    dispatch(setSelectedCart(cart));
+    navigation.navigate('OrderDetailsScreen');
   };
 
   return (
@@ -108,7 +113,7 @@ const CartScreen = ({navigation}: CartScreenProps) => {
             </View>
 
             <TouchableOpacity
-              onPress={() => navigation.navigate('OrderDetailsScreen')}
+              onPress={() => goToCartDetail(cart)}
               style={styles.detailsButton}
               activeOpacity={0.8}>
               <Text style={styles.detailsButtonText}>View Order Details</Text>

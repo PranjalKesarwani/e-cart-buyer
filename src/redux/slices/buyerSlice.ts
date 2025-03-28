@@ -1,8 +1,5 @@
 // src/features/user/buyerSlice.ts
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import axios from 'axios';
-import {API_URL} from '../../config';
-import {getBuyerToken} from '../../utils/helper';
 import {apiClient} from '../../services/api';
 import {TBuyer, TCart, TWishlist} from '../../types';
 
@@ -18,6 +15,7 @@ const initialState: TBuyer = {
   cart: [],
   wishlist: [],
   cartItemsCount: 0,
+  selectedCart: null,
 };
 
 export const fetchBuyer = createAsyncThunk<TBuyer>(
@@ -85,6 +83,9 @@ const buyerSlice = createSlice({
     setCartItemsCount: (state, action) => {
       state.cartItemsCount = action.payload;
     },
+    setSelectedCart: (state, action) => {
+      state.selectedCart = action.payload;
+    },
   },
   extraReducers: builder => {
     builder
@@ -126,5 +127,6 @@ const buyerSlice = createSlice({
   },
 });
 
-export const {fetchUserStart} = buyerSlice.actions;
+export const {fetchUserStart, setSelectedCart, setCartItemsCount} =
+  buyerSlice.actions;
 export default buyerSlice.reducer;
