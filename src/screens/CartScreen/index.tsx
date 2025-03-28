@@ -22,11 +22,6 @@ const CartScreen = ({navigation}: CartScreenProps) => {
 
   const [carts, setCarts] = useState<[] | TCart[]>([]);
   const [total, setTotal] = useState<number>(0);
-  const shops = Array(5).fill({
-    name: 'Prakash Watch Center',
-    items: ['Rolex Daytona', 'Omega Seamaster', 'Tag Heuer Carrera'],
-    prices: ['₹325,000', '₹285,000', '₹175,000'],
-  });
 
   const {width} = Dimensions.get('window');
   const cardWidth = width * 0.9;
@@ -94,20 +89,22 @@ const CartScreen = ({navigation}: CartScreenProps) => {
             </View>
 
             <View style={styles.itemsContainer}>
-              {cart.items.map((item: TCartItem, itemIndex: number) => (
-                <View key={itemIndex} style={styles.itemRow}>
-                  <View style={styles.bullet} />
-                  <View style={styles.itemDetails}>
-                    <Text style={styles.itemName}>
-                      {(item.productId as TProduct).productName}
-                    </Text>
-                    <Text style={styles.itemPrice}>
-                      {(item.productId as TProduct).currency}
-                      {(item.productId as TProduct).price}
-                    </Text>
+              {cart.items
+                .slice(0, 2)
+                .map((item: TCartItem, itemIndex: number) => (
+                  <View key={itemIndex} style={styles.itemRow}>
+                    <View style={styles.bullet} />
+                    <View style={styles.itemDetails}>
+                      <Text style={styles.itemName}>
+                        {(item.productId as TProduct).productName}
+                      </Text>
+                      <Text style={styles.itemPrice}>
+                        {(item.productId as TProduct).currency}
+                        {(item.productId as TProduct).price}
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              ))}
+                ))}
             </View>
 
             <TouchableOpacity
