@@ -147,12 +147,6 @@ const WishListScreen = ({navigation}: WishListScreenProps) => {
             {item.productId.discountPercentage}% off
           </Text>
         </View>
-
-        {/* {item.variants && item.variants > 0 && (
-          <TouchableOpacity style={styles.variantButton}>
-            <Text style={styles.variantText}>{item.variants}+ Options</Text>
-          </TouchableOpacity>
-        )} */}
       </View>
 
       <View style={styles.actionButtons}>
