@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,8 @@ import {
 import {RootStackParamList, TWishlist} from '../../types';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {useAppDispatch} from '../../redux/hooks';
+import {getWishlists} from '../../redux/slices/buyerSlice';
 
 type WishListScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -95,6 +97,8 @@ const paginatedItems: TWishlist[] = [
 
 const WishListScreen = ({navigation}: WishListScreenProps) => {
   // Sample data structure mapping
+  const dispatch = useAppDispatch();
+  const [wishlist, setWishList] = useState<[] | TWishlist[]>([]);
   const wishlistItems = paginatedItems.map(item => ({
     id: item._id,
     image: item.productId.media.images[0],
@@ -107,35 +111,42 @@ const WishListScreen = ({navigation}: WishListScreenProps) => {
     variants: item.productId.variants?.length,
   }));
 
-  const renderItem = ({item}: {item: (typeof wishlistItems)[0]}) => (
+  const renderItem = ({item}: {item: TWishlist}) => (
     <Animated.View style={styles.card}>
-      <Image source={{uri: item.image}} style={styles.productImage} />
+      <Image
+        source={{uri: item.productId.media.images[0]}}
+        style={styles.productImage}
+      />
 
       <View style={styles.productInfo}>
         <Text style={styles.productName} numberOfLines={2}>
-          {item.name}
+          {item.productId.productName}
         </Text>
 
-        <View style={styles.attributeContainer}>
+        {/* <View style={styles.attributeContainer}>
           <Text style={styles.attributeText}>{item.attributes.color}</Text>
           <Text style={styles.attributeText}>{item.attributes.storage}</Text>
-        </View>
+        </View> */}
 
         <View style={styles.priceContainer}>
           <Text style={styles.currentPrice}>
-            ₹{item.price.toLocaleString()}
+            ₹{item.productId.price.toLocaleString()}
           </Text>
-          <Text style={styles.originalPrice}>₹{item.mrp.toLocaleString()}</Text>
-          <Text style={styles.discountTag}>{item.discount}% off</Text>
+          <Text style={styles.originalPrice}>
+            ₹{item.productId.productMrp.toLocaleString()}
+          </Text>
+          <Text style={styles.discountTag}>
+            {item.productId.discountPercentage}% off
+          </Text>
         </View>
 
-        <Text style={styles.deliveryText}>Delivery {item.delivery}</Text>
+        <Text style={styles.deliveryText}>Delivery by Today</Text>
 
-        {item.variants && item.variants > 0 && (
+        {/* {item.variants && item.variants > 0 && (
           <TouchableOpacity style={styles.variantButton}>
             <Text style={styles.variantText}>{item.variants}+ Options</Text>
           </TouchableOpacity>
-        )}
+        )} */}
       </View>
 
       <View style={styles.actionButtons}>
@@ -152,21 +163,33 @@ const WishListScreen = ({navigation}: WishListScreenProps) => {
     </Animated.View>
   );
 
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const data: any = await dispatch(getWishlists()).unwrap();
+        if (data.success) {
+          setWishList(data.paginatedItems);
+        }
+      } catch (error: any) {
+        console.log(error);
+      }
+    };
+    fetchCart();
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>
-          My Wishlist ({wishlistItems.length})
-        </Text>
+        <Text style={styles.headerTitle}>My Wishlist ({wishlist.length})</Text>
         <TouchableOpacity>
           <Text style={styles.editButton}>Edit</Text>
         </TouchableOpacity>
       </View>
 
       <FlatList
-        data={wishlistItems}
+        data={wishlist}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item._id}
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
           <View style={styles.emptyState}>
