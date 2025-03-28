@@ -63,6 +63,7 @@ export interface TBuyer {
   error: any;
   cart: TCart[];
   wishlist: TProduct[];
+  cartItemsCount: number;
 }
 
 export type TWishlist = {

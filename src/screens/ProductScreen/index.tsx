@@ -19,6 +19,7 @@ import {showToast} from '../../utils/toast';
 import {apiClient} from '../../services/api';
 import ProductCard from '../../components/ProductCard';
 import {Theme} from '../../theme/theme';
+import {useAppSelector} from '../../redux/hooks';
 
 type ProductScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -33,6 +34,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
   const [subCats, setSubCats] = useState<any[]>([]);
   const [selectedSubCat, setSelectedSubCat] = useState<null | TCategory>(null);
   const [products, setProducts] = useState<[] | TProduct[]>([]);
+  const {cartItemsCount} = useAppSelector(state => state.buyer);
 
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
@@ -145,7 +147,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
           style={styles.cartButton}
           onPress={() => navigation.navigate('CartScreen')}>
           <View style={styles.cartBadge}>
-            <Text style={styles.cartBadgeText}>2</Text>
+            <Text style={styles.cartBadgeText}>{cartItemsCount}</Text>
           </View>
           <Icons name="shoppingcart" size={28} color={'black'} />
         </TouchableOpacity>

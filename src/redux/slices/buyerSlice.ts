@@ -17,6 +17,7 @@ const initialState: TBuyer = {
   error: null,
   cart: [],
   wishlist: [],
+  cartItemsCount: 0,
 };
 
 export const fetchBuyer = createAsyncThunk<TBuyer>(
@@ -80,6 +81,9 @@ const buyerSlice = createSlice({
     fetchUserStart: state => {
       state.loading = true;
       state.error = null;
+    },
+    setCartItemsCount: (state, action) => {
+      state.cartItemsCount = action.payload;
     },
   },
   extraReducers: builder => {
