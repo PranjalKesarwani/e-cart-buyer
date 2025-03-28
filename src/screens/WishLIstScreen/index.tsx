@@ -122,11 +122,6 @@ const WishListScreen = ({navigation}: WishListScreenProps) => {
         <Text style={styles.productName} numberOfLines={2}>
           {item.productId.productName}
         </Text>
-
-        {/* <View style={styles.attributeContainer}>
-          <Text style={styles.attributeText}>{item.attributes.color}</Text>
-          <Text style={styles.attributeText}>{item.attributes.storage}</Text>
-        </View> */}
         <View style={styles.attributeContainer}>
           {Object.entries(item.productId.attributes)
             .slice(0, 4)
