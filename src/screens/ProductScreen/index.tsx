@@ -250,7 +250,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
         renderItem={({item}) => (
           <ProductCard
             product={item}
-            selectedCat={selectedSubCat}
+            selectedCat={selectedSubCat as TCategory}
             goToProductScreen={goToProductNestedProductScreen}
           />
         )}

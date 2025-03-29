@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Image,
@@ -8,66 +8,75 @@ import {
   Dimensions,
 } from 'react-native';
 import Icons from 'react-native-vector-icons/AntDesign';
-import {Category, Product} from '../types';
+import {TCategory, TProduct} from '../types';
 
-// interface Product {
-//   id: string;
-//   name: string;
-//   price: number;
-//   description: string;
-//   imageUrl: string;
-//   rating: number;
-// }
-
-// interface ProductCardProps {
-//   product: Product;
-//   onAddToCart: (productId: string) => void;
-// }
 const {width} = Dimensions.get('window');
 const CARD_WIDTH = (width - 40) / 2 - 10;
-const ProductCard: React.FC<any> = ({
+
+interface ProductCardProps {
+  product: TProduct;
+  selectedCat: TCategory;
+  goToProductScreen: (product: TProduct, category: TCategory) => void;
+  // isFavorite?: boolean;
+  toggleFavorite?: () => void;
+  onChatPress?: () => void;
+}
+
+const ProductCard: React.FC<ProductCardProps> = ({
   product,
   selectedCat,
   goToProductScreen,
-}: {
-  product: Product;
-  selectedCat: Category;
-  goToProductScreen: any;
+  // isFavorite,
+  // toggleFavorite,
+  onChatPress,
 }) => {
-  const renderRating = () => {
-    return (
-      <View style={styles.ratingContainer}>
-        <Text style={styles.ratingText}>{product.rating}</Text>
-        <Text style={styles.ratingStar}>★</Text>
-      </View>
-    );
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  const toggleFavorite = () => {
+    setIsFavorite(!isFavorite);
   };
-
   return (
-    <TouchableOpacity
-      style={styles.productCard}
-      onPress={() => goToProductScreen(product, selectedCat!)}>
-      <Image
-        source={{uri: product.media.images[0]}}
-        style={styles.productImage}
-        resizeMode="cover"
-      />
+    <View style={styles.productCard}>
+      {/* Heart icon at top right */}
+      <TouchableOpacity
+        style={styles.heartButton}
+        onPress={toggleFavorite}
+        hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
+        <Icons
+          name="heart"
+          size={20}
+          color={isFavorite ? '#ff3f6c' : '#94969f'}
+          style={styles.icon}
+        />
+      </TouchableOpacity>
 
-      <View style={styles.productDetails}>
-        <Text style={styles.productName} numberOfLines={2}>
-          {product.productName}
-        </Text>
-        <Text style={styles.productPrice}>
-          ₹{product.price.toLocaleString()}
-        </Text>
-        <View style={styles.ratingContainer}>
-          <Icons name="star" size={14} color="#FFD700" />
-          <Text style={styles.ratingText}>
-            {product.rating?.toFixed(1) || '4.5'}
+      {/* Main content */}
+      <TouchableOpacity
+        onPress={() => goToProductScreen(product, selectedCat!)}
+        activeOpacity={0.9}>
+        <Image
+          source={{uri: product.media.images[0]}}
+          style={styles.productImage}
+          resizeMode="cover"
+        />
+
+        <View style={styles.productDetails}>
+          <Text style={styles.productName} numberOfLines={2}>
+            {product.productName}
+          </Text>
+          <Text style={styles.productPrice}>
+            ₹{product.price.toLocaleString()}
           </Text>
         </View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+
+      {/* Chat icon at bottom right */}
+      <TouchableOpacity
+        style={styles.chatButton}
+        onPress={onChatPress}
+        hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
+        <Icons name="message1" size={20} color="#94969f" style={styles.icon} />
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -83,17 +92,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-  },
-  cardContainer: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    margin: 8,
-    width: 160,
   },
   productImage: {
     width: '100%',
@@ -111,46 +109,43 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     height: 40,
   },
-  productDescription: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 8,
-    height: 32,
-  },
-  priceContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
   productPrice: {
     fontSize: 16,
     fontWeight: '600',
     color: '#2A59FE',
   },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  heartButton: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    zIndex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 20,
+    padding: 4,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
   },
-  ratingText: {
-    fontSize: 14,
-    marginRight: 4,
-    color: '#666',
+  chatButton: {
+    position: 'absolute',
+    bottom: 8,
+    right: 8,
+    zIndex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 20,
+    padding: 4,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
   },
-  ratingStar: {
-    color: '#FFD700',
-    fontSize: 16,
-  },
-  addToCartButton: {
-    backgroundColor: '#2A59FE',
-    borderRadius: 4,
-    paddingVertical: 8,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 14,
+  icon: {
+    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowOffset: {width: 0, height: 1},
+    textShadowRadius: 2,
   },
 });
 
