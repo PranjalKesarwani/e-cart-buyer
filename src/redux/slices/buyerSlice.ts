@@ -118,7 +118,7 @@ const buyerSlice = createSlice({
       })
       .addCase(getWishlists.fulfilled, (state, action: PayloadAction<any>) => {
         state.loading = false;
-        state.wishlist = action.payload;
+        state.wishlist = action.payload.paginatedItems;
       })
       .addCase(getWishlists.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;

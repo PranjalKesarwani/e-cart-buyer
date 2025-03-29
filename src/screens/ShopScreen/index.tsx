@@ -13,9 +13,10 @@ import {
 import Icons from 'react-native-vector-icons/AntDesign';
 import {apiClient} from '../../services/api';
 import {showToast} from '../../utils/toast';
-import {Category, Product, RootStackParamList} from '../../types';
+import {TCategory, TProduct, RootStackParamList} from '../../types';
 import ProductCard from '../../components/ProductCard';
 import {Theme} from '../../theme/theme';
+import {useAppSelector} from '../../redux/hooks';
 
 type ShopScreenProps = NativeStackScreenProps<RootStackParamList, 'ShopScreen'>;
 
@@ -27,9 +28,10 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   const [products, setProducts] = useState<any>([]);
   const [selectedCat, setSelectedCat] = useState<any>(null);
   const {shop}: any = route.params;
+  const {cart = [], wishlist = []} = useAppSelector(state => state.buyer);
 
   const goToProductScreen = useCallback(
-    (product: Product, category: Category) => {
+    (product: TProduct, category: TCategory) => {
       navigation.navigate('ProductScreen', {product, category});
     },
     [navigation],
@@ -44,7 +46,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
       });
 
       if (res.data.success) {
-        const categories = res.data.categories as Category[];
+        const categories = res.data.categories as TCategory[];
         setShopCats(categories);
         setSelectedCat(categories[0] || null);
       }
@@ -59,7 +61,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   }, [shop._id]);
 
   const getShopProducts = useCallback(
-    async (category: Category | null) => {
+    async (category: TCategory | null) => {
       if (!category) return;
 
       const abortController = new AbortController();
@@ -73,7 +75,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
         );
 
         if (res.data.success) {
-          setProducts(res.data.products as Product[]);
+          setProducts(res.data.products as TProduct[]);
         }
       } catch (error: any) {
         if (!abortController.signal.aborted) {
@@ -96,6 +98,10 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
     };
     fetchData();
   }, [getShopCats, getShopProducts, shopCats.length]);
+
+  // useEffect(() => {
+  //   console.log('5555555555555', cart);
+  // }, []);
 
   return (
     <View style={styles.container}>
@@ -226,13 +232,20 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
           </>
         }
         columnWrapperStyle={styles.productsWrapper}
-        renderItem={({item}) => (
-          <ProductCard
-            product={item}
-            selectedCat={selectedCat}
-            goToProductScreen={goToProductScreen}
-          />
-        )}
+        renderItem={({item}) => {
+          const isInWishList = !!wishlist?.find(
+            listItem => listItem.productId?._id === item._id,
+          );
+
+          return (
+            <ProductCard
+              product={item}
+              selectedCat={selectedCat}
+              goToProductScreen={goToProductScreen}
+              isFavorite={isInWishList}
+            />
+          );
+        }}
         keyExtractor={item => item._id}
         contentContainerStyle={styles.scrollContent}
       />

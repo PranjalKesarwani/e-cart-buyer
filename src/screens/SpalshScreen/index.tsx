@@ -5,7 +5,11 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../types';
 import Title from '../../components/Title';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
-import {fetchBuyer} from '../../redux/slices/buyerSlice';
+import {
+  fetchBuyer,
+  getCarts,
+  getWishlists,
+} from '../../redux/slices/buyerSlice';
 
 type SplashProps = NativeStackScreenProps<RootStackParamList, 'SplashScreen'>;
 
@@ -17,6 +21,8 @@ const SplashScreen = ({navigation}: SplashProps) => {
       try {
         const data = await dispatch(fetchBuyer()).unwrap();
         if (data.success) {
+          await dispatch(getWishlists());
+          await dispatch(getCarts());
           setTimeout(() => {
             navigation.replace('DrawerNavigator');
           }, 1500);

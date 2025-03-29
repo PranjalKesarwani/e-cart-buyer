@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Image,
@@ -17,7 +17,7 @@ interface ProductCardProps {
   product: TProduct;
   selectedCat: TCategory;
   goToProductScreen: (product: TProduct, category: TCategory) => void;
-  // isFavorite?: boolean;
+  isFavorite?: boolean;
   toggleFavorite?: () => void;
   onChatPress?: () => void;
 }
@@ -26,20 +26,23 @@ const ProductCard: React.FC<ProductCardProps> = ({
   product,
   selectedCat,
   goToProductScreen,
-  // isFavorite,
+  isFavorite,
   // toggleFavorite,
   onChatPress,
 }) => {
-  const [isFavorite, setIsFavorite] = useState<boolean>(false);
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
-  };
+  // const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  // const toggleFavorite = () => {
+  //   setIsFavorite(!isFavorite);
+  // };
+  // useEffect(() => {
+  //   console.log('-----checking-----', product.productName, isFavorite);
+  // }, []);
   return (
     <View style={styles.productCard}>
       {/* Heart icon at top right */}
       <TouchableOpacity
         style={styles.heartButton}
-        onPress={toggleFavorite}
+        onPress={() => console.log('donothikng')}
         hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
         <Icons
           name="heart"

@@ -62,7 +62,7 @@ export interface TBuyer {
   loading: boolean;
   error: any;
   cart: TCart[];
-  wishlist: TProduct[];
+  wishlist: TWishlist[];
   cartItemsCount: number;
   selectedCart: TCart | null;
 }
