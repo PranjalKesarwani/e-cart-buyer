@@ -10,107 +10,39 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
-import {RootStackParamList, TWishlist} from '../../types';
+import {RootStackParamList, TProduct, TWishlist} from '../../types';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useAppDispatch} from '../../redux/hooks';
 import {getWishlists} from '../../redux/slices/buyerSlice';
+import {showToast} from '../../utils/toast';
+import {apiClient} from '../../services/api';
+import {Theme} from '../../theme/theme';
 
 type WishListScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'WishListScreen'
 >;
 
-const paginatedItems: TWishlist[] = [
-  {
-    _id: '67e57f9dd5ae55730c8bb6db',
-    addedAt: 1743093661,
-    productId: {
-      media: {
-        images: [
-          'https://i.pinimg.com/236x/26/be/56/26be56634ad9773c9d8f6315cac2cba7.jpg',
-          'https://i.pinimg.com/236x/26/be/56/26be56634ad9773c9d8f6315cac2cba7.jpg',
-        ],
-        videos: [],
-      },
-      _id: '61e57f9dd5ae55730c8bb6db',
-      sellerId: '61e57f9dd5ae55730c8bb6db',
-      shopId: '61e57f9dd5ae55730c8bb6db',
-      productName: 'Apple iPhone 15 Pro Max',
-      price: 159999,
-      productMrp: 200000,
-      discountPercentage: 24,
-      attributes: {
-        color: 'Titanium Gray',
-        storage: '256GB',
-        brand: 'Apple',
-        model: 'iPhone 15 Pro Max',
-      },
-      deliveryOptions: {
-        standard: '4-6 days',
-      },
-      variants: [
-        {
-          sku: 'MOB-APL-IP15PM-BLU-512GB',
-          attributes: {color: 'Blue Titanium', storage: '512GB'},
-          priceOffset: 10000,
-          stock: 15,
-        },
-      ],
-    },
-  },
-  {
-    _id: '67e453173f3480ad9ce94d3e',
-    addedAt: 1743016727,
-    productId: {
-      media: {
-        images: [
-          'https://i.pinimg.com/236x/24/22/32/24223258deb2711a6cfb6ffe2ba3b5e9.jpg',
-          'https://i.pinimg.com/236x/24/22/32/24223258deb2711a6cfb6ffe2ba3b5e9.jpg',
-        ],
-        videos: ['https://example.com/videos/samsung_s23_ultra.mp4'],
-      },
-      productName: 'Samsung Galaxy S23 Ultra',
-      price: 129999,
-      productMrp: 200000,
-      discountPercentage: 24,
-      attributes: {
-        color: 'Phantom Black',
-        storage: '256GB',
-        brand: 'Samsung',
-        model: 'Galaxy S23 Ultra',
-      },
-      deliveryOptions: {
-        standard: '5-7 days',
-      },
-      variants: [
-        {
-          sku: 'MOB-SAMS-S23U-GRN-512GB',
-          attributes: {color: 'Green', storage: '512GB'},
-          priceOffset: 5000,
-          stock: 10,
-        },
-      ],
-    },
-  },
-];
-
 const WishListScreen = ({navigation}: WishListScreenProps) => {
   // Sample data structure mapping
   const dispatch = useAppDispatch();
   const [wishlist, setWishList] = useState<[] | TWishlist[]>([]);
-  const wishlistItems = paginatedItems.map(item => ({
-    id: item._id,
-    image: item.productId.media.images[0],
-    name: item.productId.productName,
-    price: item.productId.price,
-    mrp: item.productId.productMrp,
-    discount: item.productId.discountPercentage,
-    attributes: item.productId.attributes,
-    delivery: item.productId.deliveryOptions?.standard,
-    variants: item.productId.variants?.length,
-  }));
-
+  const addToCart = async (productId: string) => {
+    try {
+      console.log('|||||||||||||||||||', productId);
+      const res = await apiClient.post(`/buyer/action-cart`, {
+        action: 'ADD',
+        productId,
+      });
+      // if (!res.data.success) throw new Error(res.data.message);
+      console.log('xxxxxxxxxxxxxxx', res.data);
+      showToast('success', res.data.message);
+    } catch (error: any) {
+      console.log(error);
+      showToast('error', 'Error', error.message);
+    }
+  };
   const renderItem = ({item}: {item: TWishlist}) => (
     <Animated.View style={styles.card}>
       <Image
@@ -156,7 +88,10 @@ const WishListScreen = ({navigation}: WishListScreenProps) => {
 
         <TouchableOpacity
           style={[styles.actionButton, styles.cartButton]}
-          onPress={() => navigation.navigate('CartScreen')}>
+          onPress={() => {
+            addToCart(item.productId._id);
+            // navigation.navigate('CartScreen');
+          }}>
           <Ionicons name="cart-outline" size={24} color="#4A90E2" />
         </TouchableOpacity>
       </View>
@@ -190,7 +125,7 @@ const WishListScreen = ({navigation}: WishListScreenProps) => {
         data={wishlist}
         renderItem={renderItem}
         keyExtractor={item => item._id}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent]}
         ListEmptyComponent={
           <View style={styles.emptyState}>
             <MaterialIcons name="favorite-border" size={64} color="#E0E0E0" />
@@ -202,7 +137,7 @@ const WishListScreen = ({navigation}: WishListScreenProps) => {
         }
       />
 
-      {wishlistItems.length > 0 && (
+      {wishlist.length > 0 && (
         <View style={styles.stickyFooter}>
           <TouchableOpacity
             style={styles.footerButton}
@@ -210,8 +145,8 @@ const WishListScreen = ({navigation}: WishListScreenProps) => {
             <Text style={styles.footerButtonText}>Add All to Cart</Text>
             <Text style={styles.footerPriceText}>
               ₹
-              {wishlistItems
-                .reduce((sum, item) => sum + item.price, 0)
+              {wishlist
+                .reduce((sum, item) => sum + item.productId.price, 0)
                 .toLocaleString()}
             </Text>
           </TouchableOpacity>
@@ -249,6 +184,7 @@ const styles = StyleSheet.create({
   listContent: {
     paddingHorizontal: 16,
     paddingTop: 16,
+    paddingBottom: 80,
   },
   card: {
     flexDirection: 'row',
