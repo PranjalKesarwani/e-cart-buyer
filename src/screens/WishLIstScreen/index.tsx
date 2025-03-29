@@ -18,6 +18,7 @@ import {getWishlists} from '../../redux/slices/buyerSlice';
 import {showToast} from '../../utils/toast';
 import {apiClient} from '../../services/api';
 import {Theme} from '../../theme/theme';
+import {manageCart} from '../../utils/helper';
 
 type WishListScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -28,21 +29,7 @@ const WishListScreen = ({navigation}: WishListScreenProps) => {
   // Sample data structure mapping
   const dispatch = useAppDispatch();
   const [wishlist, setWishList] = useState<[] | TWishlist[]>([]);
-  const addToCart = async (productId: string) => {
-    try {
-      console.log('|||||||||||||||||||', productId);
-      const res = await apiClient.post(`/buyer/action-cart`, {
-        action: 'ADD',
-        productId,
-      });
-      // if (!res.data.success) throw new Error(res.data.message);
-      console.log('xxxxxxxxxxxxxxx', res.data);
-      showToast('success', res.data.message);
-    } catch (error: any) {
-      console.log(error);
-      showToast('error', 'Error', error.message);
-    }
-  };
+
   const renderItem = ({item}: {item: TWishlist}) => (
     <Animated.View style={styles.card}>
       <Image
@@ -89,7 +76,7 @@ const WishListScreen = ({navigation}: WishListScreenProps) => {
         <TouchableOpacity
           style={[styles.actionButton, styles.cartButton]}
           onPress={() => {
-            addToCart(item.productId._id);
+            manageCart(item.productId._id, 'ADD');
             // navigation.navigate('CartScreen');
           }}>
           <Ionicons name="cart-outline" size={24} color="#4A90E2" />
