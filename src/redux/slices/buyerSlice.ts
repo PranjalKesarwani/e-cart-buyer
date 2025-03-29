@@ -108,7 +108,7 @@ const buyerSlice = createSlice({
       })
       .addCase(getCarts.fulfilled, (state, action: PayloadAction<any>) => {
         state.loading = false;
-        state.cart = action.payload;
+        state.cart = action.payload.cart;
       })
       .addCase(getCarts.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;

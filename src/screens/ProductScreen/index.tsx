@@ -271,7 +271,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
           <TouchableOpacity
             style={[styles.addToCartButton]}
             onPress={() => {
-              manageCart(product._id, 'ADD', 1);
+              manageCart(product._id, 'ADD', 1, dispatch);
             }}>
             <Text style={styles.addToCartText}>Add to Cart</Text>
           </TouchableOpacity>

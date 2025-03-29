@@ -19,8 +19,8 @@ type CartScreenProps = NativeStackScreenProps<RootStackParamList, 'CartScreen'>;
 
 const CartScreen = ({navigation}: CartScreenProps) => {
   const dispatch = useAppDispatch();
-
-  const [carts, setCarts] = useState<[] | TCart[]>([]);
+  const {cart} = useAppSelector(state => state.buyer);
+  // const [carts, setCarts] = useState<[] | TCart[]>([]);
   const [total, setTotal] = useState<number>(0);
 
   const {width} = Dimensions.get('window');
@@ -29,11 +29,8 @@ const CartScreen = ({navigation}: CartScreenProps) => {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const data: any = await dispatch(getCarts()).unwrap();
-        if (data.success) {
-          setCarts(data.cart);
-          giveCartTotalSum(data.cart);
-        }
+        await dispatch(getCarts());
+        giveCartTotalSum(cart);
       } catch (error: any) {
         console.log(error);
       }
@@ -77,7 +74,7 @@ const CartScreen = ({navigation}: CartScreenProps) => {
       <ScrollView
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}>
-        {carts.map((cart: TCart, index) => (
+        {cart.map((cart: TCart, index) => (
           <View
             key={index}
             style={[styles.card, {width: cardWidth}]}

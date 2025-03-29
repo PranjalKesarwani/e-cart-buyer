@@ -76,7 +76,7 @@ const WishListScreen = ({navigation}: WishListScreenProps) => {
         <TouchableOpacity
           style={[styles.actionButton, styles.cartButton]}
           onPress={() => {
-            manageCart(item.productId._id, 'ADD');
+            manageCart(item.productId._id, 'ADD', 1, dispatch);
             // navigation.navigate('CartScreen');
           }}>
           <Ionicons name="cart-outline" size={24} color="#4A90E2" />
