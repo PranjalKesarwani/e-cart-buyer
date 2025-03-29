@@ -35,7 +35,8 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
   const [subCats, setSubCats] = useState<any[]>([]);
   const [selectedSubCat, setSelectedSubCat] = useState<null | TCategory>(null);
   const [products, setProducts] = useState<[] | TProduct[]>([]);
-  const {cartItemsCount, wishlist} = useAppSelector(state => state.buyer);
+  const {cartItemsCount, wishlist, cart} = useAppSelector(state => state.buyer);
+  const [isItemInCart, setIsItemInCart] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
@@ -73,9 +74,21 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
       showToast('error', error.message);
     }
   };
-
+  const isProductExistInCart = () => {
+    const result = cart.some((cartItem: any) =>
+      cartItem.items.some(
+        (item: TProduct) => item.productId._id === product._id,
+      ),
+    );
+    setIsItemInCart(result);
+    console.log(
+      '---------########',
+      (cart[0].items[0].productId as TProduct).productName,
+    );
+  };
   useEffect(() => {
     getSubCats();
+    isProductExistInCart();
   }, [product]);
 
   useEffect(() => {
@@ -268,13 +281,23 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
       {/* Fixed Footer */}
       <View style={[styles.footer]}>
         <View style={{width: '50%'}}>
-          <TouchableOpacity
-            style={[styles.addToCartButton]}
-            onPress={() => {
-              manageCart(product._id, 'ADD', 1, dispatch);
-            }}>
-            <Text style={styles.addToCartText}>Add to Cart</Text>
-          </TouchableOpacity>
+          {!isItemInCart ? (
+            <TouchableOpacity
+              style={[styles.addToCartButton]}
+              onPress={() => {
+                manageCart(product._id, 'ADD', 1, dispatch);
+              }}>
+              <Text style={styles.addToCartText}>Add to Cart</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={[styles.addToCartButton]}
+              onPress={() => {
+                console.log('do nothing bro');
+              }}>
+              <Text style={styles.addToCartText}>Go to Cart</Text>
+            </TouchableOpacity>
+          )}
         </View>
         <View style={{width: '50%'}}>
           <TouchableOpacity
