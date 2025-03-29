@@ -19,7 +19,7 @@ import {showToast} from '../../utils/toast';
 import {apiClient} from '../../services/api';
 import ProductCard from '../../components/ProductCard';
 import {Theme} from '../../theme/theme';
-import {useAppSelector} from '../../redux/hooks';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {manageCart, manageWishList} from '../../utils/helper';
 
 type ProductScreenProps = NativeStackScreenProps<
@@ -36,10 +36,10 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
   const [selectedSubCat, setSelectedSubCat] = useState<null | TCategory>(null);
   const [products, setProducts] = useState<[] | TProduct[]>([]);
   const {cartItemsCount} = useAppSelector(state => state.buyer);
-
+  const dispatch = useAppDispatch();
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
-    manageWishList(product._id, !isFavorite);
+    manageWishList(product._id, !isFavorite, dispatch);
   };
 
   const getSubCats = async () => {

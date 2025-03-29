@@ -10,6 +10,7 @@ import {
 import Icons from 'react-native-vector-icons/AntDesign';
 import {TCategory, TProduct} from '../types';
 import {manageWishList} from '../utils/helper';
+import {useAppDispatch} from '../redux/hooks';
 
 const {width} = Dimensions.get('window');
 const CARD_WIDTH = (width - 40) / 2 - 10;
@@ -31,12 +32,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
   // toggleFavorite,
   onChatPress,
 }) => {
+  const dispatch = useAppDispatch();
   return (
     <View style={styles.productCard}>
       {/* Heart icon at top right */}
       <TouchableOpacity
         style={styles.heartButton}
-        onPress={() => manageWishList(product._id, !isFavorite)}
+        onPress={() => manageWishList(product._id, !isFavorite, dispatch)}
         hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
         <Icons
           name="heart"

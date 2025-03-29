@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {apiClient} from '../services/api';
 import {showToast} from './toast';
+import {Dispatch} from '@reduxjs/toolkit';
+import {getWishlists} from '../redux/slices/buyerSlice';
 
 export const getBuyerToken = async (): Promise<string | null> => {
   try {
@@ -41,6 +43,7 @@ export const manageCart = async (
 export const manageWishList = async (
   productId: string,
   isFavorite: Boolean,
+  dispatch: any,
 ) => {
   try {
     const action = isFavorite ? 'ADD' : 'REMOVE';
@@ -50,9 +53,10 @@ export const manageWishList = async (
     });
 
     if (!res?.data.success) throw new Error(res?.data.message);
+    dispatch(getWishlists() as any);
     showToast('success', res.data.message, '');
   } catch (error: any) {
-    console.log(error);
+    console.log('Error in manageWishList', error);
     showToast('error', 'Error', error.message);
   }
 };
