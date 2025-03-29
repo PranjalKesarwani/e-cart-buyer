@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import Icons from 'react-native-vector-icons/AntDesign';
 import {TCategory, TProduct} from '../types';
+import {manageWishList} from '../utils/helper';
 
 const {width} = Dimensions.get('window');
 const CARD_WIDTH = (width - 40) / 2 - 10;
@@ -30,19 +31,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
   // toggleFavorite,
   onChatPress,
 }) => {
-  // const [isFavorite, setIsFavorite] = useState<boolean>(false);
-  // const toggleFavorite = () => {
-  //   setIsFavorite(!isFavorite);
-  // };
-  // useEffect(() => {
-  //   console.log('-----checking-----', product.productName, isFavorite);
-  // }, []);
   return (
     <View style={styles.productCard}>
       {/* Heart icon at top right */}
       <TouchableOpacity
         style={styles.heartButton}
-        onPress={() => console.log('donothikng')}
+        onPress={() => manageWishList(product._id, !isFavorite)}
         hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
         <Icons
           name="heart"
