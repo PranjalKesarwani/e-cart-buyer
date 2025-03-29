@@ -15,10 +15,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {getWishlists} from '../../redux/slices/buyerSlice';
-import {showToast} from '../../utils/toast';
-import {apiClient} from '../../services/api';
-import {Theme} from '../../theme/theme';
-import {manageCart} from '../../utils/helper';
+import {manageCart, manageWishList} from '../../utils/helper';
 
 type WishListScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -70,7 +67,9 @@ const WishListScreen = ({navigation}: WishListScreenProps) => {
       </View>
 
       <View style={styles.actionButtons}>
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity
+          onPress={() => manageWishList(item.productId._id, false, dispatch)}
+          style={styles.actionButton}>
           <MaterialIcons name="delete-outline" size={24} color="#666" />
         </TouchableOpacity>
 
