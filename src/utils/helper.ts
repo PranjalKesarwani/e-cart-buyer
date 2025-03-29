@@ -20,13 +20,37 @@ export const setBuyToken = async (token: string): Promise<void> => {
   }
 };
 
-export const manageCart = async (productId: string, action: string) => {
+export const manageCart = async (
+  productId: string,
+  action: string,
+  quantity = 1,
+) => {
   try {
     const res = await apiClient.post(`/buyer/action-cart`, {
       action: action,
       productId,
+      quantity,
     });
     showToast('success', res.data.message);
+  } catch (error: any) {
+    console.log(error);
+    showToast('error', 'Error', error.message);
+  }
+};
+
+export const manageWishList = async (
+  productId: string,
+  isFavorite: Boolean,
+) => {
+  try {
+    const action = isFavorite ? 'ADD' : 'REMOVE';
+    const res: any = await apiClient.post('/buyer/action-wishlist', {
+      productId: productId,
+      action,
+    });
+
+    if (!res?.data.success) throw new Error(res?.data.message);
+    showToast('success', res.data.message, '');
   } catch (error: any) {
     console.log(error);
     showToast('error', 'Error', error.message);

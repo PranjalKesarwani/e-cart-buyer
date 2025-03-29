@@ -20,6 +20,7 @@ import {apiClient} from '../../services/api';
 import ProductCard from '../../components/ProductCard';
 import {Theme} from '../../theme/theme';
 import {useAppSelector} from '../../redux/hooks';
+import {manageCart, manageWishList} from '../../utils/helper';
 
 type ProductScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -38,7 +39,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
-    addItemInWishlist(product, !isFavorite);
+    manageWishList(product._id, !isFavorite);
   };
 
   const getSubCats = async () => {
@@ -86,39 +87,6 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
       product,
       category: selectedSubCat,
     });
-  };
-
-  const addItemInCart = async (product: TProduct) => {
-    try {
-      const res: any = await apiClient.post('/buyer/action-cart', {
-        productId: product._id,
-        shopId: product.shopId,
-        action: 'ADD',
-        quantity: 1,
-      });
-      if (!res?.data.success) throw new Error(res?.data.message);
-      showToast('success', res.data.message, '');
-      // console.log('ressssssss', res);
-    } catch (error: any) {
-      console.log(error);
-      showToast('error', 'Error', error.message);
-    }
-  };
-
-  const addItemInWishlist = async (product: TProduct, isFavorite: Boolean) => {
-    try {
-      const res: any = await apiClient.post('/buyer/action-wishlist', {
-        productId: product._id,
-        shopId: product.shopId,
-        action: isFavorite ? 'ADD' : 'REMOVE',
-      });
-
-      if (!res?.data.success) throw new Error(res?.data.message);
-      showToast('success', res.data.message, '');
-    } catch (error: any) {
-      console.log(error);
-      showToast('error', 'Error', error.message);
-    }
   };
 
   return (
@@ -295,7 +263,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
           <TouchableOpacity
             style={[styles.addToCartButton]}
             onPress={() => {
-              addItemInCart(product as TProduct);
+              manageCart(product._id, 'ADD', 1);
             }}>
             <Text style={styles.addToCartText}>Add to Cart</Text>
           </TouchableOpacity>
