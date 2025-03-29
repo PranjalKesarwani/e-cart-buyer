@@ -35,12 +35,14 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
   const [subCats, setSubCats] = useState<any[]>([]);
   const [selectedSubCat, setSelectedSubCat] = useState<null | TCategory>(null);
   const [products, setProducts] = useState<[] | TProduct[]>([]);
-  const {cartItemsCount} = useAppSelector(state => state.buyer);
+  const {cartItemsCount, wishlist} = useAppSelector(state => state.buyer);
   const dispatch = useAppDispatch();
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite);
     manageWishList(product._id, !isFavorite, dispatch);
   };
+
+  useEffect(() => {}, []);
 
   const getSubCats = async () => {
     try {
@@ -149,7 +151,13 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
                 <Icons
                   name="heart"
                   size={24}
-                  color={isFavorite ? '#ff3f6c' : '#94969f'}
+                  color={
+                    wishlist.some(
+                      listItem => listItem.productId._id === product._id,
+                    )
+                      ? '#ff3f6c'
+                      : '#94969f'
+                  }
                 />
               </TouchableOpacity>
             </View>

@@ -65,6 +65,7 @@ export interface TBuyer {
   wishlist: TWishlist[];
   cartItemsCount: number;
   selectedCart: TCart | null;
+  selectedShop: TShop | null;
 }
 
 export type TWishlist = {

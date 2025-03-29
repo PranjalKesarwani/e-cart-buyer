@@ -86,7 +86,7 @@ const WishListScreen = ({navigation}: WishListScreenProps) => {
   );
 
   useEffect(() => {
-    const fetchCart = async () => {
+    const fetchWishlist = async () => {
       try {
         const data: any = await dispatch(getWishlists()).unwrap();
         if (data.success) {
@@ -96,7 +96,7 @@ const WishListScreen = ({navigation}: WishListScreenProps) => {
         console.log(error);
       }
     };
-    fetchCart();
+    fetchWishlist();
   }, []);
 
   return (

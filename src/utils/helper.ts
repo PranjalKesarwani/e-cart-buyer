@@ -52,8 +52,8 @@ export const manageWishList = async (
       action,
     });
 
-    if (!res?.data.success) throw new Error(res?.data.message);
     dispatch(getWishlists() as any);
+    if (!res?.data.success) throw new Error(res?.data.message);
     showToast('success', res.data.message, '');
   } catch (error: any) {
     console.log('Error in manageWishList', error);

@@ -16,6 +16,7 @@ const initialState: TBuyer = {
   wishlist: [],
   cartItemsCount: 0,
   selectedCart: null,
+  selectedShop: null,
 };
 
 export const fetchBuyer = createAsyncThunk<TBuyer>(
