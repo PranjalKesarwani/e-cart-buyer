@@ -13,7 +13,7 @@ import {
 import {RootStackParamList, TProduct, TWishlist} from '../../types';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useAppDispatch} from '../../redux/hooks';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {getWishlists} from '../../redux/slices/buyerSlice';
 import {showToast} from '../../utils/toast';
 import {apiClient} from '../../services/api';
@@ -28,7 +28,8 @@ type WishListScreenProps = NativeStackScreenProps<
 const WishListScreen = ({navigation}: WishListScreenProps) => {
   // Sample data structure mapping
   const dispatch = useAppDispatch();
-  const [wishlist, setWishList] = useState<[] | TWishlist[]>([]);
+  const {wishlist} = useAppSelector(state => state.buyer);
+  // const [wishlist, setWishList] = useState<[] | TWishlist[]>([]);
 
   const renderItem = ({item}: {item: TWishlist}) => (
     <Animated.View style={styles.card}>
@@ -88,10 +89,7 @@ const WishListScreen = ({navigation}: WishListScreenProps) => {
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
-        const data: any = await dispatch(getWishlists()).unwrap();
-        if (data.success) {
-          setWishList(data.paginatedItems);
-        }
+        const data: any = await dispatch(getWishlists());
       } catch (error: any) {
         console.log(error);
       }
