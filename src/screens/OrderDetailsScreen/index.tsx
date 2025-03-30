@@ -106,11 +106,31 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
                   <View style={styles.quantityContainer}>
                     <Text style={styles.quantityLabel}>Quantity:</Text>
                     <View style={styles.quantityControls}>
-                      <TouchableOpacity style={styles.quantityButton}>
+                      <TouchableOpacity
+                        onPress={() =>
+                          manageCart(
+                            product._id,
+                            'ADD',
+                            item.quantity - 1,
+                            dispatch,
+                            selectedCart,
+                          )
+                        }
+                        style={styles.quantityButton}>
                         <Text style={styles.quantityButtonText}>-</Text>
                       </TouchableOpacity>
                       <Text style={styles.quantityText}>{item.quantity}</Text>
-                      <TouchableOpacity style={styles.quantityButton}>
+                      <TouchableOpacity
+                        onPress={() =>
+                          manageCart(
+                            product._id,
+                            'ADD',
+                            item.quantity + 1,
+                            dispatch,
+                            selectedCart,
+                          )
+                        }
+                        style={styles.quantityButton}>
                         <Text style={styles.quantityButtonText}>+</Text>
                       </TouchableOpacity>
                     </View>
