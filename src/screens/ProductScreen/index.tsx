@@ -6,6 +6,7 @@ import {
   RootStackParamList,
   TProduct,
   TCategory,
+  TCart,
 } from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
 import {Image} from 'react-native';
@@ -21,6 +22,7 @@ import ProductCard from '../../components/ProductCard';
 import {Theme} from '../../theme/theme';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {manageCart, manageWishList} from '../../utils/helper';
+import {Dispatch} from '@reduxjs/toolkit';
 
 type ProductScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -74,17 +76,19 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
       showToast('error', error.message);
     }
   };
-  const isProductExistInCart = () => {
-    const result = cart.some((cartItem: any) =>
-      cartItem.items.some(
-        (item: TProduct) => item.productId._id === product._id,
-      ),
-    );
-    setIsItemInCart(result);
+  const isProductExistInCart = (carts: TCart[]) => {
+    if (carts.length > 0) {
+      const result = carts.some((cartItem: any) =>
+        cartItem.items.some(
+          (item: TProduct) => item.productId._id === product._id,
+        ),
+      );
+      setIsItemInCart(result);
+    }
   };
   useEffect(() => {
     getSubCats();
-    isProductExistInCart();
+    isProductExistInCart(cart);
   }, [product]);
 
   useEffect(() => {
@@ -98,6 +102,15 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
       product,
       category: selectedSubCat,
     });
+  };
+
+  const handleCart = async (
+    productId: string,
+    action: string,
+    quantity: number,
+  ) => {
+    const newCarts = await manageCart(productId, action, quantity, dispatch);
+    isProductExistInCart(newCarts.cart);
   };
 
   return (
@@ -281,7 +294,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
             <TouchableOpacity
               style={[styles.addToCartButton]}
               onPress={() => {
-                manageCart(product._id, 'ADD', 1, dispatch);
+                handleCart(product._id, 'ADD', 1);
               }}>
               <Text style={styles.addToCartText}>Add to Cart</Text>
             </TouchableOpacity>
@@ -289,7 +302,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
             <TouchableOpacity
               style={[styles.addToCartButton]}
               onPress={() => {
-                console.log('do nothing bro');
+                navigation.navigate('CartScreen');
               }}>
               <Text style={styles.addToCartText}>Go to Cart</Text>
             </TouchableOpacity>
