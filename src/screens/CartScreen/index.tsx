@@ -14,6 +14,7 @@ import Icons from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {getCarts, setSelectedCart} from '../../redux/slices/buyerSlice';
+import {useFocusEffect} from '@react-navigation/native';
 
 type CartScreenProps = NativeStackScreenProps<RootStackParamList, 'CartScreen'>;
 
@@ -58,6 +59,12 @@ const CartScreen = ({navigation}: CartScreenProps) => {
     dispatch(setSelectedCart(cart));
     navigation.navigate('OrderDetailsScreen');
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      dispatch(getCarts() as any); // Refresh cart when screen is focused
+    }, []),
+  );
 
   return (
     <SafeAreaView style={styles.safeArea}>

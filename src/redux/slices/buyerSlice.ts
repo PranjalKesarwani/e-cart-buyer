@@ -42,7 +42,7 @@ export const getCarts = createAsyncThunk<[] | TCart[]>(
       const response = await apiClient.post<any>(`/buyer/action-cart`, {
         action: 'GET',
       });
-
+      console.log('4w234897893749832', 1);
       return response.data;
     } catch (error: any) {
       console.log(error);
@@ -108,7 +108,7 @@ const buyerSlice = createSlice({
       })
       .addCase(getCarts.fulfilled, (state, action: PayloadAction<any>) => {
         state.loading = false;
-        state.cart = action.payload.cart;
+        state.cart = [...action.payload.cart];
       })
       .addCase(getCarts.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;

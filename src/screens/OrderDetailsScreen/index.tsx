@@ -10,12 +10,15 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import {RootStackParamList, TProduct} from '../../types';
+import {RootStackParamList, TCart, TProduct} from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {manageCart, manageWishList} from '../../utils/helper';
 import {Theme} from '../../theme/theme';
+import {useFocusEffect} from '@react-navigation/native';
+import {getCarts, setSelectedCart} from '../../redux/slices/buyerSlice';
+import {Dispatch} from '@reduxjs/toolkit';
 
 type OrderDetailsScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -48,6 +51,20 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
       calculatePrices();
     }
   }, [selectedCart]);
+
+  const handleCart = async (
+    productId: string,
+    action: string,
+    quantity: number,
+    dispatch: Dispatch,
+  ) => {
+    await manageCart(productId, action, quantity, dispatch);
+    const res = await dispatch(getCarts() as any).unwrap();
+    const newCart = res.cart.find(
+      (cartData: TCart) => cartData._id === selectedCart?._id,
+    );
+    dispatch(setSelectedCart(newCart));
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -106,7 +123,7 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
                     </View>
                     <TouchableOpacity
                       onPress={() =>
-                        manageCart(
+                        handleCart(
                           (item.productId as TProduct)._id,
                           'REMOVE',
                           1,

@@ -35,7 +35,7 @@ export const manageCart = async (
       quantity,
     });
     // console.log('0000000000i000000', productId, action, quantity);
-    dispatch(getCarts() as any);
+    // dispatch(getCarts() as any);
     // console.log('0000000000i000000', productId, action, quantity);
 
     showToast('success', res.data.message);
