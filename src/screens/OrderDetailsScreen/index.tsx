@@ -13,8 +13,8 @@ import {
 import {RootStackParamList, TProduct} from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useAppSelector} from '../../redux/hooks';
-import {manageWishList} from '../../utils/helper';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {manageCart, manageWishList} from '../../utils/helper';
 import {Theme} from '../../theme/theme';
 
 type OrderDetailsScreenProps = NativeStackScreenProps<
@@ -29,6 +29,7 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [deliveryCharge] = useState(40);
   const [totalSavings, setTotalSavings] = useState<number>(0);
+  const dispatch = useAppDispatch();
 
   const calculatePrices = () => {
     let sum = 0;
@@ -46,7 +47,7 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
     if (selectedCart) {
       calculatePrices();
     }
-  }, []);
+  }, [selectedCart]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -104,7 +105,14 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
                       </TouchableOpacity>
                     </View>
                     <TouchableOpacity
-                      onPress={() => console.log('kfkdsfsd')}
+                      onPress={() =>
+                        manageCart(
+                          (item.productId as TProduct)._id,
+                          'REMOVE',
+                          1,
+                          dispatch,
+                        )
+                      }
                       style={styles.actionButton}>
                       <MaterialIcons
                         name="delete-outline"
@@ -365,7 +373,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#FB641B',
+    backgroundColor: Theme.colors.mainOrange,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',

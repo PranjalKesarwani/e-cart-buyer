@@ -34,11 +34,16 @@ export const manageCart = async (
       productId,
       quantity,
     });
+    // console.log('0000000000i000000', productId, action, quantity);
     dispatch(getCarts() as any);
+    // console.log('0000000000i000000', productId, action, quantity);
+
     showToast('success', res.data.message);
   } catch (error: any) {
     console.log(error);
-    showToast('error', 'Error', error.message);
+    const errorMessage =
+      error.response?.data?.message || error.message || 'Something went wrong';
+    showToast('info', 'Error', errorMessage);
   }
 };
 

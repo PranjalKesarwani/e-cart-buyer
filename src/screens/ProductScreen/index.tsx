@@ -81,10 +81,6 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
       ),
     );
     setIsItemInCart(result);
-    console.log(
-      '---------########',
-      (cart[0].items[0].productId as TProduct).productName,
-    );
   };
   useEffect(() => {
     getSubCats();

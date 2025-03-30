@@ -14,6 +14,7 @@ const BASE_COLORS = {
   purityWhite: '#FFFFFF',
   baseYellow: '#FFD65A',
   mainYellow: '#FFB200',
+  mainOrange: '#FB641B',
 };
 
 export const Theme = {
