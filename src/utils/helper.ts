@@ -34,11 +34,10 @@ export const manageCart = async (
       productId,
       quantity,
     });
-    // console.log('0000000000i000000', productId, action, quantity);
-    // dispatch(getCarts() as any);
-    // console.log('0000000000i000000', productId, action, quantity);
+    const newCarts = await dispatch(getCarts() as any).unwrap();
 
     showToast('success', res.data.message);
+    return newCarts;
   } catch (error: any) {
     console.log(error);
     const errorMessage =

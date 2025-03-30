@@ -42,7 +42,6 @@ export const getCarts = createAsyncThunk<[] | TCart[]>(
       const response = await apiClient.post<any>(`/buyer/action-cart`, {
         action: 'GET',
       });
-      console.log('4w234897893749832', 1);
       return response.data;
     } catch (error: any) {
       console.log(error);

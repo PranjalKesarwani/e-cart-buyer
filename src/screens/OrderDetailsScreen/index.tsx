@@ -58,9 +58,8 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
     quantity: number,
     dispatch: Dispatch,
   ) => {
-    await manageCart(productId, action, quantity, dispatch);
-    const res = await dispatch(getCarts() as any).unwrap();
-    const newCart = res.cart.find(
+    const newCarts = await manageCart(productId, action, quantity, dispatch);
+    const newCart = newCarts.cart.find(
       (cartData: TCart) => cartData._id === selectedCart?._id,
     );
     dispatch(setSelectedCart(newCart));
