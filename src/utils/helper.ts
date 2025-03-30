@@ -2,7 +2,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {apiClient} from '../services/api';
 import {showToast} from './toast';
 import {Dispatch} from '@reduxjs/toolkit';
-import {getCarts, getWishlists} from '../redux/slices/buyerSlice';
+import {
+  getCarts,
+  getWishlists,
+  setSelectedCart,
+} from '../redux/slices/buyerSlice';
+import {TCart} from '../types';
 
 export const getBuyerToken = async (): Promise<string | null> => {
   try {
@@ -27,6 +32,7 @@ export const manageCart = async (
   action: string,
   quantity = 1,
   dispatch: Dispatch,
+  selectedCart?: TCart,
 ) => {
   try {
     const res = await apiClient.post(`/buyer/action-cart`, {
@@ -35,6 +41,10 @@ export const manageCart = async (
       quantity,
     });
     const newCarts = await dispatch(getCarts() as any).unwrap();
+    const newCart = newCarts.cart.find(
+      (cartData: TCart) => cartData._id === selectedCart?._id,
+    );
+    dispatch(setSelectedCart(newCart));
 
     showToast('success', res.data.message);
     return newCarts;

@@ -52,19 +52,6 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
     }
   }, [selectedCart]);
 
-  const handleCart = async (
-    productId: string,
-    action: string,
-    quantity: number,
-    dispatch: Dispatch,
-  ) => {
-    const newCarts = await manageCart(productId, action, quantity, dispatch);
-    const newCart = newCarts.cart.find(
-      (cartData: TCart) => cartData._id === selectedCart?._id,
-    );
-    dispatch(setSelectedCart(newCart));
-  };
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
@@ -122,11 +109,12 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
                     </View>
                     <TouchableOpacity
                       onPress={() =>
-                        handleCart(
+                        manageCart(
                           (item.productId as TProduct)._id,
                           'REMOVE',
                           1,
                           dispatch,
+                          selectedCart,
                         )
                       }
                       style={styles.actionButton}>
