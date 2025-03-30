@@ -93,15 +93,6 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
                   </View>
 
                   <View style={styles.quantityContainer}>
-                    <TouchableOpacity
-                      onPress={() => console.log('kfkdsfsd')}
-                      style={styles.actionButton}>
-                      <MaterialIcons
-                        name="delete-outline"
-                        size={24}
-                        color="black"
-                      />
-                    </TouchableOpacity>
                     <Text style={styles.quantityLabel}>Quantity:</Text>
                     <View style={styles.quantityControls}>
                       <TouchableOpacity style={styles.quantityButton}>
@@ -112,6 +103,15 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
                         <Text style={styles.quantityButtonText}>+</Text>
                       </TouchableOpacity>
                     </View>
+                    <TouchableOpacity
+                      onPress={() => console.log('kfkdsfsd')}
+                      style={styles.actionButton}>
+                      <MaterialIcons
+                        name="delete-outline"
+                        size={24}
+                        color="black"
+                      />
+                    </TouchableOpacity>
                   </View>
                 </View>
               </View>
