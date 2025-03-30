@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
+  Image,
+  Dimensions,
 } from 'react-native';
 import {RootStackParamList, TProduct} from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
@@ -18,22 +20,29 @@ type OrderDetailsScreenProps = NativeStackScreenProps<
   'OrderDetailsScreen'
 >;
 
+const {width} = Dimensions.get('window');
+
 const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
   const {selectedCart} = useAppSelector(state => state.buyer);
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [deliveryCharge] = useState(40);
+  const [totalSavings, setTotalSavings] = useState<number>(0);
 
-  // const totalPrice = '₹1,970,000';
-  const giveTotalPriceSum = () => {
+  const calculatePrices = () => {
     let sum = 0;
+    let savings = 0;
     selectedCart?.items?.forEach(item => {
-      sum += (item.productId as TProduct).price * item.quantity;
+      const product = item.productId as TProduct;
+      sum += product.price * item.quantity;
+      savings += (product.productMrp - product.price) * item.quantity;
     });
-    setTotalPrice(sum);
+    setTotalPrice(sum + deliveryCharge);
+    setTotalSavings(savings);
   };
 
   useEffect(() => {
     if (selectedCart) {
-      giveTotalPriceSum();
+      calculatePrices();
     }
   }, []);
 
@@ -50,78 +59,120 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
       </View>
 
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.storeHeader}>
-          <MaterialIcons name="storefront" size={24} color="#4A90E2" />
+        <View style={styles.storeCard}>
+          <MaterialIcons name="storefront" size={24} color="#2874F0" />
           <Text style={styles.storeName}>{selectedCart?.shopId.shopName}</Text>
         </View>
 
-        <View style={styles.tableContainer}>
-          <View style={styles.tableHeader}>
-            <Text style={[styles.headerCell, styles.itemColumn]}>Item</Text>
-            <Text style={[styles.headerCell, styles.qtyColumn]}>Qty</Text>
-            <Text style={[styles.headerCell, styles.amountColumn]}>Amount</Text>
+        <View style={styles.itemsCard}>
+          {selectedCart?.items.map((item, index) => {
+            const product = item.productId as TProduct;
+            const discount = Math.round(
+              ((product.productMrp - product.price) / product.productMrp) * 100,
+            );
+
+            return (
+              <View key={index} style={styles.itemContainer}>
+                <Image
+                  source={{uri: product.media.images[0]}}
+                  style={styles.productImage}
+                />
+                <View style={styles.itemDetails}>
+                  <Text style={styles.productName} numberOfLines={2}>
+                    {product.productName}
+                  </Text>
+
+                  <View style={styles.priceContainer}>
+                    <Text style={styles.sellingPrice}>₹{product.price}</Text>
+                    <Text style={styles.originalPrice}>
+                      ₹{product.productMrp}
+                    </Text>
+                    <Text style={styles.discount}>{discount}% off</Text>
+                  </View>
+
+                  <View style={styles.quantityContainer}>
+                    <Text style={styles.quantityLabel}>Quantity:</Text>
+                    <View style={styles.quantityControls}>
+                      <TouchableOpacity style={styles.quantityButton}>
+                        <Text style={styles.quantityButtonText}>-</Text>
+                      </TouchableOpacity>
+                      <Text style={styles.quantityText}>{item.quantity}</Text>
+                      <TouchableOpacity style={styles.quantityButton}>
+                        <Text style={styles.quantityButtonText}>+</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            );
+          })}
+        </View>
+
+        <View style={styles.priceBreakdownCard}>
+          <Text style={styles.breakdownTitle}>PRICE DETAILS</Text>
+
+          <View style={styles.breakdownRow}>
+            <Text>Total MRP</Text>
+            <Text>
+              ₹
+              {selectedCart?.items.reduce(
+                (acc, item) =>
+                  acc + (item.productId as TProduct).productMrp * item.quantity,
+                0,
+              )}
+            </Text>
           </View>
 
-          {selectedCart?.items.map((item, index) => (
-            <View key={index} style={styles.tableRow}>
-              <Text
-                style={[styles.rowCell, styles.itemColumn]}
-                numberOfLines={2}
-                ellipsizeMode="tail">
-                {(item.productId as TProduct).productName}
-              </Text>
-              <Text style={[styles.rowCell, styles.qtyColumn]}>
-                {item.quantity}
-              </Text>
-              <View style={[styles.amountColumn, styles.priceContainer]}>
-                <View style={styles.priceComparison}>
-                  <Text style={styles.originalPrice}>
-                    {(item.productId as TProduct).currency}
-                    {(item.productId as TProduct).productMrp}
-                  </Text>
-                  {/* <View style={styles.dashLine} /> */}
-                </View>
-                <Text style={styles.sellingPrice}>
-                  {(item.productId as TProduct).currency}
-                  {(item.productId as TProduct).price}
-                </Text>
-              </View>
-            </View>
-          ))}
+          <View style={styles.breakdownRow}>
+            <Text>Total Discount</Text>
+            <Text style={styles.discountText}>- ₹{totalSavings}</Text>
+          </View>
 
-          <View style={styles.totalContainer}>
-            <Text style={styles.totalLabel}>Grand Total</Text>
-            <Text style={styles.totalValue}>₹{totalPrice}</Text>
+          <View style={styles.breakdownRow}>
+            <Text>Delivery Charges</Text>
+            <Text style={styles.deliveryText}>
+              {deliveryCharge === 0 ? 'FREE' : `₹${deliveryCharge}`}
+            </Text>
+          </View>
+
+          <View style={styles.totalRow}>
+            <Text style={styles.totalLabel}>Total Amount</Text>
+            <Text style={styles.totalPrice}>₹{totalPrice}</Text>
           </View>
         </View>
+
+        <Text style={styles.savingsText}>
+          You will save ₹{totalSavings} on this order
+        </Text>
       </ScrollView>
 
       <TouchableOpacity
         style={styles.proceedButton}
         onPress={() => navigation.navigate('AddressScreen')}
         activeOpacity={0.9}>
-        <Text style={styles.proceedButtonText}>Proceed to Shipping</Text>
+        <Text style={styles.proceedButtonText}>Continue</Text>
         <MaterialIcons name="arrow-forward" size={24} color="white" />
       </TouchableOpacity>
     </SafeAreaView>
   );
 };
 
-export default OrderDetailsScreen;
-
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F8F9FB',
+    backgroundColor: '#F5F6F8',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EDEFF2',
     backgroundColor: 'white',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   backButton: {
     padding: 8,
@@ -137,63 +188,170 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 16,
+    paddingBottom: 100,
   },
-  storeHeader: {
+  storeCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 24,
     padding: 16,
     backgroundColor: 'white',
-    borderRadius: 12,
-    shadowColor: '#1F2D3D',
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 5,
+    borderRadius: 8,
+    marginBottom: 16,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   storeName: {
     fontSize: 18,
     fontWeight: '500',
     color: '#2A2A2A',
     marginLeft: 12,
-    fontFamily: 'Roboto-Medium',
   },
-  amountCell: {
+  itemsCard: {
+    backgroundColor: 'white',
+    borderRadius: 8,
+    marginBottom: 16,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  productImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+    marginRight: 16,
+  },
+  itemDetails: {
+    flex: 1,
+  },
+  productName: {
+    fontSize: 16,
+    color: '#2A2A2A',
+    marginBottom: 8,
+  },
+  priceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  originalPrice: {
+    fontSize: 14,
+    color: '#878787',
+    textDecorationLine: 'line-through',
+    marginRight: 8,
+  },
+  sellingPrice: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2A2A2A',
+    marginRight: 8,
+  },
+  discount: {
+    fontSize: 14,
+    color: '#388E3C',
     fontWeight: '500',
+  },
+  quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  quantityLabel: {
+    fontSize: 14,
+    color: '#878787',
+  },
+  quantityControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  quantityButton: {
+    backgroundColor: '#F0F0F0',
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  quantityButtonText: {
+    fontSize: 18,
     color: '#2A2A2A',
   },
-  totalContainer: {
+  quantityText: {
+    marginHorizontal: 12,
+    fontSize: 16,
+    color: '#2A2A2A',
+  },
+  priceBreakdownCard: {
+    backgroundColor: 'white',
+    borderRadius: 8,
+    padding: 16,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  breakdownTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2A2A2A',
+    marginBottom: 16,
+  },
+  breakdownRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 16,
-    paddingTop: 16,
+    marginBottom: 12,
+  },
+  discountText: {
+    color: '#388E3C',
+  },
+  deliveryText: {
+    color: '#388E3C',
+  },
+  totalRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 12,
+    paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#EDEFF2',
+    borderTopColor: '#F0F0F0',
   },
   totalLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#4F4F4F',
+    color: '#2A2A2A',
   },
-  totalValue: {
+  totalPrice: {
     fontSize: 18,
     fontWeight: '700',
     color: '#2A2A2A',
   },
+  savingsText: {
+    color: '#388E3C',
+    marginTop: 16,
+    fontSize: 14,
+    textAlign: 'center',
+  },
   proceedButton: {
-    backgroundColor: '#4A90E2',
-    borderRadius: 8,
-    padding: 18,
-    margin: 16,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#FB641B',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#1F2D3D',
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 5,
+    paddingVertical: 16,
   },
   proceedButtonText: {
     color: 'white',
@@ -201,87 +359,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginRight: 8,
   },
-  tableContainer: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    shadowColor: '#1F2D3D',
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 5,
-  },
-
-  priceColumn: {
-    flex: 1.2,
-    textAlign: 'right',
-  },
-
-  tableRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F5F5F5',
-  },
-  rowCell: {
-    fontSize: 14, // Slightly reduced size
-    color: '#2A2A2A',
-    paddingHorizontal: 4, // Added cell padding
-  },
-  tableHeader: {
-    flexDirection: 'row',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EDEFF2',
-    marginBottom: 8,
-  },
-  headerCell: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#4F4F4F',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-  },
-  itemColumn: {
-    flex: 4,
-    paddingRight: 12,
-  },
-  qtyColumn: {
-    flex: 0.8,
-    textAlign: 'center',
-  },
-  amountColumn: {
-    flex: 2,
-    alignItems: 'flex-end',
-  },
-  priceContainer: {
-    justifyContent: 'space-between',
-    height: 40, // Fixed height for price alignment
-  },
-  priceComparison: {
-    position: 'relative',
-    marginBottom: 4,
-    color: 'black',
-  },
-  originalPrice: {
-    fontSize: 12,
-    color: 'red',
-    textDecorationLine: 'line-through',
-  },
-  dashLine: {
-    position: 'absolute',
-    top: '50%',
-    width: '100%',
-    height: 1,
-    backgroundColor: '#EF4444',
-    borderStyle: 'dashed',
-    borderWidth: 1,
-  },
-  sellingPrice: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: 'green',
-  },
 });
+
+export default OrderDetailsScreen;
