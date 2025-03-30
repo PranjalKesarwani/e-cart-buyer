@@ -14,6 +14,8 @@ import {RootStackParamList, TProduct} from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useAppSelector} from '../../redux/hooks';
+import {manageWishList} from '../../utils/helper';
+import {Theme} from '../../theme/theme';
 
 type OrderDetailsScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -91,6 +93,15 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
                   </View>
 
                   <View style={styles.quantityContainer}>
+                    <TouchableOpacity
+                      onPress={() => console.log('kfkdsfsd')}
+                      style={styles.actionButton}>
+                      <MaterialIcons
+                        name="delete-outline"
+                        size={24}
+                        color="black"
+                      />
+                    </TouchableOpacity>
                     <Text style={styles.quantityLabel}>Quantity:</Text>
                     <View style={styles.quantityControls}>
                       <TouchableOpacity style={styles.quantityButton}>
@@ -185,6 +196,13 @@ const styles = StyleSheet.create({
   },
   headerRight: {
     width: 40,
+  },
+  actionButton: {
+    justifyContent: 'space-between',
+    marginLeft: 16,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    borderRadius: 16,
+    padding: 4,
   },
   container: {
     padding: 16,
