@@ -9,7 +9,9 @@ import {
   fetchBuyer,
   getCarts,
   getWishlists,
+  setCartItemsCount,
 } from '../../redux/slices/buyerSlice';
+import {calculateCartItemsCount} from '../../utils/helper';
 
 type SplashProps = NativeStackScreenProps<RootStackParamList, 'SplashScreen'>;
 
@@ -22,7 +24,9 @@ const SplashScreen = ({navigation}: SplashProps) => {
         const data = await dispatch(fetchBuyer()).unwrap();
         if (data.success) {
           await dispatch(getWishlists());
-          await dispatch(getCarts());
+          const cartInfo: any = await dispatch(getCarts()).unwrap();
+          const cartItemsCount = calculateCartItemsCount(cartInfo.cart);
+          dispatch(setCartItemsCount(cartItemsCount));
           setTimeout(() => {
             navigation.replace('DrawerNavigator');
           }, 1500);
