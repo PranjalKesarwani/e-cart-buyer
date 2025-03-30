@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   View,
   Text,
@@ -21,51 +21,35 @@ type CartScreenProps = NativeStackScreenProps<RootStackParamList, 'CartScreen'>;
 const CartScreen = ({navigation}: CartScreenProps) => {
   const dispatch = useAppDispatch();
   const {cart} = useAppSelector(state => state.buyer);
-  // const [carts, setCarts] = useState<[] | TCart[]>([]);
-  const [total, setTotal] = useState<number>(0);
-
   const {width} = Dimensions.get('window');
   const cardWidth = width * 0.9;
 
-  useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        await dispatch(getCarts());
-        giveCartTotalSum(cart);
-      } catch (error: any) {
-        console.log(error);
-      }
-    };
-    fetchCart();
+  // 🔥 Efficiently calculate total only when cart changes
+  const total = useMemo(() => {
+    return cart.reduce((sum, cartItem) => {
+      return (
+        sum +
+        cartItem.items.reduce(
+          (acc, item) =>
+            acc + item.quantity * Number((item.productId as TProduct).price),
+          0,
+        )
+      );
+    }, 0);
   }, [cart]);
 
-  const giveCartTotalSum = (carts: TCart[]) => {
-    let totalSum = 0; // Initialize total sum
+  // 🏎️ Fetch cart only when screen is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      dispatch(getCarts());
+    }, [dispatch]),
+  );
 
-    for (const cart of carts) {
-      totalSum += cart.items.reduce((accumulator, currentValue) => {
-        return (
-          accumulator +
-          currentValue.quantity *
-            Number((currentValue.productId as TProduct).price)
-        );
-      }, 0);
-    }
-
-    setTotal(totalSum); // Return the total sum
-  };
-
+  // 🚀 Navigate to Order Details
   const goToCartDetail = (cart: TCart) => {
     dispatch(setSelectedCart(cart));
     navigation.navigate('OrderDetailsScreen');
   };
-
-  useFocusEffect(
-    React.useCallback(() => {
-      dispatch(getCarts() as any); // Refresh cart when screen is focused
-    }, []),
-  );
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
