@@ -37,7 +37,7 @@ const CartScreen = ({navigation}: CartScreenProps) => {
       }
     };
     fetchCart();
-  }, []);
+  }, [cart]);
 
   const giveCartTotalSum = (carts: TCart[]) => {
     let totalSum = 0; // Initialize total sum
