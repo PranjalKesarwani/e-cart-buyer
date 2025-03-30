@@ -51,6 +51,13 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
       calculatePrices();
     }
   }, [selectedCart]);
+  useEffect(() => {
+    if (!selectedCart || selectedCart.items.length === 0) {
+      navigation.goBack();
+    } else {
+      calculatePrices();
+    }
+  }, [selectedCart, navigation]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
