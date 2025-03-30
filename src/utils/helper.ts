@@ -5,6 +5,7 @@ import {Dispatch} from '@reduxjs/toolkit';
 import {
   getCarts,
   getWishlists,
+  setCartItemsCount,
   setSelectedCart,
 } from '../redux/slices/buyerSlice';
 import {TCart} from '../types';
@@ -27,6 +28,15 @@ export const setBuyToken = async (token: string): Promise<void> => {
   }
 };
 
+export const calculateCartItemsCount = (carts: TCart[]) => {
+  let cartItemsCount = 0;
+  for (const cart of carts) {
+    cartItemsCount += cart.items.length;
+  }
+
+  return cartItemsCount;
+};
+
 export const manageCart = async (
   productId: string,
   action: string,
@@ -45,7 +55,9 @@ export const manageCart = async (
       (cartData: TCart) => cartData._id === selectedCart?._id,
     );
     dispatch(setSelectedCart(newCart));
-
+    console.log('--------->>>>>>', newCarts);
+    const cartItemsCount = calculateCartItemsCount(newCarts.cart);
+    dispatch(setCartItemsCount(cartItemsCount));
     showToast('success', res.data.message);
     return newCarts;
   } catch (error: any) {
