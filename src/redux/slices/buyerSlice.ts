@@ -86,6 +86,9 @@ const buyerSlice = createSlice({
     setSelectedCart: (state, action) => {
       state.selectedCart = action.payload;
     },
+    setSelectedShop: (state, action) => {
+      state.selectedShop = action.payload;
+    },
   },
   extraReducers: builder => {
     builder
@@ -127,6 +130,10 @@ const buyerSlice = createSlice({
   },
 });
 
-export const {fetchUserStart, setSelectedCart, setCartItemsCount} =
-  buyerSlice.actions;
+export const {
+  fetchUserStart,
+  setSelectedCart,
+  setCartItemsCount,
+  setSelectedShop,
+} = buyerSlice.actions;
 export default buyerSlice.reducer;

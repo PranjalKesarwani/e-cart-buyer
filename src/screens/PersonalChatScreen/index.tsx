@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -11,17 +11,20 @@ import {
   Image,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../types';
+import {RootStackParamList, TShop} from '../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {showToast} from '../../utils/toast';
+import {apiClient} from '../../services/api';
 
 type PersonalChatScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'PersonalChatScreen'
 >;
 
-const PersonalChatScreen = ({navigation, route}: PersonalChatScreenProps) => {
+const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
+  // const {shop}:{shop:TShop} = route;
   const [messages, setMessages] = useState(
     Array.from({length: 50}, (_, i) => ({
       id: i.toString(),
@@ -33,6 +36,22 @@ const PersonalChatScreen = ({navigation, route}: PersonalChatScreenProps) => {
   );
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+
+  useEffect(() => {
+    const getMessages = async () => {
+      try {
+        const messages = await apiClient.get('/buyer/get-chat-screen');
+        console.log('$$$$$$$$$$$$$$$$$$$$$$$$$', messages);
+      } catch (error: any) {
+        const errorMessage =
+          error.response?.data?.message ||
+          error.message ||
+          'Something went wrong';
+        showToast('error', errorMessage);
+      }
+    };
+    getMessages();
+  }, []);
 
   const sendMessage = () => {
     if (newMessage.trim() !== '') {

@@ -19,7 +19,7 @@ export type RootStackParamList = {
   PaymentScreen: undefined;
   OrderStatusScreen: undefined;
   YourOrdersScreen: undefined;
-  PersonalChatScreen: undefined;
+  PersonalChatScreen: {shop: TShop};
   OrderedItemDetailScreen: undefined;
 };
 
@@ -182,7 +182,7 @@ export type TShopLocation = {
 
 export type TShop = {
   _id: string;
-  sellerId: string;
+  sellerId: TSeller | string;
   shopName: string;
   shopTiming: {
     open: string;
@@ -199,4 +199,28 @@ export type TShop = {
   shopPic: string;
   createdAt: string;
   updatedAt: string;
+};
+export type TSeller = {
+  _id: String;
+  sellerName: string;
+  mobile: string;
+  isMobileVerified: boolean;
+  email: string;
+  password: string;
+  isEmailVerified: boolean;
+  adhaarId: string;
+  upi: string;
+  status: 'pending' | 'approved' | 'rejected';
+  adminApproval: 'approved' | 'rejected' | 'pending';
+  profilePic: string;
+  dailyViewCounts: {date: Date; count: number}[];
+  address: {
+    street: string;
+    landmark?: string;
+    city: string;
+    state: string;
+    pinCode: string;
+    country: string;
+  };
+  activeSessions?: string[];
 };

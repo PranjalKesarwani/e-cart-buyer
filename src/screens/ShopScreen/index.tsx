@@ -13,7 +13,13 @@ import {
 import Icons from 'react-native-vector-icons/AntDesign';
 import {apiClient} from '../../services/api';
 import {showToast} from '../../utils/toast';
-import {TCategory, TProduct, RootStackParamList} from '../../types';
+import {
+  TCategory,
+  TProduct,
+  RootStackParamList,
+  TShop,
+  TSeller,
+} from '../../types';
 import ProductCard from '../../components/ProductCard';
 import {Theme} from '../../theme/theme';
 import {useAppSelector} from '../../redux/hooks';
@@ -27,7 +33,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   const [shopCats, setShopCats] = useState<any>([]);
   const [products, setProducts] = useState<any>([]);
   const [selectedCat, setSelectedCat] = useState<any>(null);
-  const {shop}: any = route.params;
+  const {shop}: {shop: TShop} = route.params;
   const {cart = [], wishlist = []} = useAppSelector(state => state.buyer);
 
   const goToProductScreen = useCallback(
@@ -99,8 +105,9 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
     fetchData();
   }, [getShopCats, getShopProducts, shopCats.length]);
 
-  const onChatPress = () => {
-    navigation.navigate('PersonalChatScreen');
+  const onChatPress = (shop: TShop) => {
+    console.log('++++++++++++++++++++', shop);
+    navigation.navigate('PersonalChatScreen', {shop});
   };
 
   return (
@@ -157,7 +164,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
                   />
                 </View>
                 <TouchableOpacity
-                  onPress={onChatPress}
+                  onPress={() => onChatPress(shop)}
                   style={{
                     position: 'absolute',
                     bottom: 16,
@@ -186,7 +193,8 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
                 <View style={styles.infoRow}>
                   <Icons name="enviromento" size={16} color="#1F7D53" />
                   <Text style={styles.infoText}>
-                    {shop.sellerId.address.street}, {shop.sellerId.address.city}
+                    {(shop.sellerId as TSeller).address.street},{' '}
+                    {(shop.sellerId as TSeller).address.city}
                   </Text>
                 </View>
                 <View style={styles.infoRow}>
@@ -244,7 +252,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
               selectedCat={selectedCat}
               goToProductScreen={goToProductScreen}
               isFavorite={isInWishList}
-              onChatPress={onChatPress}
+              onChatPress={() => onChatPress(shop)}
             />
           );
         }}

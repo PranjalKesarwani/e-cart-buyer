@@ -10,10 +10,12 @@ import {
 } from 'react-native';
 import Icons from 'react-native-vector-icons/AntDesign';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../types';
+import {RootStackParamList, TShop} from '../../types';
 import {showToast} from '../../utils/toast';
 import {apiClient} from '../../services/api';
 import {Theme} from '../../theme/theme';
+import {setSelectedShop} from '../../redux/slices/buyerSlice';
+import {useDispatch} from 'react-redux';
 
 type ShopListProps = NativeStackScreenProps<
   RootStackParamList,
@@ -27,6 +29,7 @@ const CARD_WIDTH = width - 30 - CARD_MARGIN; // 15 padding on each side
 const ShopListScreen = ({route, navigation}: ShopListProps) => {
   const {category}: any = route.params;
   const [shops, setShops] = useState<any>([]);
+  const dispatch = useDispatch();
 
   const getShops = async () => {
     try {
@@ -39,7 +42,8 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
     }
   };
 
-  const goToShopScreen = (shop: any) => {
+  const goToShopScreen = (shop: TShop) => {
+    dispatch(setSelectedShop(shop));
     navigation.navigate('ShopScreen', {shop});
   };
 

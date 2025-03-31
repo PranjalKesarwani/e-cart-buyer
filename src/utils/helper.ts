@@ -55,7 +55,6 @@ export const manageCart = async (
       (cartData: TCart) => cartData._id === selectedCart?._id,
     );
     dispatch(setSelectedCart(newCart));
-    console.log('--------->>>>>>', newCarts);
     const cartItemsCount = calculateCartItemsCount(newCarts.cart);
     dispatch(setCartItemsCount(cartItemsCount));
     showToast('success', res.data.message);
