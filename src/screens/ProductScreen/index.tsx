@@ -45,8 +45,6 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
     manageWishList(product._id, !isFavorite, dispatch);
   };
 
-  useEffect(() => {}, []);
-
   const getSubCats = async () => {
     try {
       const res = await apiClient.get(
@@ -111,6 +109,10 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
   ) => {
     const newCarts = await manageCart(productId, action, quantity, dispatch);
     isProductExistInCart(newCarts.cart);
+  };
+
+  const onChatPress = () => {
+    navigation.navigate('PersonalChatScreen');
   };
 
   return (
@@ -188,7 +190,9 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
             <View style={styles.productInfoContainer}>
               <View style={[styles.productHeader]}>
                 <Text style={styles.productName}>{product.productName}</Text>
-                <TouchableOpacity style={styles.chatButton}>
+                <TouchableOpacity
+                  onPress={onChatPress}
+                  style={styles.chatButton}>
                   <Icons name="message1" size={24} color="#fff" />
                 </TouchableOpacity>
               </View>
@@ -282,6 +286,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
             product={item}
             selectedCat={selectedSubCat as TCategory}
             goToProductScreen={goToProductNestedProductScreen}
+            onChatPress={onChatPress}
           />
         )}
         ListFooterComponent={<View style={{height: 80}} />}

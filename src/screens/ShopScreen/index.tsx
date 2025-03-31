@@ -99,9 +99,9 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
     fetchData();
   }, [getShopCats, getShopProducts, shopCats.length]);
 
-  // useEffect(() => {
-  //   console.log('5555555555555', cart);
-  // }, []);
+  const onChatPress = () => {
+    navigation.navigate('PersonalChatScreen');
+  };
 
   return (
     <View style={styles.container}>
@@ -156,7 +156,8 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
                     // style={{position: 'absolute', top: 16, right: 16}}
                   />
                 </View>
-                <View
+                <TouchableOpacity
+                  onPress={onChatPress}
                   style={{
                     position: 'absolute',
                     bottom: 16,
@@ -172,7 +173,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
                     color="#FFF"
                     // style={{position: 'absolute', top: 16, right: 16}}
                   />
-                </View>
+                </TouchableOpacity>
               </View>
 
               <View style={styles.infoContainer}>
@@ -243,6 +244,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
               selectedCat={selectedCat}
               goToProductScreen={goToProductScreen}
               isFavorite={isInWishList}
+              onChatPress={onChatPress}
             />
           );
         }}
