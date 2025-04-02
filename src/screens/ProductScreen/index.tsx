@@ -7,6 +7,7 @@ import {
   TProduct,
   TCategory,
   TCart,
+  TShop,
 } from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
 import {Image} from 'react-native';
@@ -37,7 +38,9 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
   const [subCats, setSubCats] = useState<any[]>([]);
   const [selectedSubCat, setSelectedSubCat] = useState<null | TCategory>(null);
   const [products, setProducts] = useState<[] | TProduct[]>([]);
-  const {cartItemsCount, wishlist, cart} = useAppSelector(state => state.buyer);
+  const {cartItemsCount, wishlist, cart, selectedShop} = useAppSelector(
+    state => state.buyer,
+  );
   const [isItemInCart, setIsItemInCart] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const toggleFavorite = () => {
@@ -112,7 +115,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
   };
 
   const onChatPress = () => {
-    navigation.navigate('PersonalChatScreen');
+    navigation.navigate('PersonalChatScreen', {shop: selectedShop as TShop});
   };
 
   return (

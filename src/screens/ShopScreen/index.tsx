@@ -106,7 +106,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   }, [getShopCats, getShopProducts, shopCats.length]);
 
   const onChatPress = (shop: TShop) => {
-    console.log('++++++++++++++++++++', shop);
+    // console.log('++++++++++++++++++++', shop);
     navigation.navigate('PersonalChatScreen', {shop});
   };
 

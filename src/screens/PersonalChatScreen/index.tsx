@@ -24,7 +24,7 @@ type PersonalChatScreenProps = NativeStackScreenProps<
 >;
 
 const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
-  // const {shop}:{shop:TShop} = route;
+  const {shop}: {shop: TShop} = route.params;
   const [messages, setMessages] = useState(
     Array.from({length: 50}, (_, i) => ({
       id: i.toString(),
@@ -108,6 +108,10 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
       </View>
     </View>
   );
+
+  useEffect(() => {
+    console.log('7777&&&&&&&&&&&&&&&&&&&&&&', shop);
+  }, []);
 
   return (
     <KeyboardAvoidingView
