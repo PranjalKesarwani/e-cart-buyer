@@ -11,12 +11,13 @@ import {
   Image,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList, TShop} from '../../types';
+import {RootStackParamList, TSeller, TShop} from '../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {showToast} from '../../utils/toast';
 import {apiClient} from '../../services/api';
+import socket from '../../utils/socket';
 
 type PersonalChatScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -40,8 +41,10 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   useEffect(() => {
     const getMessages = async () => {
       try {
-        const messages = await apiClient.get('/buyer/get-chat-screen');
-        console.log('$$$$$$$$$$$$$$$$$$$$$$$$$', messages);
+        const messages = await apiClient.post('/buyer/get-chat-screen', {
+          sellerId: (shop.sellerId as TSeller)._id,
+        });
+        console.log('$$$$$$$$$$$$$$$$$$$$$$$$$');
       } catch (error: any) {
         const errorMessage =
           error.response?.data?.message ||
@@ -110,7 +113,14 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   );
 
   useEffect(() => {
-    console.log('7777&&&&&&&&&&&&&&&&&&&&&&', shop);
+    // Listen for incoming messages
+    socket.on('message', (data: string) => {
+      setMessages((prevMessages: any) => [...prevMessages, data]);
+    });
+
+    return () => {
+      socket.off('message'); // Clean up event listener
+    };
   }, []);
 
   return (
