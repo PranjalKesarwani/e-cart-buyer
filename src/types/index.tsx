@@ -224,3 +224,83 @@ export type TSeller = {
   };
   activeSessions?: string[];
 };
+
+export enum EDeletionType {
+  FOR_ME = 'for_me',
+  FOR_EVERYONE = 'for_everyone',
+}
+
+export enum ESystemMessageType {
+  CHAT_CREATED = 'chat_created',
+  USER_ADDED = 'user_added',
+  USER_REMOVED = 'user_removed',
+}
+
+export interface IMedia {
+  type: string;
+  url: string;
+  thumbnail?: string;
+  size?: number;
+  duration?: number;
+  fileName?: string;
+  caption?: string;
+}
+
+export interface IReadBy {
+  user: string; // User ID
+  onModel: 'Buyer' | 'Seller' | 'DeliveryPerson' | 'Admin';
+  timestamp: number;
+}
+
+export interface IMessageDelete {
+  user: string;
+  onModel: 'Buyer' | 'Seller' | 'DeliveryPerson' | 'Admin';
+  deletionType: EDeletionType;
+}
+
+export interface ISystemMessage {
+  type: ESystemMessageType;
+  affectedUsers: string[];
+  affectedUsersOnModel: string[];
+}
+
+export enum EMessageType {
+  TEXT = 'text',
+  IMAGE = 'image',
+  VIDEO = 'video',
+  DOCUMENT = 'document',
+  AUDIO = 'audio',
+  LOCATION = 'location',
+  CONTACT = 'contact',
+  SYSTEM = 'system',
+}
+
+export enum EMessageStatus {
+  SENT = 'sent',
+  DELIVERED = 'delivered',
+  READ = 'read',
+}
+
+export interface IMessage {
+  _id: string;
+  chatContactId: string;
+  sender: string;
+  senderOnModel: string;
+  content: {
+    text?: string;
+    media?: IMedia[];
+  };
+  type: EMessageType;
+  status: EMessageStatus;
+  readBy: IReadBy[];
+  deletedFor: IMessageDelete[];
+  replyTo?: String;
+  forwarded: boolean;
+  starredBy: IStarredBy[];
+  timestamp: Number;
+  systemMessage?: ISystemMessage;
+}
+export interface IStarredBy {
+  user: string;
+  onModel: 'Buyer' | 'Seller' | 'DeliveryPerson' | 'Admin';
+}

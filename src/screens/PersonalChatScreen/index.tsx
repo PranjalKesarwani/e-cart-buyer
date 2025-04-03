@@ -44,7 +44,6 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
         const messages = await apiClient.post('/buyer/get-chat-screen', {
           sellerId: (shop.sellerId as TSeller)._id,
         });
-        console.log('$$$$$$$$$$$$$$$$$$$$$$$$$');
       } catch (error: any) {
         const errorMessage =
           error.response?.data?.message ||
@@ -114,13 +113,11 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
 
   useEffect(() => {
     // Listen for incoming messages
-    socket.on('message', (data: string) => {
-      setMessages((prevMessages: any) => [...prevMessages, data]);
-    });
+    socket.emit('initiateChat', 'Your Message here');
 
-    return () => {
-      socket.off('message'); // Clean up event listener
-    };
+    // return () => {
+    //   socket.off('initiateChat'); // Clean up event listener
+    // };
   }, []);
 
   return (

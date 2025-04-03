@@ -7,6 +7,7 @@ export interface ServerToClientEvents {
 
 export interface ClientToServerEvents {
   sendMessage: (data: string) => void;
+  initiateChat: (data: string) => void;
 }
 
 const SOCKET_URL = 'http://10.0.2.2:8080'; // Replace with your backend URL
