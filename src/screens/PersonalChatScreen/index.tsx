@@ -11,7 +11,7 @@ import {
   Image,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList, TSeller, TShop} from '../../types';
+import {RootStackParamList, TChatContact, TSeller, TShop} from '../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -26,6 +26,7 @@ type PersonalChatScreenProps = NativeStackScreenProps<
 
 const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   const {shop}: {shop: TShop} = route.params;
+  const [chatContact, setChatContact] = useState<TChatContact | null>(null);
   const [messages, setMessages] = useState(
     Array.from({length: 50}, (_, i) => ({
       id: i.toString(),
@@ -37,13 +38,18 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   );
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isThisChatExist, setIsThisChatExist] = useState<boolean>(false);
 
   useEffect(() => {
     const getMessages = async () => {
       try {
-        const messages = await apiClient.post('/buyer/get-chat-screen', {
+        const res = await apiClient.post('/buyer/get-chat-screen', {
           sellerId: (shop.sellerId as TSeller)._id,
         });
+        console.log('Messages are------>', res.data.chat);
+        setIsThisChatExist(res.data.isChatExist);
+        setChatContact(res.data.chat);
+        setMessages(res.data.messages);
       } catch (error: any) {
         const errorMessage =
           error.response?.data?.message ||
@@ -57,18 +63,21 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
 
   const sendMessage = () => {
     if (newMessage.trim() !== '') {
-      const newMsg = {
-        id: Date.now().toString(),
+      // const newMsg = {
+      //   id: Date.now().toString(),
+      //   text: newMessage,
+      //   sender: 'user',
+      //   time: new Date().toLocaleTimeString([], {
+      //     hour: '2-digit',
+      //     minute: '2-digit',
+      //   }),
+      //   status: 'sent',
+      // };
+      // setMessages([newMsg, ...messages]);
+      // setNewMessage('');
+      const payload = {
         text: newMessage,
-        sender: 'user',
-        time: new Date().toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
-        status: 'sent',
       };
-      setMessages([newMsg, ...messages]);
-      setNewMessage('');
     }
   };
 
@@ -136,7 +145,10 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
           style={styles.headerAvatar}
         />
         <View style={styles.headerInfo}>
-          <Text style={styles.userName}>Pranjal</Text>
+          <Text style={styles.userName}>
+            dsfasdf{' '}
+            {/* {chatContact?.participants.find(p => p.onModel === "Seller" && p.userId)?.userId?.sellerName || "N/A"} */}
+          </Text>
           <Text style={styles.statusText}>
             {isTyping ? 'typing...' : 'online'}
           </Text>

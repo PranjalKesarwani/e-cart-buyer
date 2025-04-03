@@ -304,3 +304,40 @@ export interface IStarredBy {
   user: string;
   onModel: 'Buyer' | 'Seller' | 'DeliveryPerson' | 'Admin';
 }
+export interface IChatParticipant {
+  userId: string | TBuyer | TSeller;
+  onModel?: string;
+  role?: 'buyer' | 'seller' | 'admin' | 'superadmin' | 'delivery';
+  archived?: boolean;
+  muted?: boolean;
+}
+export type TChatContact = {
+  _id: string;
+  participants: IChatParticipant[];
+  chatType: 'private' | 'group'; // Add more types if needed
+  groupInfo: any | null;
+};
+
+export enum EChatType {
+  PRIVATE = 'private',
+  GROUP = 'group',
+}
+
+export interface IChat {
+  _id: string;
+  participants?: IChatParticipant[];
+  chatType?: EChatType;
+  groupInfo?: IChatGroupInfo;
+  lastMessage?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface IChatGroupInfo {
+  name: string;
+  creator: string;
+  creatorOnModel: string; // e.g. "Buyer", "Seller", etc.
+  admins: string[];
+  adminsOnModel: string[]; // Each admin's corresponding model name
+  image?: string;
+}
