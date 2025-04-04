@@ -146,7 +146,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
         />
         <View style={styles.headerInfo}>
           <Text style={styles.userName}>
-            dsfasdf{' '}
+            {chatContact?._id}
             {/* {chatContact?.participants.find(p => p.onModel === "Seller" && p.userId)?.userId?.sellerName || "N/A"} */}
           </Text>
           <Text style={styles.statusText}>
