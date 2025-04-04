@@ -46,7 +46,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
         const res = await apiClient.post('/buyer/get-chat-screen', {
           sellerId: (shop.sellerId as TSeller)._id,
         });
-        console.log('Messages are------>', res.data.chat);
+        // console.log('Messages are------>', res.data.chat);
         setIsThisChatExist(res.data.isChatExist);
         setChatContact(res.data.chat);
         setMessages(res.data.messages);
@@ -122,11 +122,11 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
 
   useEffect(() => {
     // Listen for incoming messages
-    socket.emit('initiateChat', 'Your Message here');
-
+    // socket.emit('initiateChat', 'Your Message here');
     // return () => {
     //   socket.off('initiateChat'); // Clean up event listener
     // };
+    console.log('--------->>>>>', shop);
   }, []);
 
   return (
@@ -146,14 +146,14 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
         />
         <View style={styles.headerInfo}>
           <Text style={styles.userName}>
-            {chatContact?._id}
+            {shop.shopName}
             {/* {chatContact?.participants.find(p => p.onModel === "Seller" && p.userId)?.userId?.sellerName || "N/A"} */}
           </Text>
           <Text style={styles.statusText}>
             {isTyping ? 'typing...' : 'online'}
           </Text>
         </View>
-        <View style={styles.headerIcons}>
+        {/* <View style={styles.headerIcons}>
           <FontAwesome
             name="video-camera"
             size={20}
@@ -167,7 +167,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
             style={styles.iconSpacing}
           />
           <MaterialIcon name="more-vert" size={24} color="white" />
-        </View>
+        </View> */}
       </View>
 
       <FlatList

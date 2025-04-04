@@ -313,9 +313,12 @@ export interface IChatParticipant {
 }
 export type TChatContact = {
   _id: string;
+  isChatInitiated: boolean;
   participants: IChatParticipant[];
   chatType: 'private' | 'group'; // Add more types if needed
   groupInfo: any | null;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export enum EChatType {
