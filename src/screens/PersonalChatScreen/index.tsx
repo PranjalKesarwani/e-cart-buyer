@@ -122,11 +122,11 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
 
   useEffect(() => {
     // Listen for incoming messages
-    // socket.emit('initiateChat', 'Your Message here');
+    socket.emit('initiateChat', 'Your Message here');
     // return () => {
     //   socket.off('initiateChat'); // Clean up event listener
     // };
-    console.log('--------->>>>>', shop);
+    // console.log('--------->>>>>', shop);
   }, []);
 
   return (
