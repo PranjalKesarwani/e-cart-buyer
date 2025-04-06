@@ -151,6 +151,8 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
       setNewMessage('');
     });
     socket.on('newPrivateMessage', (data: IMessage) => {
+      console.log('continuous data checking', data);
+
       handleContinuousChat(data, setMessages);
     });
 
