@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {
+  EMessageStatus,
   IMessage,
   RootStackParamList,
   TChatContact,
@@ -157,9 +158,19 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
         messageId: data._id,
         chatContactId: chatContact?._id,
       });
+      setMessages(prevMessages =>
+        prevMessages.map(msg =>
+          msg._id === data._id
+            ? {...msg, status: 'read' as EMessageStatus.READ}
+            : msg,
+        ),
+      );
     });
     socket.on('typing', () => setIsTyping(true));
-    socket.on('stopTyping', () => setIsTyping(false));
+    socket.on('stopTyping', () => {
+      console.log('hello--------___________');
+      setIsTyping(false);
+    });
     socket.on('userJoined', () => {
       setIsUserOnline(true);
     });
@@ -247,7 +258,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
             {/* {chatContact?.participants.find(p => p.onModel === "Seller" && p.userId)?.userId?.sellerName || "N/A"} */}
           </Text>
           <Text style={styles.statusText}>
-            {isTyping ? 'typing...' : 'online'}
+            {isTyping ? 'typing...' : isUserOnline ? 'online' : 'offline'}
           </Text>
         </View>
       </View>
