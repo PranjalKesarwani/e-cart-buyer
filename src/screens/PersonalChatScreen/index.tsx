@@ -18,6 +18,8 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {showToast} from '../../utils/toast';
 import {apiClient} from '../../services/api';
 import socket from '../../utils/socket';
+import {useAppSelector} from '../../redux/hooks';
+import {handleCreatedChat} from '../../utils/socketHelper';
 
 type PersonalChatScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -27,6 +29,7 @@ type PersonalChatScreenProps = NativeStackScreenProps<
 const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   const {shop}: {shop: TShop} = route.params;
   const [chatContact, setChatContact] = useState<TChatContact | null>(null);
+  const {_id: buyerId} = useAppSelector(state => state.buyer);
   const [messages, setMessages] = useState(
     Array.from({length: 50}, (_, i) => ({
       id: i.toString(),
@@ -63,21 +66,16 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
 
   const sendMessage = () => {
     if (newMessage.trim() !== '') {
-      // const newMsg = {
-      //   id: Date.now().toString(),
-      //   text: newMessage,
-      //   sender: 'user',
-      //   time: new Date().toLocaleTimeString([], {
-      //     hour: '2-digit',
-      //     minute: '2-digit',
-      //   }),
-      //   status: 'sent',
-      // };
-      // setMessages([newMsg, ...messages]);
-      // setNewMessage('');
       const payload = {
-        text: newMessage,
+        buyerId,
+        sellerId: (shop.sellerId as TSeller)._id,
+        message: newMessage,
+        messageType: 'text',
       };
+      socket.emit(
+        `${isThisChatExist ? 'sendPrivateMessage' : 'initiateChat'}`,
+        payload,
+      );
     }
   };
 
@@ -121,12 +119,19 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   );
 
   useEffect(() => {
-    // Listen for incoming messages
-    socket.emit('initiateChat', 'Your Message here');
-    // return () => {
-    //   socket.off('initiateChat'); // Clean up event listener
-    // };
-    // console.log('--------->>>>>', shop);
+    // Handler for new private messages
+
+    // Listen for the 'newPrivateMessage' event from the server
+    socket.on('chatCreated', (data: TChatContact) =>
+      handleCreatedChat(data, setMessages),
+    );
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      socket.off('chatCreated', (data: TChatContact) =>
+        handleCreatedChat(data, setMessages),
+      );
+    };
   }, []);
 
   return (

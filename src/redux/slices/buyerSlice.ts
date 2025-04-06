@@ -59,7 +59,6 @@ export const getWishlists = createAsyncThunk<[] | TWishlist[]>(
       const response = await apiClient.post<any>(`/buyer/action-wishlist`, {
         action: 'GET',
       });
-
       return response.data;
     } catch (error: any) {
       console.log(error);
@@ -97,7 +96,7 @@ const buyerSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchBuyer.fulfilled, (state, action: PayloadAction<any>) => {
-        Object.assign(state, action.payload); // Update state with API response
+        Object.assign(state, action.payload.buyerInfo); // Update state with API response
         state.loading = false;
         state.success = true;
       })

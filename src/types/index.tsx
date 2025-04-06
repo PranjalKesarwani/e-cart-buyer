@@ -317,6 +317,7 @@ export type TChatContact = {
   participants: IChatParticipant[];
   chatType: 'private' | 'group'; // Add more types if needed
   groupInfo: any | null;
+  lastMessage: IMessage | null | string;
   createdAt: Date;
   updatedAt: Date;
 };

@@ -3,11 +3,12 @@ import {io, Socket} from 'socket.io-client';
 // Define the TypeScript type for the socket
 export interface ServerToClientEvents {
   message: (data: string) => void;
+  chatCreated: (data: any) => void;
 }
 
 export interface ClientToServerEvents {
-  sendMessage: (data: string) => void;
-  initiateChat: (data: string) => void;
+  sendPrivateMessage: (data: any) => void;
+  initiateChat: (data: any) => void;
 }
 
 const SOCKET_URL = 'http://10.0.2.2:8080'; // Replace with your backend URL
