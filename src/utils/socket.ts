@@ -12,12 +12,16 @@ export interface ServerToClientEvents {
   userLeft: (data: any) => void;
   userOnline: (data: any) => void;
   userOffline: (data: any) => void;
+  typing: (data: any) => void;
+  stopTyping: (data: any) => void;
 }
 
 export interface ClientToServerEvents {
   sendPrivateMessage: (data: any) => void;
   initiateChat: (data: any) => void;
   joinPrivateChat: (data: any) => void;
+  typing: (data: any) => void;
+  stopTyping: (data: any) => void;
 }
 
 const SOCKET_URL = 'http://10.0.2.2:8080'; // Replace with your backend URL

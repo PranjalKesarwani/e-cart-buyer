@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -44,6 +44,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   const [newMessage, setNewMessage] = useState<string>('');
   const [isTyping, setIsTyping] = useState(false);
   const [isThisChatExist, setIsThisChatExist] = useState<boolean>(false);
+  const typingTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const getMessages = async () => {
@@ -152,6 +153,8 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
     socket.on('newPrivateMessage', (data: IMessage) => {
       handleContinuousChat(data, setMessages);
     });
+    socket.on('typing', () => setIsTyping(true));
+    socket.on('stopTyping', () => setIsTyping(false));
 
     // Clean up the event listener when the component unmounts
     return () => {
@@ -166,6 +169,8 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
       socket.off('newPrivateMessage', (data: IMessage) => {
         handleContinuousChat(data, setMessages);
       });
+      socket.off('typing', () => setIsTyping(true));
+      socket.off('stopTyping', () => setIsTyping(false));
     };
   }, []);
 
@@ -175,6 +180,34 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
       console.log(`Joined private chat with ID: ${chatContact._id}`);
     }
   }, [isThisChatExist, chatContact]);
+
+  useEffect(() => {
+    if (!isThisChatExist || !chatContact?._id) return;
+
+    // Emit "typing" event
+    if (newMessage.trim()) {
+      socket.emit('typing', {
+        chatContactId: chatContact._id,
+      });
+
+      // Clear existing timer if still typing
+      if (typingTimeout.current) {
+        clearTimeout(typingTimeout.current);
+      }
+
+      // Set a new timer to emit "stopTyping" after delay
+      typingTimeout.current = setTimeout(() => {
+        socket.emit('stopTyping', {
+          chatContactId: chatContact._id,
+        });
+      }, 1500); // 1.5 seconds of no typing = stop typing
+    } else {
+      // If text is cleared
+      socket.emit('stopTyping', {
+        chatContactId: chatContact._id,
+      });
+    }
+  }, [newMessage]);
 
   return (
     <KeyboardAvoidingView
