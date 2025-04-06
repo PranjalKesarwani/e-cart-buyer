@@ -23,5 +23,6 @@ export const handleContinuousChat = (
   data: IMessage,
   setMessages: React.Dispatch<React.SetStateAction<IMessage[] | []>>,
 ) => {
+  console.log('continuous data checking', data);
   setMessages(prevMessages => [data, ...prevMessages]);
 };

@@ -116,7 +116,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
       ]}>
       {item.senderOnModel === 'Seller' && (
         <Image
-          source={{uri: (shop.sellerId as TSeller).profilePic}}
+          source={{uri: (shop.sellerId as TSeller)?.profilePic}}
           style={styles.avatar}
         />
       )}
@@ -150,6 +150,9 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
       handleContinuousChat(data, setMessages);
       setNewMessage('');
     });
+    socket.on('newPrivateMessage', (data: IMessage) => {
+      handleContinuousChat(data, setMessages);
+    });
 
     // Clean up the event listener when the component unmounts
     return () => {
@@ -160,6 +163,9 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
       socket.off('messageSent', (data: IMessage) => {
         handleContinuousChat(data, setMessages);
         setNewMessage('');
+      });
+      socket.off('newPrivateMessage', (data: IMessage) => {
+        handleContinuousChat(data, setMessages);
       });
     };
   }, []);

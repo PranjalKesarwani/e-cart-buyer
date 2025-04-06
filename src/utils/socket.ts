@@ -5,6 +5,7 @@ export interface ServerToClientEvents {
   message: (data: string) => void;
   chatCreated: (data: any) => void;
   messageSent: (data: any) => void;
+  newPrivateMessage: (data: any) => void;
 }
 
 export interface ClientToServerEvents {
