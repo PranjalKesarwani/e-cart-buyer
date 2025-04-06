@@ -153,6 +153,10 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
     });
     socket.on('newPrivateMessage', (data: IMessage) => {
       handleContinuousChat(data, setMessages);
+      socket.emit('read', {
+        messageId: data._id,
+        chatContactId: chatContact?._id,
+      });
     });
     socket.on('typing', () => setIsTyping(true));
     socket.on('stopTyping', () => setIsTyping(false));

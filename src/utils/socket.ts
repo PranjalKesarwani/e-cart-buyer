@@ -20,6 +20,7 @@ export interface ClientToServerEvents {
   joinPrivateChat: (data: any) => void;
   typing: (data: any) => void;
   stopTyping: (data: any) => void;
+  read: (data: any) => void;
 }
 
 const SOCKET_URL = 'http://10.0.2.2:8080'; // Replace with your backend URL
