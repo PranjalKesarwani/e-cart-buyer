@@ -297,7 +297,7 @@ export interface IMessage {
   replyTo?: String;
   forwarded: boolean;
   starredBy: IStarredBy[];
-  timestamp: Number;
+  timestamp: number;
   systemMessage?: ISystemMessage;
 }
 export interface IStarredBy {

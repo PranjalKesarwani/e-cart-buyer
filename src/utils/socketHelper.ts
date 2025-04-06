@@ -1,10 +1,16 @@
-import {TChatContact} from '../types';
+import {IMessage, TChatContact} from '../types';
 
 export const handleCreatedChat = (
   data: TChatContact,
-  setMessages: React.Dispatch<React.SetStateAction<any[]>>,
+  setMessages: React.Dispatch<React.SetStateAction<IMessage[] | []>>,
 ) => {
-  console.log('-------------->>>>', data);
   // Update the messages state with the new message received from the server
-  //   setMessages(prevMessages => [...prevMessages, data.lastMessage]);
+  if (data?.lastMessage && typeof data.lastMessage === 'object') {
+    setMessages(prevMessages => [
+      ...prevMessages,
+      data.lastMessage as IMessage,
+    ]);
+  } else {
+    console.warn('Invalid lastMessage received:', data.lastMessage);
+  }
 };

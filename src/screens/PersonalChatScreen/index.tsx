@@ -11,7 +11,13 @@ import {
   Image,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList, TChatContact, TSeller, TShop} from '../../types';
+import {
+  IMessage,
+  RootStackParamList,
+  TChatContact,
+  TSeller,
+  TShop,
+} from '../../types';
 import Icon from 'react-native-vector-icons/AntDesign';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -20,6 +26,7 @@ import {apiClient} from '../../services/api';
 import socket from '../../utils/socket';
 import {useAppSelector} from '../../redux/hooks';
 import {handleCreatedChat} from '../../utils/socketHelper';
+import moment from 'moment';
 
 type PersonalChatScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -30,15 +37,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   const {shop}: {shop: TShop} = route.params;
   const [chatContact, setChatContact] = useState<TChatContact | null>(null);
   const {_id: buyerId} = useAppSelector(state => state.buyer);
-  const [messages, setMessages] = useState(
-    Array.from({length: 50}, (_, i) => ({
-      id: i.toString(),
-      text: `Message ${i + 1}`,
-      sender: i % 2 === 0 ? 'user' : 'other',
-      time: '10:30 AM',
-      status: i % 3 === 0 ? 'sent' : i % 3 === 1 ? 'delivered' : 'read',
-    })),
-  );
+  const [messages, setMessages] = useState<IMessage[] | []>([]);
   const [newMessage, setNewMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isThisChatExist, setIsThisChatExist] = useState<boolean>(false);
@@ -92,27 +91,33 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
     }
   };
 
-  const renderItem = ({item}: {item: (typeof messages)[0]}) => (
+  const renderItem = ({item}: {item: IMessage}) => (
     <View
       style={[
         styles.messageContainer,
-        item.sender === 'user' ? styles.userContainer : styles.otherContainer,
+        item.senderOnModel === 'Buyer'
+          ? styles.userContainer
+          : styles.otherContainer,
       ]}>
-      {item.sender === 'other' && (
+      {item.senderOnModel === 'Seller' && (
         <Image
-          source={{uri: 'https://i.pravatar.cc/150?img=5'}}
+          source={{uri: (shop.sellerId as TSeller).profilePic}}
           style={styles.avatar}
         />
       )}
       <View
         style={[
           styles.messageBubble,
-          item.sender === 'user' ? styles.userBubble : styles.otherBubble,
+          item.senderOnModel === 'Buyer'
+            ? styles.userBubble
+            : styles.otherBubble,
         ]}>
-        <Text style={styles.messageText}>{item.text}</Text>
+        <Text style={styles.messageText}>{item.content.text}</Text>
         <View style={styles.timeContainer}>
-          <Text style={styles.timeText}>{item.time}</Text>
-          {item.sender === 'user' && renderMessageStatus(item.status)}
+          <Text style={styles.timeText}>
+            {moment.unix(item.timestamp).format('h:mm A')}
+          </Text>
+          {item.senderOnModel === 'Buyer' && renderMessageStatus(item.status)}
         </View>
       </View>
     </View>
@@ -178,7 +183,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
       <FlatList
         data={messages}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item._id}
         contentContainerStyle={styles.listContent}
         inverted
       />
