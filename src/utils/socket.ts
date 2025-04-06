@@ -10,8 +10,6 @@ export interface ServerToClientEvents {
   userStoppedTyping: (data: any) => void;
   userJoined: (data: any) => void;
   userLeft: (data: any) => void;
-  userOnline: (data: any) => void;
-  userOffline: (data: any) => void;
   typing: (data: any) => void;
   stopTyping: (data: any) => void;
 }

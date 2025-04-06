@@ -45,6 +45,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   const [isTyping, setIsTyping] = useState(false);
   const [isThisChatExist, setIsThisChatExist] = useState<boolean>(false);
   const typingTimeout = useRef<NodeJS.Timeout | null>(null);
+  const [isUserOnline, setIsUserOnline] = useState<boolean>(false);
 
   useEffect(() => {
     const getMessages = async () => {
@@ -155,6 +156,12 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
     });
     socket.on('typing', () => setIsTyping(true));
     socket.on('stopTyping', () => setIsTyping(false));
+    socket.on('userJoined', () => {
+      setIsUserOnline(true);
+    });
+    socket.on('userLeft', () => {
+      setIsUserOnline(false);
+    });
 
     // Clean up the event listener when the component unmounts
     return () => {
@@ -171,6 +178,12 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
       });
       socket.off('typing', () => setIsTyping(true));
       socket.off('stopTyping', () => setIsTyping(false));
+      socket.on('userJoined', () => {
+        setIsUserOnline(true);
+      });
+      socket.on('userLeft', () => {
+        setIsUserOnline(false);
+      });
     };
   }, []);
 
@@ -233,21 +246,6 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
             {isTyping ? 'typing...' : 'online'}
           </Text>
         </View>
-        {/* <View style={styles.headerIcons}>
-          <FontAwesome
-            name="video-camera"
-            size={20}
-            color="white"
-            style={styles.iconSpacing}
-          />
-          <MaterialIcon
-            name="call"
-            size={24}
-            color="white"
-            style={styles.iconSpacing}
-          />
-          <MaterialIcon name="more-vert" size={24} color="white" />
-        </View> */}
       </View>
 
       <FlatList
