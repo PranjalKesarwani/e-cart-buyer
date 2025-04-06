@@ -4,6 +4,7 @@ import {io, Socket} from 'socket.io-client';
 export interface ServerToClientEvents {
   message: (data: string) => void;
   chatCreated: (data: any) => void;
+  messageSent: (data: any) => void;
 }
 
 export interface ClientToServerEvents {

@@ -25,7 +25,10 @@ import {showToast} from '../../utils/toast';
 import {apiClient} from '../../services/api';
 import socket from '../../utils/socket';
 import {useAppSelector} from '../../redux/hooks';
-import {handleCreatedChat} from '../../utils/socketHelper';
+import {
+  handleContinuousChat,
+  handleCreatedChat,
+} from '../../utils/socketHelper';
 import moment from 'moment';
 
 type PersonalChatScreenProps = NativeStackScreenProps<
@@ -38,7 +41,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   const [chatContact, setChatContact] = useState<TChatContact | null>(null);
   const {_id: buyerId} = useAppSelector(state => state.buyer);
   const [messages, setMessages] = useState<IMessage[] | []>([]);
-  const [newMessage, setNewMessage] = useState('');
+  const [newMessage, setNewMessage] = useState<string>('');
   const [isTyping, setIsTyping] = useState(false);
   const [isThisChatExist, setIsThisChatExist] = useState<boolean>(false);
 
@@ -65,12 +68,24 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
 
   const sendMessage = () => {
     if (newMessage.trim() !== '') {
-      const payload = {
-        buyerId,
-        sellerId: (shop.sellerId as TSeller)._id,
-        message: newMessage,
-        messageType: 'text',
-      };
+      let payload: any = {};
+      if (!isThisChatExist) {
+        payload = {
+          buyerId,
+          sellerId: (shop.sellerId as TSeller)._id,
+          message: newMessage,
+          messageType: 'text',
+        };
+      } else {
+        payload = {
+          chatContactId: chatContact?._id,
+          message: newMessage,
+          messageType: 'text',
+          sender: buyerId,
+          senderOnModel: 'Buyer',
+        };
+      }
+
       socket.emit(
         `${isThisChatExist ? 'sendPrivateMessage' : 'initiateChat'}`,
         payload,
@@ -127,15 +142,25 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
     // Handler for new private messages
 
     // Listen for the 'newPrivateMessage' event from the server
-    socket.on('chatCreated', (data: TChatContact) =>
-      handleCreatedChat(data, setMessages),
-    );
+    socket.on('chatCreated', (data: TChatContact) => {
+      handleCreatedChat(data, setMessages, setChatContact);
+      setNewMessage('');
+    });
+    socket.on('messageSent', (data: IMessage) => {
+      handleContinuousChat(data, setMessages);
+      setNewMessage('');
+    });
 
     // Clean up the event listener when the component unmounts
     return () => {
-      socket.off('chatCreated', (data: TChatContact) =>
-        handleCreatedChat(data, setMessages),
-      );
+      socket.off('chatCreated', (data: TChatContact) => {
+        handleCreatedChat(data, setMessages, setChatContact);
+        setNewMessage('');
+      });
+      socket.off('messageSent', (data: IMessage) => {
+        handleContinuousChat(data, setMessages);
+        setNewMessage('');
+      });
     };
   }, []);
 
