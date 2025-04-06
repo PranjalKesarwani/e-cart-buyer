@@ -51,7 +51,6 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
         const res = await apiClient.post('/buyer/get-chat-screen', {
           sellerId: (shop.sellerId as TSeller)._id,
         });
-        // console.log('Messages are------>', res.data.chat);
         setIsThisChatExist(res.data.isChatExist);
         setChatContact(res.data.chat);
         setMessages(res.data.messages);
@@ -151,8 +150,6 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
       setNewMessage('');
     });
     socket.on('newPrivateMessage', (data: IMessage) => {
-      console.log('continuous data checking', data);
-
       handleContinuousChat(data, setMessages);
     });
 
@@ -171,6 +168,13 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
       });
     };
   }, []);
+
+  useEffect(() => {
+    if (isThisChatExist && chatContact?._id) {
+      socket.emit('joinPrivateChat', {chatContactId: chatContact._id});
+      console.log(`Joined private chat with ID: ${chatContact._id}`);
+    }
+  }, [isThisChatExist, chatContact]);
 
   return (
     <KeyboardAvoidingView

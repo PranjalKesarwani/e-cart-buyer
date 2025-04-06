@@ -23,5 +23,11 @@ export const handleContinuousChat = (
   data: IMessage,
   setMessages: React.Dispatch<React.SetStateAction<IMessage[] | []>>,
 ) => {
-  setMessages(prevMessages => [data, ...prevMessages]);
+  setMessages(prevMessages => {
+    const isDuplicate = prevMessages.some(
+      msg => msg._id === data._id || msg.timestamp === data.timestamp,
+    );
+    if (isDuplicate) return prevMessages;
+    return [data, ...prevMessages]; // or [data, ...prevMessages] if latest at top
+  });
 };

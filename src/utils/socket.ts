@@ -6,11 +6,18 @@ export interface ServerToClientEvents {
   chatCreated: (data: any) => void;
   messageSent: (data: any) => void;
   newPrivateMessage: (data: any) => void;
+  userTyping: (data: any) => void;
+  userStoppedTyping: (data: any) => void;
+  userJoined: (data: any) => void;
+  userLeft: (data: any) => void;
+  userOnline: (data: any) => void;
+  userOffline: (data: any) => void;
 }
 
 export interface ClientToServerEvents {
   sendPrivateMessage: (data: any) => void;
   initiateChat: (data: any) => void;
+  joinPrivateChat: (data: any) => void;
 }
 
 const SOCKET_URL = 'http://10.0.2.2:8080'; // Replace with your backend URL
