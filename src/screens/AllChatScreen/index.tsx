@@ -1,14 +1,35 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, FlatList, Image} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {RootStackParamList} from '../../types';
+import {apiClient} from '../../services/api';
 
 type AllChatScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'AllChatScreen'
 >;
-
+type TChatContactAllScreen = {
+  chatContactId: string;
+  userType: 'Buyer' | 'Seller' | 'DeliveryPerson' | 'Admin';
+  lastMessage: {
+    content: {
+      text: string;
+      media: string[];
+    };
+    _id: string;
+    sender: string;
+    senderOnModel: 'Buyer' | 'Seller' | 'DeliveryPerson' | 'Admin';
+    type: 'text' | 'image' | 'video' | string; // adjust based on your enum
+    status: 'sent' | 'delivered' | 'read' | string; // adjust as needed
+    timestamp: number;
+  };
+  updatedAt: string;
+  shop?: {
+    shopName: string;
+    shopPic: string;
+  };
+};
 // Mock data structure similar to WhatsApp
 const chatData = Array.from({length: 20}, (_, i) => ({
   id: `chat${i + 1}`,
@@ -21,9 +42,26 @@ const chatData = Array.from({length: 20}, (_, i) => ({
 }));
 
 const AllChatScreen = ({navigation}: AllChatScreenProps) => {
+  const [chatContacts, setChatContacts] =
+    useState<TChatContactAllScreen | null>(null);
+  useEffect(() => {
+    const getChatContacts = async () => {
+      try {
+        const res = await apiClient.get('/buyer/get-chat-contacts');
+        console.log('Chat contacts fetched successfully:', res.data);
+        setChatContacts(res.data.chatContacts);
+      } catch (error) {
+        console.log('Error fetching chat contacts:', error);
+      }
+    };
+    getChatContacts();
+  }, []);
   const renderItem = ({item}: {item: (typeof chatData)[0]}) => (
     <TouchableOpacity
-      onPress={() => navigation.navigate('PersonalChatScreen')}
+      onPress={() => {
+        console.log('Chat item pressed:', item.name);
+        // navigation.navigate('PersonalChatScreen')
+      }}
       style={styles.chatItem}>
       <View style={styles.avatarContainer}>
         <Image source={{uri: item.avatar}} style={styles.avatar} />
