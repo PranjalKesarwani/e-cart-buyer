@@ -4,6 +4,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {RootStackParamList} from '../../types';
 import {apiClient} from '../../services/api';
+import moment from 'moment';
 
 type AllChatScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -42,8 +43,9 @@ const chatData = Array.from({length: 20}, (_, i) => ({
 }));
 
 const AllChatScreen = ({navigation}: AllChatScreenProps) => {
-  const [chatContacts, setChatContacts] =
-    useState<TChatContactAllScreen | null>(null);
+  const [chatContacts, setChatContacts] = useState<
+    TChatContactAllScreen[] | null
+  >(null);
   useEffect(() => {
     const getChatContacts = async () => {
       try {
@@ -56,22 +58,25 @@ const AllChatScreen = ({navigation}: AllChatScreenProps) => {
     };
     getChatContacts();
   }, []);
-  const renderItem = ({item}: {item: (typeof chatData)[0]}) => (
+  const renderItem = ({item}: {item: TChatContactAllScreen}) => (
     <TouchableOpacity
       onPress={() => {
-        console.log('Chat item pressed:', item.name);
+        console.log('Chat item pressed:', item.shop?.shopName);
         // navigation.navigate('PersonalChatScreen')
       }}
       style={styles.chatItem}>
       <View style={styles.avatarContainer}>
-        <Image source={{uri: item.avatar}} style={styles.avatar} />
-        {item.online && <View style={styles.onlineIndicator} />}
+        <Image source={{uri: item.shop?.shopPic}} style={styles.avatar} />
+        {/* {item.online && <View style={styles.onlineIndicator} />} */}
       </View>
 
       <View style={styles.chatContent}>
         <View style={styles.headerRow}>
-          <Text style={styles.contactName}>{item.name}</Text>
-          <Text style={styles.timestamp}>{item.timestamp}</Text>
+          <Text style={styles.contactName}>{item.shop?.shopName}</Text>
+          <Text style={styles.timestamp}>
+            {' '}
+            {moment.unix(item.lastMessage.timestamp).format('h:mm A')}
+          </Text>
         </View>
 
         <View style={styles.messageRow}>
@@ -79,13 +84,13 @@ const AllChatScreen = ({navigation}: AllChatScreenProps) => {
             style={styles.lastMessage}
             numberOfLines={1}
             ellipsizeMode="tail">
-            {item.lastMessage}
+            {item.lastMessage.content.text}
           </Text>
-          {item.unreadCount > 0 && (
+          {/* {item.unreadCount > 0 && (
             <View style={styles.unreadBadge}>
               <Text style={styles.unreadText}>{item.unreadCount}</Text>
             </View>
-          )}
+          )} */}
         </View>
       </View>
     </TouchableOpacity>
@@ -94,9 +99,9 @@ const AllChatScreen = ({navigation}: AllChatScreenProps) => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={chatData}
+        data={chatContacts}
         renderItem={renderItem}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.chatContactId}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
     </View>
