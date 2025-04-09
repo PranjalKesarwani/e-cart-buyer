@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, FlatList, Image} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {RootStackParamList} from '../../types';
+import {IMessage, RootStackParamList, TChatContact} from '../../types';
 import {apiClient} from '../../services/api';
 import moment from 'moment';
 
@@ -43,9 +43,7 @@ const chatData = Array.from({length: 20}, (_, i) => ({
 }));
 
 const AllChatScreen = ({navigation}: AllChatScreenProps) => {
-  const [chatContacts, setChatContacts] = useState<
-    TChatContactAllScreen[] | null
-  >(null);
+  const [chatContacts, setChatContacts] = useState<TChatContact[] | null>(null);
   useEffect(() => {
     const getChatContacts = async () => {
       try {
@@ -58,24 +56,39 @@ const AllChatScreen = ({navigation}: AllChatScreenProps) => {
     };
     getChatContacts();
   }, []);
-  const renderItem = ({item}: {item: TChatContactAllScreen}) => (
+
+  const getShopData = (item: TChatContact) => {
+    const sellerParticipant = item.participants.find(
+      participant => participant.onModel === 'Seller',
+    );
+    const shopPic = sellerParticipant?.shop?.shopPic;
+    const shopName = sellerParticipant?.shop?.shopName;
+
+    return {shopPic, shopName};
+  };
+  const renderItem = ({item}: {item: TChatContact}) => (
     <TouchableOpacity
       onPress={() => {
-        console.log('Chat item pressed:', item.shop?.shopName);
+        console.log('Chat item pressed:', item.participants);
         // navigation.navigate('PersonalChatScreen')
       }}
       style={styles.chatItem}>
       <View style={styles.avatarContainer}>
-        <Image source={{uri: item.shop?.shopPic}} style={styles.avatar} />
+        <Image
+          source={{uri: getShopData(item).shopPic}}
+          style={styles.avatar}
+        />
         {/* {item.online && <View style={styles.onlineIndicator} />} */}
       </View>
 
       <View style={styles.chatContent}>
         <View style={styles.headerRow}>
-          <Text style={styles.contactName}>{item.shop?.shopName}</Text>
+          <Text style={styles.contactName}>{getShopData(item).shopName}</Text>
           <Text style={styles.timestamp}>
             {' '}
-            {moment.unix(item.lastMessage.timestamp).format('h:mm A')}
+            {moment
+              .unix((item.lastMessage as IMessage).timestamp)
+              .format('h:mm A')}
           </Text>
         </View>
 
@@ -84,7 +97,7 @@ const AllChatScreen = ({navigation}: AllChatScreenProps) => {
             style={styles.lastMessage}
             numberOfLines={1}
             ellipsizeMode="tail">
-            {item.lastMessage.content.text}
+            {(item.lastMessage as IMessage).content.text}
           </Text>
           {/* {item.unreadCount > 0 && (
             <View style={styles.unreadBadge}>
@@ -101,7 +114,7 @@ const AllChatScreen = ({navigation}: AllChatScreenProps) => {
       <FlatList
         data={chatContacts}
         renderItem={renderItem}
-        keyExtractor={item => item.chatContactId}
+        keyExtractor={item => item._id}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
     </View>

@@ -310,6 +310,7 @@ export interface IChatParticipant {
   role?: 'buyer' | 'seller' | 'admin' | 'superadmin' | 'delivery';
   archived?: boolean;
   muted?: boolean;
+  shop?: TShop;
 }
 export type TChatContact = {
   _id: string;
