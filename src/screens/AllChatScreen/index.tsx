@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, FlatList, Image} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {IMessage, RootStackParamList, TChatContact} from '../../types';
+import {IMessage, RootStackParamList, TChatContact, TShop} from '../../types';
 import {apiClient} from '../../services/api';
 import moment from 'moment';
 
@@ -63,14 +63,17 @@ const AllChatScreen = ({navigation}: AllChatScreenProps) => {
     );
     const shopPic = sellerParticipant?.shop?.shopPic;
     const shopName = sellerParticipant?.shop?.shopName;
+    const shop = sellerParticipant?.shop;
 
-    return {shopPic, shopName};
+    return {shopPic, shopName, shop};
   };
   const renderItem = ({item}: {item: TChatContact}) => (
     <TouchableOpacity
       onPress={() => {
         console.log('Chat item pressed:', item.participants);
-        // navigation.navigate('PersonalChatScreen')
+        const shopInfo = getShopData(item);
+        const shop = shopInfo.shop as TShop;
+        navigation.navigate('PersonalChatScreen', {shop});
       }}
       style={styles.chatItem}>
       <View style={styles.avatarContainer}>
