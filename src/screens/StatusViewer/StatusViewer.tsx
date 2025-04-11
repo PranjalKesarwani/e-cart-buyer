@@ -48,7 +48,10 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
   const currentStatus = statusUpdates[currentStatusIndex]?.content;
   const shopInfo = statusUpdates[currentStatusIndex]?.shopId;
   const progress = useSharedValue(0);
-  const duration = 5000; // 5 seconds per status
+  const duration = moment(statusUpdates[currentStatusIndex]?.expiresAt).diff(
+    moment(statusUpdates[currentStatusIndex]?.createdAt),
+    'milliseconds',
+  );
 
   const progressStyle = useAnimatedStyle(() => ({
     width: `${progress.value * 100}%`,
@@ -66,9 +69,7 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
         easing: Easing.linear,
       },
       finished => {
-        if (finished) {
-          runOnJS(handleSwipe)('left');
-        }
+        if (finished) runOnJS(handleSwipe)('left');
       },
     );
   };
@@ -99,7 +100,10 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
           <View key={index} style={styles.progressBarBackground}>
             {index === currentStatusIndex && (
               <Animated.View
-                style={[styles.progressBarForeground, progressStyle]}
+                style={[
+                  styles.progressBarForeground,
+                  progressStyle, // Correct usage without .value
+                ]}
               />
             )}
             {index < currentStatusIndex && (
