@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {apiClient} from '../../services/api';
 
 const StatusScreen = () => {
   // Mock data for status updates
@@ -36,6 +37,19 @@ const StatusScreen = () => {
     },
     // Add more status items...
   ];
+
+  const getStatusUpdates = async () => {
+    try {
+      const res = await apiClient.get('/buyer/get-nearby-status-updates');
+      console.log('Status updates:', res.data.statusUpdates);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getStatusUpdates();
+  }, []);
 
   const renderStatusItem = (item: any, index: any) => {
     return (

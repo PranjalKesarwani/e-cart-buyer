@@ -48,7 +48,6 @@ const AllChatScreen = ({navigation}: AllChatScreenProps) => {
     const getChatContacts = async () => {
       try {
         const res = await apiClient.get('/buyer/get-chat-contacts');
-        console.log('Chat contacts fetched successfully:', res.data);
         setChatContacts(res.data.chatContacts);
       } catch (error) {
         console.log('Error fetching chat contacts:', error);

@@ -21,6 +21,7 @@ export type RootStackParamList = {
   YourOrdersScreen: undefined;
   PersonalChatScreen: {shop: TShop};
   OrderedItemDetailScreen: undefined;
+  StatusViewer: {statusUpdates: any; currentIndex: any};
 };
 
 export type RootDrawerParamList = {
@@ -346,3 +347,33 @@ export interface IChatGroupInfo {
   adminsOnModel: string[]; // Each admin's corresponding model name
   image?: string;
 }
+
+export type StatusUpdateType = {
+  _id: string;
+  sellerRegId: string;
+  shopId: {
+    _id: string;
+    shopName: string;
+    shopPic: string;
+  };
+  content: {
+    background: {
+      type: 'color' | 'image';
+      value: string;
+    };
+    text: {
+      content: string;
+      fontStyle: string;
+      color: string;
+      alignment: 'center' | 'left' | 'right';
+      position: {
+        x: number;
+        y: number;
+      };
+    };
+    drawings: any[];
+  };
+  expiresAt: string;
+  createdAt: string;
+  updatedAt: string;
+};
