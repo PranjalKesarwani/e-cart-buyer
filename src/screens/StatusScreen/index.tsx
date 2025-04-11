@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -9,10 +9,28 @@ import {
   ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
+import {StackNavigationProp} from '@react-navigation/stack';
+
 import {apiClient} from '../../services/api';
+import {MainTabsParamList, RootStackParamList} from '../../types';
+import {useNavigation} from '@react-navigation/native';
+type StatusScreenNavigationProp = StackNavigationProp<
+  MainTabsParamList,
+  'StatusScreen'
+>;
+type NavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'StatusViewer'
+>;
 
 const StatusScreen = () => {
   // Mock data for status updates
+  const navigation = useNavigation<NavigationProp>();
+  // const [statusUpdates, setStatusUpdates] = useState<any[]>([]);
   const statusUpdates = [
     {
       id: 1,
@@ -42,6 +60,7 @@ const StatusScreen = () => {
     try {
       const res = await apiClient.get('/buyer/get-nearby-status-updates');
       console.log('Status updates:', res.data.statusUpdates);
+      // setStatusUpdates(res.data.statusUpdates);
     } catch (error) {
       console.log(error);
     }
@@ -50,10 +69,19 @@ const StatusScreen = () => {
   useEffect(() => {
     getStatusUpdates();
   }, []);
+  const handleStatusPress = (statusIndex: number) => {
+    navigation.navigate('StatusViewer', {
+      statusUpdates,
+      currentIndex: 1,
+    });
+  };
 
   const renderStatusItem = (item: any, index: any) => {
     return (
-      <TouchableOpacity key={item.id} style={styles.statusItem}>
+      <TouchableOpacity
+        key={item.id}
+        style={styles.statusItem}
+        onPress={() => handleStatusPress(item)}>
         <View style={styles.avatarContainer}>
           <Image
             source={{uri: item.avatar}}

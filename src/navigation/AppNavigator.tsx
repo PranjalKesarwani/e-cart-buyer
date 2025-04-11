@@ -21,6 +21,7 @@ import PaymentScreen from '../screens/PaymentScreen';
 import OrderStatusScreen from '../screens/OrderStatusScreen';
 import PersonalChatScreen from '../screens/PersonalChatScreen';
 import OrderedItemDetailScreen from '../screens/OrderedItemDetailScreen';
+import StatusViewer from '../screens/StatusViewer/StatusViewer';
 // import StatusViewer from '../screens/StatusViewer/StatusViewer';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -77,11 +78,11 @@ const AppNavigator = () => {
       <Stack.Screen name="PaymentScreen" component={PaymentScreen} />
       <Stack.Screen name="OrderStatusScreen" component={OrderStatusScreen} />
       <Stack.Screen name="PersonalChatScreen" component={PersonalChatScreen} />
-      {/* <Stack.Screen 
-          name="StatusViewer" 
-          component={StatusViewer} 
-          options={{ headerShown: false }}
-        /> */}
+      <Stack.Screen
+        name="StatusViewer"
+        component={StatusViewer}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name="OrderedItemDetailScreen"
         component={OrderedItemDetailScreen}

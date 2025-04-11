@@ -22,6 +22,7 @@ export type RootStackParamList = {
   PersonalChatScreen: {shop: TShop};
   OrderedItemDetailScreen: undefined;
   StatusViewer: {statusUpdates: any; currentIndex: any};
+  // StatusScreen: undefined;
 };
 
 export type RootDrawerParamList = {
@@ -37,7 +38,7 @@ export type RootDrawerParamList = {
 };
 export type MainTabsParamList = {
   AllChatScreen: undefined;
-  Status: undefined;
+  StatusScreen: undefined;
   Bid: undefined;
 };
 export interface AuthState {

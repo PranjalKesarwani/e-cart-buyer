@@ -31,7 +31,7 @@ const MainTabsNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Status"
+        name="StatusScreen"
         component={StatusScreen}
         options={{
           tabBarIcon: ({color}) => (
