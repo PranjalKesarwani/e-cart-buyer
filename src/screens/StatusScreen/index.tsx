@@ -9,58 +9,33 @@ import {
   ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {
-  NativeStackNavigationProp,
-  NativeStackScreenProps,
-} from '@react-navigation/native-stack';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
 
 import {apiClient} from '../../services/api';
-import {MainTabsParamList, RootStackParamList} from '../../types';
-import {useNavigation} from '@react-navigation/native';
-type StatusScreenNavigationProp = StackNavigationProp<
+import {
   MainTabsParamList,
-  'StatusScreen'
->;
+  RootStackParamList,
+  StatusUpdateType,
+} from '../../types';
+
 type NavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'StatusViewer'
 >;
 
 const StatusScreen = () => {
-  // Mock data for status updates
   const navigation = useNavigation<NavigationProp>();
-  // const [statusUpdates, setStatusUpdates] = useState<any[]>([]);
-  const statusUpdates = [
-    {
-      id: 1,
-      name: 'My Status',
-      time: 'Tap to add status update',
-      avatar: 'https://i.pravatar.cc/150?img=1',
-      isViewed: false,
-    },
-    {
-      id: 2,
-      name: 'John',
-      time: '20 minutes ago',
-      avatar: 'https://i.pravatar.cc/150?img=2',
-      isViewed: false,
-    },
-    {
-      id: 3,
-      name: 'Alice',
-      time: '45 minutes ago',
-      avatar: 'https://i.pravatar.cc/150?img=3',
-      isViewed: true,
-    },
-    // Add more status items...
-  ];
+  const [statusUpdates, setStatusUpdates] = useState<StatusUpdateType[] | []>(
+    [],
+  );
 
   const getStatusUpdates = async () => {
     try {
       const res = await apiClient.get('/buyer/get-nearby-status-updates');
-      console.log('Status updates:', res.data.statusUpdates);
-      // setStatusUpdates(res.data.statusUpdates);
+      // console.log('Status updatesxxx:', res.data);
+      setStatusUpdates(res.data.statusUpdates);
     } catch (error) {
       console.log(error);
     }
@@ -69,23 +44,45 @@ const StatusScreen = () => {
   useEffect(() => {
     getStatusUpdates();
   }, []);
+
   const handleStatusPress = (statusIndex: number) => {
     navigation.navigate('StatusViewer', {
       statusUpdates,
-      currentIndex: 1,
+      currentIndex: statusIndex,
     });
   };
 
-  const renderStatusItem = (item: any, index: any) => {
+  const renderStatusItem = (item: StatusUpdateType, index: number) => {
+    if (!item || !item.content || !item.content.background) return null;
+
+    const isImage = item.content.background.type === 'image';
+    console.log('Status item:', item);
+    console.log('Status item content:', item.content);
+    console.log('Status item background:', item.content.background);
+    console.log('Status item background type:', item.content.background.type);
+    console.log('Status item background value:', item.content.background.value);
+    console.log('Status item createdAt:', item.createdAt);
+    console.log('Status item index:', index);
+
+    const avatar = isImage
+      ? item.content.background.value
+      : 'https://via.placeholder.com/150';
+
+    const name = `Status ${index + 1}`;
+    const time = new Date(item.createdAt).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
     return (
       <TouchableOpacity
-        key={item.id}
+        key={item._id}
         style={styles.statusItem}
-        onPress={() => handleStatusPress(item)}>
+        onPress={() => handleStatusPress(index)}>
         <View style={styles.avatarContainer}>
           <Image
-            source={{uri: item.avatar}}
-            style={[styles.avatar, !item.isViewed && styles.unviewedBorder]}
+            source={{uri: avatar}}
+            style={[styles.avatar, styles.unviewedBorder]}
           />
           {index === 0 && (
             <View style={styles.addStatus}>
@@ -94,8 +91,8 @@ const StatusScreen = () => {
           )}
         </View>
         <View style={styles.textContainer}>
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.time}>{item.time}</Text>
+          <Text style={styles.name}>{name}</Text>
+          <Text style={styles.time}>{time}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -104,39 +101,22 @@ const StatusScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        {/* My Status */}
-        {renderStatusItem(statusUpdates[0], 0)}
-
-        {/* Recent Updates */}
-        <Text style={styles.sectionHeader}>Recent updates</Text>
-        {statusUpdates
-          .slice(1)
-          .map((item, index) => renderStatusItem(item, index + 1))}
-
-        {/* Viewed Updates */}
-        <Text style={styles.sectionHeader}>Viewed updates</Text>
-        {statusUpdates
-          .slice(2)
-          .map((item, index) => renderStatusItem(item, index + 2))}
+        {statusUpdates?.length > 0 ? (
+          <>
+            <Text style={styles.sectionHeader}>Recent updates</Text>
+            {statusUpdates.map((item, index) => renderStatusItem(item, index))}
+          </>
+        ) : (
+          <Text style={{textAlign: 'center', marginTop: 50}}>
+            No status updates yet
+          </Text>
+        )}
       </ScrollView>
 
       {/* Floating Camera Button */}
       <TouchableOpacity style={styles.cameraButton}>
         <Icon name="photo-camera" size={28} color="white" />
       </TouchableOpacity>
-
-      {/* Header Icons */}
-      {/* <View style={styles.header}>
-        <Text style={styles.headerTitle}>Status</Text>
-        <View style={styles.headerIcons}>
-          <TouchableOpacity style={styles.iconButton}>
-            <Icon name="photo-camera" size={24} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton}>
-            <Icon name="more-vert" size={24} color="white" />
-          </TouchableOpacity>
-        </View>
-      </View> */}
     </SafeAreaView>
   );
 };
@@ -145,29 +125,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f0f0f0',
-  },
-  header: {
-    position: 'absolute',
-    top: 0,
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#008069',
-    paddingVertical: 15,
-    paddingHorizontal: 16,
-  },
-  headerTitle: {
-    color: 'white',
-    fontSize: 20,
-    fontWeight: '600',
-  },
-  headerIcons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  iconButton: {
-    marginLeft: 25,
   },
   statusItem: {
     flexDirection: 'row',
@@ -215,6 +172,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     color: '#666',
     backgroundColor: '#f8f8f8',
+    fontWeight: '600',
   },
   cameraButton: {
     position: 'absolute',

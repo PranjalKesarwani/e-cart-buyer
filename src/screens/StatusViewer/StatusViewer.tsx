@@ -1,19 +1,16 @@
 import {useState} from 'react';
-import {Dimensions} from 'react-native';
-const {width, height} = Dimensions.get('window');
 import {
+  Dimensions,
   View,
   Text,
   StyleSheet,
-  FlatList,
-  TextInput,
   TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform,
   Image,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../types';
+import {RootStackParamList, StatusUpdateType} from '../../types';
+
+const {width, height} = Dimensions.get('window');
 
 type StatusViewerProps = NativeStackScreenProps<
   RootStackParamList,
@@ -22,21 +19,23 @@ type StatusViewerProps = NativeStackScreenProps<
 
 const StatusViewer = ({route, navigation}: StatusViewerProps) => {
   const {statusUpdates, currentIndex} = route.params;
-  const [currentStatusIndex, setCurrentStatusIndex] = useState(currentIndex);
+  const [currentStatusIndex, setCurrentStatusIndex] =
+    useState<number>(currentIndex);
 
   const handleSwipe = (direction: 'left' | 'right') => {
     if (direction === 'left' && currentStatusIndex < statusUpdates.length - 1) {
-      setCurrentStatusIndex((prev: any) => prev + 1);
+      setCurrentStatusIndex(prev => prev + 1);
     } else if (direction === 'right' && currentStatusIndex > 0) {
-      setCurrentStatusIndex((prev: any) => prev - 1);
+      setCurrentStatusIndex(prev => prev - 1);
     }
   };
 
   const currentStatus = statusUpdates[currentStatusIndex]?.content;
 
+  if (!currentStatus) return null;
+
   return (
     <View style={styles.viewerContainer}>
-      {/* Background */}
       {currentStatus.background.type === 'color' ? (
         <View
           style={[
@@ -51,7 +50,6 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
         />
       )}
 
-      {/* Text Content */}
       <View
         style={[
           styles.textContent,
@@ -65,15 +63,26 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
           style={[
             styles.statusText,
             {
-              fontWeight: currentStatus.text.fontStyle,
+              fontWeight: currentStatus.text.fontStyle as
+                | 'normal'
+                | 'bold'
+                | '100'
+                | '200'
+                | '300'
+                | '400'
+                | '500'
+                | '600'
+                | '700'
+                | '800'
+                | '900',
               color: currentStatus.text.color,
+              textAlign: currentStatus.text.alignment,
             },
           ]}>
           {currentStatus.text.content}
         </Text>
       </View>
 
-      {/* Gesture Handling */}
       <TouchableOpacity
         style={styles.leftSwipeArea}
         onPress={() => handleSwipe('left')}
@@ -103,7 +112,6 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 24,
     includeFontPadding: false,
-    textAlign: 'center',
   },
   leftSwipeArea: {
     position: 'absolute',
