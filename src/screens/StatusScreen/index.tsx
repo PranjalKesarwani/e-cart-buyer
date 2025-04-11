@@ -68,7 +68,7 @@ const StatusScreen = () => {
       ? item.content.background.value
       : 'https://via.placeholder.com/150';
 
-    const name = `Status ${index + 1}`;
+    const name = item.shopId.shopName;
     const time = new Date(item.createdAt).toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
@@ -84,11 +84,11 @@ const StatusScreen = () => {
             source={{uri: avatar}}
             style={[styles.avatar, styles.unviewedBorder]}
           />
-          {index === 0 && (
+          {/* {index === 0 && (
             <View style={styles.addStatus}>
               <Icon name="add-circle" size={24} color="#25D366" />
             </View>
-          )}
+          )} */}
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.name}>{name}</Text>
