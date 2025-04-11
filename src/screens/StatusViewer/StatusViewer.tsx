@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect, useRef} from 'react';
 import {
   Dimensions,
   View,
@@ -6,9 +6,20 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  PanResponder,
 } from 'react-native';
+
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList, StatusUpdateType} from '../../types';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import moment from 'moment';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  Easing,
+  runOnJS,
+} from 'react-native-reanimated';
 
 const {width, height} = Dimensions.get('window');
 
@@ -19,23 +30,100 @@ type StatusViewerProps = NativeStackScreenProps<
 
 const StatusViewer = ({route, navigation}: StatusViewerProps) => {
   const {statusUpdates, currentIndex} = route.params;
-  const [currentStatusIndex, setCurrentStatusIndex] =
-    useState<number>(currentIndex);
-
-  const handleSwipe = (direction: 'left' | 'right') => {
-    if (direction === 'left' && currentStatusIndex < statusUpdates.length - 1) {
-      setCurrentStatusIndex(prev => prev + 1);
-    } else if (direction === 'right' && currentStatusIndex > 0) {
-      setCurrentStatusIndex(prev => prev - 1);
-    }
-  };
+  const [currentStatusIndex, setCurrentStatusIndex] = useState(currentIndex);
+  // const progressAnim = useRef(new Animated.Value(0)).current;
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderRelease: (evt, gestureState) => {
+        if (gestureState.dx > 50) {
+          handleSwipe('right');
+        } else if (gestureState.dx < -50) {
+          handleSwipe('left');
+        }
+      },
+    }),
+  ).current;
 
   const currentStatus = statusUpdates[currentStatusIndex]?.content;
+  const shopInfo = statusUpdates[currentStatusIndex]?.shopId;
+  const progress = useSharedValue(0);
+  const duration = 5000; // 5 seconds per status
+
+  const progressStyle = useAnimatedStyle(() => ({
+    width: `${progress.value * 100}%`,
+  }));
+  useEffect(() => {
+    startProgressAnimation();
+  }, [currentStatusIndex]);
+
+  const startProgressAnimation = () => {
+    progress.value = 0;
+    progress.value = withTiming(
+      1,
+      {
+        duration: duration,
+        easing: Easing.linear,
+      },
+      finished => {
+        if (finished) {
+          runOnJS(handleSwipe)('left');
+        }
+      },
+    );
+  };
+
+  const handleSwipe = (direction: 'left' | 'right') => {
+    if (direction === 'left') {
+      if (currentStatusIndex < statusUpdates.length - 1) {
+        setCurrentStatusIndex((prev: number) => prev + 1);
+      } else {
+        navigation.goBack();
+      }
+    } else {
+      if (currentStatusIndex > 0) {
+        setCurrentStatusIndex((prev: number) => prev - 1);
+      } else {
+        navigation.goBack();
+      }
+    }
+  };
 
   if (!currentStatus) return null;
 
   return (
-    <View style={styles.viewerContainer}>
+    <View style={styles.container} {...panResponder.panHandlers}>
+      {/* Progress Bars */}
+      <View style={styles.progressBarContainer}>
+        {statusUpdates.map((_: any, index: number) => (
+          <View key={index} style={styles.progressBarBackground}>
+            {index === currentStatusIndex && (
+              <Animated.View
+                style={[styles.progressBarForeground, progressStyle]}
+              />
+            )}
+            {index < currentStatusIndex && (
+              <View style={styles.progressBarForeground} />
+            )}
+          </View>
+        ))}
+      </View>
+
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={24} color="white" />
+        </TouchableOpacity>
+        <Image source={{uri: shopInfo.shopPic}} style={styles.shopAvatar} />
+        <View style={styles.shopInfo}>
+          <Text style={styles.shopName}>{shopInfo.shopName}</Text>
+          <Text style={styles.timeLeft}>
+            {moment(statusUpdates[currentStatusIndex].createdAt).fromNow()}
+          </Text>
+        </View>
+      </View>
+
+      {/* Content */}
       {currentStatus.background.type === 'color' ? (
         <View
           style={[
@@ -47,35 +135,26 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
         <Image
           source={{uri: currentStatus.background.value}}
           style={styles.background}
+          resizeMode="cover"
         />
       )}
 
+      {/* Text Content */}
       <View
         style={[
-          styles.textContent,
+          styles.textContainer,
           {
             left: currentStatus.text.position.x * width,
             top: currentStatus.text.position.y * height,
-            alignItems: currentStatus.text.alignment,
           },
         ]}>
         <Text
           style={[
             styles.statusText,
             {
-              fontWeight: currentStatus.text.fontStyle as
-                | 'normal'
-                | 'bold'
-                | '100'
-                | '200'
-                | '300'
-                | '400'
-                | '500'
-                | '600'
-                | '700'
-                | '800'
-                | '900',
               color: currentStatus.text.color,
+              fontWeight:
+                currentStatus.text.fontStyle === 'bold' ? 'bold' : 'normal',
               textAlign: currentStatus.text.alignment,
             },
           ]}>
@@ -83,12 +162,13 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
         </Text>
       </View>
 
+      {/* Navigation Controls */}
       <TouchableOpacity
-        style={styles.leftSwipeArea}
+        style={styles.leftTouchArea}
         onPress={() => handleSwipe('left')}
       />
       <TouchableOpacity
-        style={styles.rightSwipeArea}
+        style={styles.rightTouchArea}
         onPress={() => handleSwipe('right')}
       />
     </View>
@@ -96,38 +176,73 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
 };
 
 const styles = StyleSheet.create({
-  viewerContainer: {
+  container: {
     flex: 1,
     backgroundColor: 'black',
   },
-  background: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
+  progressBarContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 5,
+    paddingTop: 8,
+    gap: 5,
   },
-  textContent: {
+  progressBarBackground: {
+    flex: 1,
+    height: 2,
+    backgroundColor: 'rgba(255,255,255,0.4)',
+    borderRadius: 1,
+    overflow: 'hidden',
+  },
+  progressBarForeground: {
+    height: '100%',
+    backgroundColor: 'white',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 15,
+    backgroundColor: 'rgba(0,0,0,0.6)',
     position: 'absolute',
-    transform: [{translateX: -50}, {translateY: -50}],
+    top: 0,
+    width: '100%',
+    zIndex: 1,
+  },
+  shopAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginHorizontal: 15,
+  },
+  shopInfo: {
+    flex: 1,
+  },
+  shopName: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  timeLeft: {
+    color: 'rgba(255,255,255,0.8)',
+    fontSize: 14,
+  },
+  background: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  textContainer: {
+    position: 'absolute',
+    maxWidth: '90%',
   },
   statusText: {
     fontSize: 24,
     includeFontPadding: false,
   },
-  leftSwipeArea: {
-    position: 'absolute',
-    top: 0,
+  leftTouchArea: {
+    ...StyleSheet.absoluteFillObject,
     right: '50%',
-    bottom: 0,
-    left: 0,
-    opacity: 0,
   },
-  rightSwipeArea: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
+  rightTouchArea: {
+    ...StyleSheet.absoluteFillObject,
     left: '50%',
-    opacity: 0,
   },
 });
 
