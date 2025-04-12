@@ -46,37 +46,30 @@ const StatusScreen = () => {
   }, []);
 
   const handleStatusPress = (statusIndex: number) => {
-    navigation.navigate('StatusViewer', {
-      statusUpdates,
-      currentIndex: statusIndex,
-    });
+    // navigation.navigate('StatusViewer', {
+    //   statusUpdates,
+    //   currentIndex: statusIndex,
+    // });
   };
 
-  const renderStatusItem = (item: StatusUpdateType, index: number) => {
-    if (!item || !item.content || !item.content.background) return null;
+  const renderStatusItem = (shop: StatusUpdateType, index: number) => {
+    if (!shop.statuses || shop.statuses.length === 0) return null;
 
-    const isImage = item.content.background.type === 'image';
-    console.log('Status item:', item);
-    console.log('Status item content:', item.content);
-    console.log('Status item background:', item.content.background);
-    console.log('Status item background type:', item.content.background.type);
-    console.log('Status item background value:', item.content.background.value);
-    console.log('Status item createdAt:', item.createdAt);
-    console.log('Status item index:', index);
+    const latestStatus = shop.statuses[0];
+    const avatar =
+      latestStatus.content.background.type === 'image'
+        ? latestStatus.content.background.value
+        : 'https://via.placeholder.com/150';
 
-    const avatar = isImage
-      ? item.content.background.value
-      : 'https://via.placeholder.com/150';
-
-    const name = item.shopId.shopName;
-    const time = new Date(item.createdAt).toLocaleTimeString([], {
+    const name = shop.shopName;
+    const time = new Date(latestStatus.createdAt).toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
     });
 
     return (
       <TouchableOpacity
-        key={item._id}
+        key={shop.shopId}
         style={styles.statusItem}
         onPress={() => handleStatusPress(index)}>
         <View style={styles.avatarContainer}>
@@ -84,11 +77,6 @@ const StatusScreen = () => {
             source={{uri: avatar}}
             style={[styles.avatar, styles.unviewedBorder]}
           />
-          {/* {index === 0 && (
-            <View style={styles.addStatus}>
-              <Icon name="add-circle" size={24} color="#25D366" />
-            </View>
-          )} */}
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.name}>{name}</Text>

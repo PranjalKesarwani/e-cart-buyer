@@ -350,31 +350,36 @@ export interface IChatGroupInfo {
 }
 
 export type StatusUpdateType = {
-  _id: string;
-  sellerRegId: string;
-  shopId: {
+  shopId: string;
+  shopName: string;
+  shopPic: string;
+  statuses: {
     _id: string;
-    shopName: string;
-    shopPic: string;
-  };
-  content: {
-    background: {
-      type: 'color' | 'image';
-      value: string;
-    };
-    text: {
-      content: string;
-      fontStyle: string;
-      color: string;
-      alignment: 'center' | 'left' | 'right';
-      position: {
-        x: number;
-        y: number;
+    createdAt: string;
+    expiresAt: string;
+    content: {
+      background: {
+        type: 'color' | 'image';
+        value: string;
       };
+      text: {
+        content: string;
+        fontStyle: string;
+        color: string;
+        alignment: 'center' | 'left' | 'right';
+        position: {
+          x: number;
+          y: number;
+        };
+      };
+      drawings: {
+        color: string;
+        thickness: number;
+        path: {
+          x: number;
+          y: number;
+        }[];
+      }[];
     };
-    drawings: any[];
-  };
-  expiresAt: string;
-  createdAt: string;
-  updatedAt: string;
+  }[];
 };
