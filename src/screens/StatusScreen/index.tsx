@@ -12,6 +12,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {useNavigation} from '@react-navigation/native';
+import {Svg, Circle} from 'react-native-svg';
 
 import {apiClient} from '../../services/api';
 import {
@@ -55,17 +56,19 @@ const StatusScreen = () => {
   const renderStatusItem = (shop: StatusUpdateType, index: number) => {
     if (!shop.statuses || shop.statuses.length === 0) return null;
 
-    const latestStatus = shop.statuses[0];
-    const avatar =
-      latestStatus.content.background.type === 'image'
-        ? latestStatus.content.background.value
-        : 'https://via.placeholder.com/150';
-
+    const totalStatuses = shop.statuses.length;
+    const avatar = shop.shopPic; // Using shop's profile picture instead of status background
     const name = shop.shopName;
+    const latestStatus = shop.statuses[0];
     const time = new Date(latestStatus.createdAt).toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
     });
+
+    // Calculate angles for each segment
+    const segmentAngle = 360 / totalStatuses;
+    const radius = 28; // Match avatar radius
+    const circumference = 2 * Math.PI * radius;
 
     return (
       <TouchableOpacity
@@ -73,10 +76,38 @@ const StatusScreen = () => {
         style={styles.statusItem}
         onPress={() => handleStatusPress(index)}>
         <View style={styles.avatarContainer}>
-          <Image
-            source={{uri: avatar}}
-            style={[styles.avatar, styles.unviewedBorder]}
-          />
+          <Svg height="60" width="60" style={styles.statusRing}>
+            {/* Background circle */}
+            <Circle
+              cx="30"
+              cy="30"
+              r={radius}
+              stroke="#e8e8e8"
+              strokeWidth="2"
+              fill="none"
+            />
+
+            {/* Status segments */}
+            {shop.statuses.map((_, idx) => (
+              <Circle
+                key={idx}
+                cx="30"
+                cy="30"
+                r={radius}
+                stroke="#25D366"
+                strokeWidth="2"
+                fill="none"
+                strokeDasharray={circumference}
+                strokeDashoffset={
+                  circumference - (circumference * segmentAngle) / 360
+                }
+                rotation={-90 + idx * segmentAngle}
+                originX="30"
+                originY="30"
+              />
+            ))}
+          </Svg>
+          <Image source={{uri: avatar}} style={styles.avatar} />
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.name}>{name}</Text>
@@ -122,15 +153,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     borderBottomColor: '#e8e8e8',
   },
-  avatarContainer: {
-    position: 'relative',
-  },
-  avatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    marginRight: 15,
-  },
+  // avatarContainer: {
+  //   position: 'relative',
+  // },
+  // avatar: {
+  //   width: 56,
+  //   height: 56,
+  //   borderRadius: 28,
+  //   marginRight: 15,
+  // },
   unviewedBorder: {
     borderWidth: 2,
     borderColor: '#25D366',
@@ -173,6 +204,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 5,
+  },
+  avatarContainer: {
+    position: 'relative',
+    width: 60,
+    height: 60,
+    marginRight: 15,
+  },
+  statusRing: {
+    position: 'absolute',
+    transform: [{rotate: '-90deg'}],
+  },
+  avatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    position: 'absolute',
+    top: 2,
+    left: 2,
+    borderWidth: 2,
+    borderColor: 'white',
   },
 });
 
