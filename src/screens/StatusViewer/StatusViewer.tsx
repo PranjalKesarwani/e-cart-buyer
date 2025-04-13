@@ -20,6 +20,7 @@ import Animated, {
   Easing,
   runOnJS,
 } from 'react-native-reanimated';
+import {Theme} from '../../theme/theme';
 
 const {width, height} = Dimensions.get('window');
 
@@ -33,6 +34,7 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
     statusUpdates,
     currentIndex: initialShopIndex,
   }: {statusUpdates: StatusUpdateType[]; currentIndex: number} = route.params;
+  console.log('Initial shop:', statusUpdates[initialShopIndex]);
   const [currentShopIndex, setCurrentShopIndex] = useState(initialShopIndex);
   const [currentStatusIndex, setCurrentStatusIndex] = useState(0);
   const progress = useSharedValue(0);
@@ -115,9 +117,9 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
       } else {
         // Move to previous shop if available
         if (currentShopIndex > 0) {
-          setCurrentShopIndex(prev => prev - 1);
           const newShopIndex = currentShopIndex - 1; // Calculate first
           const prevShopStatuses = statusUpdates[newShopIndex].statuses;
+          setCurrentShopIndex(newShopIndex);
           // const prevShopStatuses = statusUpdates[currentShopIndex - 1].statuses;
           setCurrentStatusIndex(prevShopStatuses.length - 1);
         } else {
@@ -188,6 +190,7 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
             left: currentStatus.text.position.x * width,
             top: currentStatus.text.position.y * height,
           },
+          Theme.showBorder,
         ]}>
         <Text
           style={[
@@ -271,11 +274,15 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     position: 'absolute',
-    maxWidth: '90%',
+    alignSelf: 'flex-start', // container should size to content
+    paddingHorizontal: 4, // optional for spacing
+    flexShrink: 1, // allow it to shrink if needed
+    backgroundColor: 'transparent',
   },
   statusText: {
     fontSize: 24,
     includeFontPadding: false,
+    flexWrap: 'wrap',
   },
   leftTouchArea: {
     ...StyleSheet.absoluteFillObject,
