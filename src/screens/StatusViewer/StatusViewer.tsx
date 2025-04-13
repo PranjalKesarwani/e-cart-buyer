@@ -116,7 +116,9 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
         // Move to previous shop if available
         if (currentShopIndex > 0) {
           setCurrentShopIndex(prev => prev - 1);
-          const prevShopStatuses = statusUpdates[currentShopIndex - 1].statuses;
+          const newShopIndex = currentShopIndex - 1; // Calculate first
+          const prevShopStatuses = statusUpdates[newShopIndex].statuses;
+          // const prevShopStatuses = statusUpdates[currentShopIndex - 1].statuses;
           setCurrentStatusIndex(prevShopStatuses.length - 1);
         } else {
           navigation.goBack();
