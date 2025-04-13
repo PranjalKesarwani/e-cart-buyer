@@ -47,10 +47,10 @@ const StatusScreen = () => {
   }, []);
 
   const handleStatusPress = (statusIndex: number) => {
-    // navigation.navigate('StatusViewer', {
-    //   statusUpdates,
-    //   currentIndex: statusIndex,
-    // });
+    navigation.navigate('StatusViewer', {
+      statusUpdates,
+      currentIndex: statusIndex,
+    });
   };
 
   const renderStatusItem = (shop: StatusUpdateType, index: number) => {
