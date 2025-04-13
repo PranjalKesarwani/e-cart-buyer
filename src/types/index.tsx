@@ -382,4 +382,6 @@ export type StatusUpdateType = {
       }[];
     };
   }[];
+  createdAt: Date;
+  expiresAt: Date;
 };

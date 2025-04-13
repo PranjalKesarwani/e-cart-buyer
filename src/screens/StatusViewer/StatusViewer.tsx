@@ -29,8 +29,25 @@ type StatusViewerProps = NativeStackScreenProps<
 >;
 
 const StatusViewer = ({route, navigation}: StatusViewerProps) => {
-  const {statusUpdates, currentIndex} = route.params;
-  const [currentStatusIndex, setCurrentStatusIndex] = useState(currentIndex);
+  const {
+    statusUpdates,
+    currentIndex: initialShopIndex,
+  }: {statusUpdates: StatusUpdateType[]; currentIndex: number} = route.params;
+  const [currentShopIndex, setCurrentShopIndex] = useState(initialShopIndex);
+  const [currentStatusIndex, setCurrentStatusIndex] = useState(0);
+  const progress = useSharedValue(0);
+  const currentShop = statusUpdates[currentShopIndex];
+  const currentStatus = currentShop?.statuses[currentStatusIndex]?.content;
+  const shopInfo = {
+    shopPic: currentShop?.shopPic,
+    shopName: currentShop?.shopName,
+  };
+  const duration = moment(
+    currentShop?.statuses[currentStatusIndex]?.expiresAt,
+  ).diff(
+    moment(currentShop?.statuses[currentStatusIndex]?.createdAt),
+    'milliseconds',
+  );
   // const progressAnim = useRef(new Animated.Value(0)).current;
   const panResponder = useRef(
     PanResponder.create({
@@ -45,20 +62,23 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
     }),
   ).current;
 
-  const currentStatus = statusUpdates[currentStatusIndex]?.content;
-  const shopInfo = statusUpdates[currentStatusIndex]?.shopId;
-  const progress = useSharedValue(0);
-  const duration = moment(statusUpdates[currentStatusIndex]?.expiresAt).diff(
-    moment(statusUpdates[currentStatusIndex]?.createdAt),
-    'milliseconds',
-  );
+  // const currentStatus = statusUpdates[currentStatusIndex]?.content;
+  // const shopInfo = statusUpdates[currentStatusIndex]?.shopId;
+  // const duration = moment(statusUpdates[currentStatusIndex]?.expiresAt).diff(
+  //   moment(statusUpdates[currentStatusIndex]?.createdAt),
+  //   'milliseconds',
+  // );
 
   const progressStyle = useAnimatedStyle(() => ({
     width: `${progress.value * 100}%`,
   }));
   useEffect(() => {
-    startProgressAnimation();
-  }, [currentStatusIndex]);
+    if (currentShop?.statuses) {
+      startProgressAnimation();
+    }
+  }, [currentStatusIndex, currentShopIndex]);
+
+  if (!currentShop || !currentStatus) return null;
 
   const startProgressAnimation = () => {
     progress.value = 0;
@@ -76,16 +96,31 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
 
   const handleSwipe = (direction: 'left' | 'right') => {
     if (direction === 'left') {
-      if (currentStatusIndex < statusUpdates.length - 1) {
-        setCurrentStatusIndex((prev: number) => prev + 1);
+      // Check if there's next status in current shop
+      if (currentStatusIndex < currentShop.statuses.length - 1) {
+        setCurrentStatusIndex(prev => prev + 1);
       } else {
-        navigation.goBack();
+        // Move to next shop if available
+        if (currentShopIndex < statusUpdates.length - 1) {
+          setCurrentShopIndex(prev => prev + 1);
+          setCurrentStatusIndex(0);
+        } else {
+          navigation.goBack();
+        }
       }
     } else {
+      // Swipe right
       if (currentStatusIndex > 0) {
-        setCurrentStatusIndex((prev: number) => prev - 1);
+        setCurrentStatusIndex(prev => prev - 1);
       } else {
-        navigation.goBack();
+        // Move to previous shop if available
+        if (currentShopIndex > 0) {
+          setCurrentShopIndex(prev => prev - 1);
+          const prevShopStatuses = statusUpdates[currentShopIndex - 1].statuses;
+          setCurrentStatusIndex(prevShopStatuses.length - 1);
+        } else {
+          navigation.goBack();
+        }
       }
     }
   };
@@ -96,7 +131,7 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
     <View style={styles.container} {...panResponder.panHandlers}>
       {/* Progress Bars */}
       <View style={styles.progressBarContainer}>
-        {statusUpdates.map((_: any, index: number) => (
+        {currentShop?.statuses.map((_: any, index: number) => (
           <View key={index} style={styles.progressBarBackground}>
             {index === currentStatusIndex && (
               <Animated.View
