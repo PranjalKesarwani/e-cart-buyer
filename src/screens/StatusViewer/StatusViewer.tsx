@@ -44,14 +44,14 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
     shopPic: currentShop?.shopPic,
     shopName: currentShop?.shopName,
   };
-  const duration = moment(
-    currentShop?.statuses[currentStatusIndex]?.expiresAt,
-  ).diff(
-    moment(currentShop?.statuses[currentStatusIndex]?.createdAt),
-    'milliseconds',
-  );
+  // const duration = moment(
+  //   currentShop?.statuses[currentStatusIndex]?.expiresAt,
+  // ).diff(
+  //   moment(currentShop?.statuses[currentStatusIndex]?.createdAt),
+  //   'milliseconds',
+  // );
 
-  const validDuration = duration > 0 ? duration : 6000;
+  const validDuration = 6000;
   // const progressAnim = useRef(new Animated.Value(0)).current;
   const panResponder = useRef(
     PanResponder.create({
@@ -139,7 +139,7 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
       <View style={[styles.progressBarContainer, {zIndex: 2}]}>
         {currentShop?.statuses.map((_: any, index: number) => (
           <View key={index} style={[styles.progressBarBackground]}>
-            {index === currentStatusIndex && (
+            {true && (
               <Animated.View
                 style={[
                   styles.progressBarForeground,
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
   },
   progressBarForeground: {
     height: '100%',
-    backgroundColor: 'white',
+    backgroundColor: 'rgba(205, 16, 16, 0.8)',
   },
   header: {
     flexDirection: 'row',
