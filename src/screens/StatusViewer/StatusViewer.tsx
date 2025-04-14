@@ -44,12 +44,6 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
     shopPic: currentShop?.shopPic,
     shopName: currentShop?.shopName,
   };
-  // const duration = moment(
-  //   currentShop?.statuses[currentStatusIndex]?.expiresAt,
-  // ).diff(
-  //   moment(currentShop?.statuses[currentStatusIndex]?.createdAt),
-  //   'milliseconds',
-  // );
 
   const validDuration = 6000;
   // const progressAnim = useRef(new Animated.Value(0)).current;
@@ -139,7 +133,7 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
       <View style={[styles.progressBarContainer, {zIndex: 2}]}>
         {currentShop?.statuses.map((_: any, index: number) => (
           <View key={index} style={[styles.progressBarBackground]}>
-            {true && (
+            {index === currentStatusIndex && (
               <Animated.View
                 style={[
                   styles.progressBarForeground,
@@ -243,7 +237,7 @@ const styles = StyleSheet.create({
   },
   progressBarForeground: {
     height: '100%',
-    backgroundColor: 'rgba(205, 16, 16, 0.8)',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
   },
   header: {
     flexDirection: 'row',
