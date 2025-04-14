@@ -50,6 +50,8 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
     moment(currentShop?.statuses[currentStatusIndex]?.createdAt),
     'milliseconds',
   );
+
+  const validDuration = duration > 0 ? duration : 6000;
   // const progressAnim = useRef(new Animated.Value(0)).current;
   const panResponder = useRef(
     PanResponder.create({
@@ -80,7 +82,7 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
     progress.value = withTiming(
       1,
       {
-        duration: duration,
+        duration: validDuration,
         easing: Easing.linear,
       },
       finished => {
@@ -88,6 +90,13 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
       },
     );
   };
+
+  useEffect(() => {
+    if (currentShop?.statuses) {
+      setCurrentStatusIndex(0); // Reset status index when shop changes
+      startProgressAnimation();
+    }
+  }, [currentShopIndex]);
 
   const handleSwipe = (direction: 'left' | 'right') => {
     if (direction === 'left') {
