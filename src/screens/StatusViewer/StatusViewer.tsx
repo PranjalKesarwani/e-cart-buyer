@@ -34,9 +34,9 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
     statusUpdates,
     currentIndex: initialShopIndex,
   }: {statusUpdates: StatusUpdateType[]; currentIndex: number} = route.params;
-  console.log('Initial shop:', statusUpdates[initialShopIndex]);
-  const [currentShopIndex, setCurrentShopIndex] = useState(initialShopIndex);
-  const [currentStatusIndex, setCurrentStatusIndex] = useState(0);
+  const [currentShopIndex, setCurrentShopIndex] =
+    useState<number>(initialShopIndex);
+  const [currentStatusIndex, setCurrentStatusIndex] = useState<number>(0);
   const progress = useSharedValue(0);
   const currentShop = statusUpdates[currentShopIndex];
   const currentStatus = currentShop?.statuses[currentStatusIndex]?.content;
