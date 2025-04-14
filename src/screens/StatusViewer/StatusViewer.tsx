@@ -207,11 +207,11 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
       {/* Navigation Controls */}
       <TouchableOpacity
         style={styles.leftTouchArea}
-        onPress={() => handleSwipe('left')}
+        onPress={() => handleSwipe('right')}
       />
       <TouchableOpacity
         style={styles.rightTouchArea}
-        onPress={() => handleSwipe('right')}
+        onPress={() => handleSwipe('left')}
       />
     </View>
   );
