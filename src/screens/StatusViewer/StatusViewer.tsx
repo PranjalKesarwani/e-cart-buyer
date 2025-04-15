@@ -188,7 +188,6 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
             left: currentStatus.text.position.x * width,
             top: currentStatus.text.position.y * height,
           },
-          Theme.showBorder,
         ]}>
         <Text
           style={[
