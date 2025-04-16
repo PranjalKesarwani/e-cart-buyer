@@ -1,66 +1,118 @@
 import React from 'react';
-import {View, Text, StyleSheet, FlatList, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {MainTabsParamList, RootStackParamList} from '../../types';
+import {
+  MainTabsParamList,
+  RootStackParamList,
+  TCartItem,
+  TProduct,
+} from '../../types';
 import {CompositeScreenProps} from '@react-navigation/native';
 import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
-// import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import Icons from 'react-native-vector-icons/AntDesign';
+import {Theme} from '../../theme/theme';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-// Mock data structure similar to WhatsApp
-const chatData = Array.from({length: 20}, (_, i) => ({
-  id: `chat${i + 1}`,
-  name: `Contact ${i + 1}`,
-  lastMessage: 'Last message preview...',
-  timestamp: '10:30 AM',
-  unreadCount: Math.floor(Math.random() * 5),
-  online: i % 4 === 0, // mock online status
-  avatar: `https://i.pravatar.cc/150?img=${i + 1}`, // placeholder images
-}));
+// Mock data for shops
+const shopData = [
+  {
+    id: '1',
+    shopName: 'Om Prakash General Store',
+    items: [
+      'Samsung 657L Side-by-Side Refrigerator',
+      'LG 8kg Front Load Washing Machine',
+      'Whirlpool 1.5 Ton 5 Star Inverter Split AC',
+    ],
+  },
+  {
+    id: '2',
+    shopName: 'Electronics World',
+    items: ['Apple iPhone 15 Pro Max', 'Sony 65-inch 4K OLED Smart TV'],
+  },
+
+  // Add more shops as needed
+];
+
 type BidScreenProps = CompositeScreenProps<
   BottomTabScreenProps<MainTabsParamList, 'Bid'>,
   NativeStackScreenProps<RootStackParamList>
 >;
+
 const BidScreen = ({navigation}: BidScreenProps) => {
-  const renderItem = ({item}: {item: (typeof chatData)[0]}) => (
-    <TouchableOpacity
-      onPress={() => navigation.navigate('PersonalChatScreen')}
-      style={styles.chatItem}>
-      <View style={styles.avatarContainer}>
-        <Image source={{uri: item.avatar}} style={styles.avatar} />
-        {item.online && <View style={styles.onlineIndicator} />}
+  const {width} = Dimensions.get('window');
+  const cardWidth = width * 0.9;
+  const renderItem = ({item}: {item: (typeof shopData)[0]}) => (
+    <View
+      key={'321423'}
+      style={[styles.card, {width: cardWidth}, Theme.showBorder]}
+      accessible
+      accessibilityLabel={`Cart items from Om Prakash general store`}>
+      <View style={styles.shopHeader}>
+        <MaterialIcons
+          name="storefront"
+          size={20}
+          color="#4A90E2"
+          style={styles.storeIcon}
+        />
+        <Text style={styles.shopName}>Om Prakash General Store</Text>
       </View>
 
-      <View style={styles.chatContent}>
-        <View style={styles.headerRow}>
-          <Text style={styles.contactName}>{item.name}</Text>
-          <Text style={styles.timestamp}>{item.timestamp}</Text>
-        </View>
-
-        <View style={styles.messageRow}>
-          <Text
-            style={styles.lastMessage}
-            numberOfLines={1}
-            ellipsizeMode="tail">
-            {item.lastMessage}
-          </Text>
-          {item.unreadCount > 0 && (
-            <View style={styles.unreadBadge}>
-              <Text style={styles.unreadText}>{item.unreadCount}</Text>
-            </View>
-          )}
+      <View style={styles.itemsContainer}>
+        {/* {cart.items
+                      .slice(0, 2)
+                      .map((item: TCartItem, itemIndex: number) => (
+                        <View key={itemIndex} style={styles.itemRow}>
+                          <View style={styles.bullet} />
+                          <View style={styles.itemDetails}>
+                            <Text style={styles.itemName}>
+                              {(item.productId as TProduct).productName}
+                            </Text>
+                            <Text style={styles.itemPrice}>
+                              {(item.productId as TProduct).currency}
+                              {(item.productId as TProduct).price}
+                            </Text>
+                          </View>
+                        </View>
+                      ))} */}
+        <View key={'1234'} style={styles.itemRow}>
+          <View style={styles.bullet} />
+          <View style={styles.itemDetails}>
+            <Text style={styles.itemName}>Product name 1</Text>
+            <Text style={styles.itemPrice}>₹ 500</Text>
+          </View>
         </View>
       </View>
-    </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => console.log('clicked for going to next stage')}
+        style={styles.detailsButton}
+        activeOpacity={0.8}>
+        <Text style={styles.detailsButtonText}>View Order Details</Text>
+        <Icons
+          name="arrowright"
+          size={20}
+          color="#4A90E2"
+          style={styles.arrowIcon}
+        />
+      </TouchableOpacity>
+    </View>
   );
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={chatData}
+        data={shopData}
         renderItem={renderItem}
         keyExtractor={item => item.id}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
@@ -69,80 +121,105 @@ const BidScreen = ({navigation}: BidScreenProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f5f5f5',
   },
-  chatItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    backgroundColor: '#fff',
+  listContent: {
+    padding: 16,
   },
-  avatarContainer: {
-    position: 'relative',
-    marginRight: 15,
-  },
-  avatar: {
-    width: 55,
-    height: 55,
-    borderRadius: 30,
-  },
-  onlineIndicator: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 15,
-    height: 15,
+  card: {
+    backgroundColor: 'white',
     borderRadius: 8,
-    backgroundColor: '#25D366',
-    borderWidth: 2,
-    borderColor: '#fff',
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  chatContent: {
-    flex: 1,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+
+  itemText: {
+    fontSize: 14,
+    color: '#666',
     marginBottom: 4,
   },
-  contactName: {
-    fontWeight: '600',
-    fontSize: 18,
-    color: '#000',
-  },
-  timestamp: {
+  moreItems: {
     fontSize: 12,
-    color: '#667781',
+    color: '#999',
+    marginBottom: 12,
   },
-  messageRow: {
+  // detailsButton: {
+  //   backgroundColor: '#007bff',
+  //   borderRadius: 4,
+  //   paddingVertical: 10,
+  //   alignItems: 'center',
+  // },
+
+  storeIcon: {
+    marginRight: 12,
+  },
+  shopName: {
+    fontSize: 18,
+    fontWeight: '500',
+    color: '#2A2A2A',
+    fontFamily: 'Roboto-Medium',
+  },
+  itemsContainer: {
+    marginVertical: 8,
+  },
+  itemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  bullet: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#4A90E2',
+    marginRight: 12,
+  },
+  itemDetails: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  lastMessage: {
-    fontSize: 14,
-    color: '#667781',
+  itemName: {
+    fontSize: 16,
+    color: '#4F4F4F',
     flex: 1,
-    marginRight: 10,
+    marginRight: 16,
   },
-  unreadBadge: {
-    backgroundColor: '#25D366',
-    borderRadius: 20,
-    minWidth: 22,
-    height: 22,
-    justifyContent: 'center',
+  itemPrice: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#2A2A2A',
+  },
+  detailsButton: {
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 5,
+    justifyContent: 'space-between',
+    marginTop: 16,
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#EDEFF2',
   },
-  unreadText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
+  detailsButtonText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#4A90E2',
   },
-  separator: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: '#E0E0E0',
-    marginLeft: 82,
+  arrowIcon: {
+    marginLeft: 8,
+  },
+  shopHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EDEFF2',
+    paddingBottom: 12,
   },
 });
 
