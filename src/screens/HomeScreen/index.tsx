@@ -4,23 +4,24 @@ import {
   View,
   Text,
   StyleSheet,
-  Button,
   Alert,
   PermissionsAndroid,
   Modal,
   TouchableOpacity,
   Dimensions,
   Image,
+  Linking,
 } from 'react-native';
-import {RootDrawerParamList} from '../../types'; // Assuming you only need RootDrawerParamList
+import {RootDrawerParamList} from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
 import MapView, {Marker} from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import Title from '../../components/Title';
 import {FlatList} from 'react-native-gesture-handler';
 import {showToast} from '../../utils/toast';
-import {apiClient, request} from '../../services/api';
+import {apiClient} from '../../services/api';
 import {Theme} from '../../theme/theme';
+// import {colors, Theme} from '../../theme/theme'; // Assuming colors are defined in theme
 
 type HomeProps = NativeStackScreenProps<RootDrawerParamList, 'HomeScreen'>;
 
@@ -47,57 +48,117 @@ const HomeScreen = ({navigation}: HomeProps) => {
     }
   };
 
-  useEffect(() => {
-    requestLocationPermission();
-    getGlobalCategories();
-  }, []);
   const requestLocationPermission = async () => {
     try {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
         {
           title: 'Location Permission',
-          message:
-            'We need your location for your better experience!' +
-            'so you can take awesome pictures.',
+          message: 'We need your location for a better experience!',
           buttonNeutral: 'Ask Me Later',
           buttonNegative: 'Cancel',
           buttonPositive: 'OK',
         },
       );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('You can use the Location');
-      } else {
-        console.log('Location permission denied');
-      }
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
     } catch (err) {
       console.warn(err);
+      return false;
     }
   };
 
-  const getCurrentLocation = () => {
-    console.log('trying to get current location');
+  const checkLocationServices = async () => {
+    const hasPermission = await requestLocationPermission();
+    if (!hasPermission) {
+      showToast('error', 'Location permission denied');
+      return;
+    }
+
     try {
+      // Attempt to get current position to check if location services are enabled
       Geolocation.getCurrentPosition(
         position => {
+          // Location is enabled, set coordinates
           setMLat(position.coords.latitude);
           setMLong(position.coords.longitude);
-          console.log(position);
+          console.log('Location enabled:', position);
         },
         error => {
-          // See error code charts below.
-          console.log('fallen into error');
-          console.log(error.code, error.message);
+          // Location services are disabled or other error
+          if (error.code === 2) {
+            // Location services disabled
+            Alert.alert(
+              'Location Services Disabled',
+              'Please enable location services for a better experience.',
+              [
+                {
+                  text: 'Cancel',
+                  style: 'cancel',
+                },
+                {
+                  text: 'Open Settings',
+                  onPress: () => Linking.openSettings(), // Open device settings
+                },
+              ],
+            );
+          } else {
+            console.log('Geolocation error:', error.code, error.message);
+            showToast('error', 'Unable to get location');
+          }
         },
         {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
       );
     } catch (error) {
-      console.log('--xx--', error);
+      console.log('Error checking location:', error);
     }
   };
 
+  const getCurrentLocation = async () => {
+    try {
+      const hasPermission = await requestLocationPermission();
+      if (!hasPermission) {
+        showToast('error', 'Location permission denied');
+        return;
+      }
+
+      const location = await new Promise<Geolocation.GeoPosition>(
+        (resolve, reject) => {
+          Geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 10000,
+            distanceFilter: 0,
+            forceRequestLocation: true,
+            showLocationDialog: true,
+          });
+        },
+      );
+
+      setMLat(location.coords.latitude);
+      setMLong(location.coords.longitude);
+    } catch (error: any) {
+      console.log('Location error:', error.code, error.message);
+      showToast('error', `Location error: ${error.message}`);
+
+      if (error.code === 2) {
+        Alert.alert(
+          'Location Required',
+          'Please enable device location services',
+          [
+            {text: 'Cancel', style: 'cancel'},
+            {text: 'Settings', onPress: () => Linking.openSettings()},
+          ],
+        );
+      }
+    }
+  };
+
+  useEffect(() => {
+    getGlobalCategories();
+    checkLocationServices(); // Check location services on screen load
+  }, []);
+
   const handleCardPress = (item: any) => {
-    // console.log('item', item);
     navigation.navigate('ShopListScreen', {category: item});
   };
 
@@ -109,7 +170,11 @@ const HomeScreen = ({navigation}: HomeProps) => {
           onPress={() => setModalVisible(true)}
           style={styles.locationSelector}>
           <View style={styles.locationContent}>
-            <Icons name="enviromento" size={20} color={colors.primary} />
+            <Icons
+              name="enviromento"
+              size={20}
+              color={Theme.colors.bharatPurple}
+            />
             <View style={styles.locationTextContainer}>
               <Text style={styles.locationTitle}>Username</Text>
               <Text
@@ -139,7 +204,6 @@ const HomeScreen = ({navigation}: HomeProps) => {
               activeOpacity={0.9}
               onPress={() => handleCardPress(item)}>
               <View style={[styles.categoryContent]}>
-                {/* Display Image Instead of Icon */}
                 <View style={[styles.imageContainer]}>
                   <Image
                     style={[styles.categoryImage, {borderTopRightRadius: 5.6}]}
@@ -176,12 +240,14 @@ const HomeScreen = ({navigation}: HomeProps) => {
           <MapView
             style={styles.map}
             initialRegion={{
-              latitude: 28.68344961110582,
-              longitude: 77.21538250329944,
+              latitude: mLat || 28.68344961110582,
+              longitude: mLong || 77.21538250329944,
               latitudeDelta: 0.01,
               longitudeDelta: 0.01,
             }}>
-            <Marker coordinate={{latitude: mLat, longitude: mLong}} />
+            {mLat !== 0 && mLong !== 0 && (
+              <Marker coordinate={{latitude: mLat, longitude: mLong}} />
+            )}
           </MapView>
 
           <TouchableOpacity
@@ -195,7 +261,6 @@ const HomeScreen = ({navigation}: HomeProps) => {
     </View>
   );
 };
-
 export default HomeScreen;
 
 const colors = {
