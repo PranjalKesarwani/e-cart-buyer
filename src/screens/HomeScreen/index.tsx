@@ -33,12 +33,15 @@ type TCategoryCards = {
 const HomeScreen = ({navigation}: HomeProps) => {
   const [modalVisible, setModalVisible] = useState(false);
   const mapRef = useRef<MapView>(null);
-  const [mLat, setMLat] = useState<number>(37.4219983);
-  const [mLong, setMLong] = useState<number>(-122.084);
-  const [selectedLocation, setSelectedLocation] = useState({
-    latitude: mLat,
-    longitude: mLong,
-  });
+
+  const [userLocation, setUserLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  // const [selectedLocation, setSelectedLocation] = useState({
+  //   latitude: mLat,
+  //   longitude: mLong,
+  // });
   const windowHeight = Dimensions.get('window').height;
   const modalHeight = windowHeight;
 
@@ -81,38 +84,16 @@ const HomeScreen = ({navigation}: HomeProps) => {
     }
 
     try {
-      // Attempt to get current position to check if location services are enabled
       Geolocation.getCurrentPosition(
         position => {
-          // Location is enabled, set coordinates
-          setMLat(position.coords.latitude);
-          setMLong(position.coords.longitude);
-          console.log('Location enabled:', position);
+          const newCoords = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          };
+          setUserLocation(newCoords);
+          console.log('Location enabled:', newCoords);
         },
-        error => {
-          // Location services are disabled or other error
-          if (error.code === 2) {
-            // Location services disabled
-            Alert.alert(
-              'Location Services Disabled',
-              'Please enable location services for a better experience.',
-              [
-                {
-                  text: 'Cancel',
-                  style: 'cancel',
-                },
-                {
-                  text: 'Open Settings',
-                  onPress: () => Linking.openSettings(), // Open device settings
-                },
-              ],
-            );
-          } else {
-            console.log('Geolocation error:', error.code, error.message);
-            showToast('error', 'Unable to get location');
-          }
-        },
-        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+        // ... rest of error handling remains the same
       );
     } catch (error) {
       console.log('Error checking location:', error);
@@ -122,10 +103,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
   const getCurrentLocation = async () => {
     try {
       const hasPermission = await requestLocationPermission();
-      if (!hasPermission) {
-        showToast('error', 'Location permission denied');
-        return;
-      }
+      if (!hasPermission) return;
 
       const location = await new Promise<Geolocation.GeoPosition>(
         (resolve, reject) => {
@@ -133,29 +111,28 @@ const HomeScreen = ({navigation}: HomeProps) => {
             enableHighAccuracy: true,
             timeout: 15000,
             maximumAge: 10000,
-            distanceFilter: 0,
-            forceRequestLocation: true,
-            showLocationDialog: true,
           });
         },
       );
 
-      if (location) {
-        const newCoords = {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        };
+      const newCoords = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      };
 
-        setSelectedLocation(newCoords);
-        mapRef.current?.animateToRegion({
-          ...newCoords,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        });
+      // Update single source of truth
+      setUserLocation(newCoords);
+
+      if (mapRef.current) {
+        mapRef.current.animateToRegion(
+          {
+            ...newCoords,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          },
+          1000,
+        );
       }
-
-      // setMLat(location.coords.latitude);
-      // setMLong(location.coords.longitude);
     } catch (error: any) {
       console.log('Location error:', error.code, error.message);
       showToast('error', `Location error: ${error.message}`);
@@ -178,11 +155,11 @@ const HomeScreen = ({navigation}: HomeProps) => {
     checkLocationServices(); // Check location services on screen load
   }, []);
 
-  useEffect(() => {
-    if (modalVisible) {
-      setSelectedLocation({latitude: mLat, longitude: mLong});
-    }
-  }, [modalVisible]);
+  // useEffect(() => {
+  //   if (modalVisible) {
+  //     setSelectedLocation({latitude: mLat, longitude: mLong});
+  //   }
+  // }, [modalVisible]);
 
   const handleCardPress = (item: any) => {
     navigation.navigate('ShopListScreen', {category: item});
@@ -267,24 +244,26 @@ const HomeScreen = ({navigation}: HomeProps) => {
             style={styles.map}
             ref={mapRef}
             provider="google"
-            initialRegion={{
-              latitude: mLat || 37.4219983,
-              longitude: mLong || -122.084,
-              latitudeDelta: 0.01,
-              longitudeDelta: 0.01,
-            }}
+            region={
+              userLocation
+                ? {
+                    latitude: userLocation.latitude,
+                    longitude: userLocation.longitude,
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01,
+                  }
+                : undefined
+            }
             onRegionChangeComplete={region => {
-              setSelectedLocation({
+              setUserLocation({
                 latitude: region.latitude,
                 longitude: region.longitude,
               });
             }}
-            showsUserLocation={true} // Add this to show default blue dot
-            followsUserLocation={false} // Add this to follow location
-          >
-            {mLat !== 0 && mLong !== 0 && (
-              <Marker coordinate={{latitude: mLat, longitude: mLong}}>
-                {/* Custom Marker Design */}
+            showsUserLocation={true}
+            followsUserLocation={false}>
+            {userLocation && (
+              <Marker coordinate={userLocation}>
                 <View style={styles.customMarker}>
                   <Icons name="enviromento" size={30} color="#003366" />
                   <View style={styles.markerPulse} />
@@ -300,9 +279,10 @@ const HomeScreen = ({navigation}: HomeProps) => {
           <TouchableOpacity
             style={styles.confirmButton}
             onPress={() => {
-              setMLat(selectedLocation.latitude);
-              setMLong(selectedLocation.longitude);
-              setModalVisible(false);
+              if (userLocation) {
+                setModalVisible(false);
+                // Update any other location-related states if needed
+              }
             }}>
             <Text style={styles.confirmButtonText}>Confirm Location</Text>
           </TouchableOpacity>
