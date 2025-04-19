@@ -34,8 +34,8 @@ const HomeScreen = ({navigation}: HomeProps) => {
   const [modalVisible, setModalVisible] = useState(false);
   const windowHeight = Dimensions.get('window').height;
   const modalHeight = windowHeight;
-  const [mLat, setMLat] = useState<number>(0);
-  const [mLong, setMLong] = useState<number>(0);
+  const [mLat, setMLat] = useState<number>(37.4219983);
+  const [mLong, setMLong] = useState<number>(-122.084);
   const [globalCats, setGlobalCats] = useState<any>([]);
 
   const getGlobalCategories = async () => {
@@ -239,14 +239,24 @@ const HomeScreen = ({navigation}: HomeProps) => {
 
           <MapView
             style={styles.map}
-            initialRegion={{
-              latitude: mLat || 28.68344961110582,
-              longitude: mLong || 77.21538250329944,
+            provider="google"
+            region={{
+              latitude: mLat || 37.4219983,
+              longitude: mLong || -122.084,
               latitudeDelta: 0.01,
               longitudeDelta: 0.01,
-            }}>
+            }}
+            showsUserLocation={true} // Add this to show default blue dot
+            followsUserLocation={true} // Add this to follow location
+          >
             {mLat !== 0 && mLong !== 0 && (
-              <Marker coordinate={{latitude: mLat, longitude: mLong}} />
+              <Marker coordinate={{latitude: mLat, longitude: mLong}}>
+                {/* Custom Marker Design */}
+                <View style={styles.customMarker}>
+                  <Icons name="enviromento" size={30} color="#003366" />
+                  <View style={styles.markerPulse} />
+                </View>
+              </Marker>
             )}
           </MapView>
 
@@ -353,27 +363,15 @@ const styles = StyleSheet.create({
   closeButton: {
     padding: 8,
   },
-  map: {
-    flex: 1,
-  },
-  // currentLocationButton: {
-  //   flexDirection: 'row',
-  //   backgroundColor: colors.primary,
-  //   padding: 16,
-  //   borderRadius: 12,
-  //   alignItems: 'center',
+  // modalContent: {
+  //   flex: 1,
   //   justifyContent: 'center',
-  //   margin: 16,
-  //   position: 'absolute',
-  //   bottom: 0,
-  //   left: 16,
-  //   right: 16,
+  //   alignItems: 'center',
   // },
-  // locationButtonText: {
-  //   color: 'white',
-  //   fontWeight: '600',
-  //   marginLeft: 8,
+  // modalText: {
   //   fontSize: 16,
+  //   color: colors.darkGray,
+  //   marginBottom: 20,
   // },
   currentLocationButton: {
     position: 'absolute',
@@ -427,5 +425,22 @@ const styles = StyleSheet.create({
   },
   gridContainer: {
     padding: 10, // Padding around the grid
+  },
+  customMarker: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  markerPulse: {
+    position: 'absolute',
+    backgroundColor: '#00336622',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    zIndex: -1,
+  },
+  // Ensure your map has proper dimensions
+  map: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height * 0.8, // Use 80% of screen height
   },
 });
