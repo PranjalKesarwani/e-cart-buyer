@@ -1,5 +1,5 @@
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -32,10 +32,16 @@ type TCategoryCards = {
 
 const HomeScreen = ({navigation}: HomeProps) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const windowHeight = Dimensions.get('window').height;
-  const modalHeight = windowHeight;
+  const mapRef = useRef<MapView>(null);
   const [mLat, setMLat] = useState<number>(37.4219983);
   const [mLong, setMLong] = useState<number>(-122.084);
+  const [selectedLocation, setSelectedLocation] = useState({
+    latitude: mLat,
+    longitude: mLong,
+  });
+  const windowHeight = Dimensions.get('window').height;
+  const modalHeight = windowHeight;
+
   const [globalCats, setGlobalCats] = useState<any>([]);
 
   const getGlobalCategories = async () => {
@@ -134,8 +140,22 @@ const HomeScreen = ({navigation}: HomeProps) => {
         },
       );
 
-      setMLat(location.coords.latitude);
-      setMLong(location.coords.longitude);
+      if (location) {
+        const newCoords = {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        };
+
+        setSelectedLocation(newCoords);
+        mapRef.current?.animateToRegion({
+          ...newCoords,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        });
+      }
+
+      // setMLat(location.coords.latitude);
+      // setMLong(location.coords.longitude);
     } catch (error: any) {
       console.log('Location error:', error.code, error.message);
       showToast('error', `Location error: ${error.message}`);
@@ -157,6 +177,12 @@ const HomeScreen = ({navigation}: HomeProps) => {
     getGlobalCategories();
     checkLocationServices(); // Check location services on screen load
   }, []);
+
+  useEffect(() => {
+    if (modalVisible) {
+      setSelectedLocation({latitude: mLat, longitude: mLong});
+    }
+  }, [modalVisible]);
 
   const handleCardPress = (item: any) => {
     navigation.navigate('ShopListScreen', {category: item});
@@ -239,15 +265,22 @@ const HomeScreen = ({navigation}: HomeProps) => {
 
           <MapView
             style={styles.map}
+            ref={mapRef}
             provider="google"
-            region={{
+            initialRegion={{
               latitude: mLat || 37.4219983,
               longitude: mLong || -122.084,
               latitudeDelta: 0.01,
               longitudeDelta: 0.01,
             }}
+            onRegionChangeComplete={region => {
+              setSelectedLocation({
+                latitude: region.latitude,
+                longitude: region.longitude,
+              });
+            }}
             showsUserLocation={true} // Add this to show default blue dot
-            followsUserLocation={true} // Add this to follow location
+            followsUserLocation={false} // Add this to follow location
           >
             {mLat !== 0 && mLong !== 0 && (
               <Marker coordinate={{latitude: mLat, longitude: mLong}}>
@@ -260,10 +293,24 @@ const HomeScreen = ({navigation}: HomeProps) => {
             )}
           </MapView>
 
+          <View style={styles.centerMarker}>
+            <Icons name="enviromento" size={30} color="#003366" />
+            <View style={styles.markerPulse} />
+          </View>
+          <TouchableOpacity
+            style={styles.confirmButton}
+            onPress={() => {
+              setMLat(selectedLocation.latitude);
+              setMLong(selectedLocation.longitude);
+              setModalVisible(false);
+            }}>
+            <Text style={styles.confirmButtonText}>Confirm Location</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity
             onPress={getCurrentLocation}
             style={styles.currentLocationButton}>
-            <Icons name="enviromento" size={30} color="#003366" />
+            <Icons name="enviromento" size={30} color="#FFF" />
             <Text style={styles.locationButtonText}>Use Current Location</Text>
           </TouchableOpacity>
         </View>
@@ -373,17 +420,17 @@ const styles = StyleSheet.create({
   //   color: colors.darkGray,
   //   marginBottom: 20,
   // },
-  currentLocationButton: {
-    position: 'absolute',
-    bottom: 20,
-    alignSelf: 'center',
-    backgroundColor: 'white',
-    padding: 15,
-    borderRadius: 30,
-    flexDirection: 'row',
-    alignItems: 'center',
-    elevation: 5,
-  },
+  // currentLocationButton: {
+  //   position: 'absolute',
+  //   bottom: 20,
+  //   alignSelf: 'center',
+  //   backgroundColor: 'white',
+  //   padding: 15,
+  //   borderRadius: 30,
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   elevation: 5,
+  // },
   locationButtonText: {
     marginLeft: 10,
     color: '#003366',
@@ -430,17 +477,70 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  markerPulse: {
-    position: 'absolute',
-    backgroundColor: '#00336622',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    zIndex: -1,
-  },
+  // markerPulse: {
+  //   position: 'absolute',
+  //   backgroundColor: '#00336622',
+  //   width: 40,
+  //   height: 40,
+  //   borderRadius: 20,
+  //   zIndex: -1,
+  // },
   // Ensure your map has proper dimensions
   map: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height * 0.8, // Use 80% of screen height
+  },
+  centerMarker: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginLeft: -15,
+    marginTop: -40,
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  markerPulse: {
+    position: 'absolute',
+    backgroundColor: 'rgba(0, 51, 102, 0.2)',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    top: -5,
+    zIndex: -1,
+  },
+  confirmButton: {
+    position: 'absolute',
+    bottom: 100,
+    alignSelf: 'center',
+    backgroundColor: Theme.colors.bharatPurple,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  confirmButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    marginLeft: 8,
+    fontWeight: '500',
+  },
+  currentLocationButton: {
+    position: 'absolute',
+    bottom: 40,
+    right: 20,
+    backgroundColor: Theme.colors.bharatPurple,
+    padding: 12,
+    borderRadius: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
 });
