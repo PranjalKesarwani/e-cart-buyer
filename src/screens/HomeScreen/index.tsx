@@ -16,19 +16,12 @@ import {RootDrawerParamList} from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
 import MapView, {Marker} from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
-import Title from '../../components/Title';
 import {FlatList} from 'react-native-gesture-handler';
 import {showToast} from '../../utils/toast';
 import {apiClient} from '../../services/api';
 import {Theme} from '../../theme/theme';
-// import {colors, Theme} from '../../theme/theme'; // Assuming colors are defined in theme
 
 type HomeProps = NativeStackScreenProps<RootDrawerParamList, 'HomeScreen'>;
-
-type TCategoryCards = {
-  id: number;
-  text: string;
-};
 
 const HomeScreen = ({navigation}: HomeProps) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -38,10 +31,14 @@ const HomeScreen = ({navigation}: HomeProps) => {
     latitude: number;
     longitude: number;
   } | null>(null);
-  // const [selectedLocation, setSelectedLocation] = useState({
-  //   latitude: mLat,
-  //   longitude: mLong,
-  // });
+  const [confirmedLocation, setConfirmedLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const [confirmedAddress, setConfirmedAddress] = useState<string>(
+    'Opposite Ramleela Maidan, 221507',
+  );
+
   const windowHeight = Dimensions.get('window').height;
   const modalHeight = windowHeight;
 
@@ -93,7 +90,21 @@ const HomeScreen = ({navigation}: HomeProps) => {
           setUserLocation(newCoords);
           console.log('Location enabled:', newCoords);
         },
-        // ... rest of error handling remains the same
+        error => {
+          console.log('Location error:', error.code, error.message);
+          showToast('error', `Location error: ${error.message}`);
+          if (error.code === 2) {
+            Alert.alert(
+              'Location Required',
+              'Please enable device location services',
+              [
+                {text: 'Cancel', style: 'cancel'},
+                {text: 'Settings', onPress: () => Linking.openSettings()},
+              ],
+            );
+          }
+        },
+        {enableHighAccuracy: true, timeout: 15000, maximumAge: 0},
       );
     } catch (error) {
       console.log('Error checking location:', error);
@@ -120,8 +131,6 @@ const HomeScreen = ({navigation}: HomeProps) => {
         longitude: location.coords.longitude,
       };
       console.log('Current location:', newCoords);
-
-      // Update single source of truth
       setUserLocation(newCoords);
 
       if (mapRef.current) {
@@ -137,7 +146,6 @@ const HomeScreen = ({navigation}: HomeProps) => {
     } catch (error: any) {
       console.log('Location error:', error.code, error.message);
       showToast('error', `Location error: ${error.message}`);
-
       if (error.code === 2) {
         Alert.alert(
           'Location Required',
@@ -151,9 +159,45 @@ const HomeScreen = ({navigation}: HomeProps) => {
     }
   };
 
+  const getAddressFromCoordinates = async (
+    latitude: number,
+    longitude: number,
+  ) => {
+    const API_KEY = 'YOUR_GOOGLE_API_KEY'; // Replace with your actual API key
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${API_KEY}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      if (data.status === 'OK') {
+        const address = data.results[0].formatted_address;
+        return address;
+      } else {
+        throw new Error(data.status);
+      }
+    } catch (error) {
+      console.error('Error getting address:', error);
+      return null;
+    }
+  };
+
+  const initializeLocation = async () => {
+    await checkLocationServices();
+    if (userLocation) {
+      setConfirmedLocation(userLocation);
+      const address = await getAddressFromCoordinates(
+        userLocation.latitude,
+        userLocation.longitude,
+      );
+      if (address) {
+        setConfirmedAddress(address);
+      }
+    }
+  };
+
   useEffect(() => {
     getGlobalCategories();
-    checkLocationServices(); // Check location services on screen load
+    initializeLocation();
   }, []);
 
   const handleCardPress = (item: any) => {
@@ -179,10 +223,10 @@ const HomeScreen = ({navigation}: HomeProps) => {
                 numberOfLines={1}
                 ellipsizeMode="tail"
                 style={styles.locationAddress}>
-                Opposite Ramleela Maidan, 221507
+                {confirmedAddress}
               </Text>
             </View>
-            <Icons name="down" size={16} color={colors.darkGray} />
+            <Icons name="down" size={16} color={Theme.colors.bharatPurple} />
           </View>
         </TouchableOpacity>
       </View>
@@ -231,7 +275,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
             <TouchableOpacity
               onPress={() => setModalVisible(false)}
               style={styles.closeButton}>
-              <Icons name="close" size={24} color={colors.darkGray} />
+              <Icons name="close" size={24} color={Theme.colors.baseYellow} />
             </TouchableOpacity>
           </View>
 
@@ -273,10 +317,17 @@ const HomeScreen = ({navigation}: HomeProps) => {
           </View>
           <TouchableOpacity
             style={styles.confirmButton}
-            onPress={() => {
+            onPress={async () => {
               if (userLocation) {
+                setConfirmedLocation(userLocation);
+                const address = await getAddressFromCoordinates(
+                  userLocation.latitude,
+                  userLocation.longitude,
+                );
+                if (address) {
+                  setConfirmedAddress(address);
+                }
                 setModalVisible(false);
-                // Update any other location-related states if needed
               }
             }}>
             <Text style={styles.confirmButtonText}>Confirm Location</Text>
@@ -293,6 +344,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
     </View>
   );
 };
+
 export default HomeScreen;
 
 const colors = {
