@@ -119,6 +119,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       };
+      console.log('Current location:', newCoords);
 
       // Update single source of truth
       setUserLocation(newCoords);
