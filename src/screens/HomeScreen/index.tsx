@@ -156,12 +156,6 @@ const HomeScreen = ({navigation}: HomeProps) => {
     checkLocationServices(); // Check location services on screen load
   }, []);
 
-  // useEffect(() => {
-  //   if (modalVisible) {
-  //     setSelectedLocation({latitude: mLat, longitude: mLong});
-  //   }
-  // }, [modalVisible]);
-
   const handleCardPress = (item: any) => {
     navigation.navigate('ShopListScreen', {category: item});
   };
