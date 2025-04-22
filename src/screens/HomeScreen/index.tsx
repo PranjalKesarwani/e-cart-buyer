@@ -228,17 +228,16 @@ const HomeScreen = ({navigation}: HomeProps) => {
           onPress={() => setModalVisible(true)}
           style={styles.locationSelector}>
           <View style={styles.locationContent}>
-            <Icons
-              name="enviromento"
-              size={20}
-              color={Theme.colors.bharatPurple}
-            />
-            <View style={styles.locationTextContainer}>
-              <Text style={styles.locationTitle}>Username</Text>
+            <Icons name="enviromento" size={20} color={Theme.colors.primary} />
+            <View style={[styles.locationTextContainer]}>
+              <Text
+                style={[styles.locationTitle, {color: Theme.colors.primary}]}>
+                Username
+              </Text>
               <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
-                style={styles.locationAddress}>
+                style={[styles.locationAddress]}>
                 {confirmedAddress}
               </Text>
             </View>
@@ -400,6 +399,7 @@ const styles = StyleSheet.create({
   locationTextContainer: {
     flex: 1,
     marginLeft: 12,
+    color: Theme.colors.primary,
   },
   locationTitle: {
     fontSize: 14,
