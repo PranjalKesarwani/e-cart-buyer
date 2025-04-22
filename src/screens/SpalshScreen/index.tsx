@@ -22,7 +22,6 @@ const SplashScreen = ({navigation}: SplashProps) => {
     const fetchData = async () => {
       try {
         const data: any = await dispatch(fetchBuyer()).unwrap();
-        console.log('----------->>>>', data.buyerInfo.name);
 
         if (data.success) {
           if (!data.buyerInfo.name) {

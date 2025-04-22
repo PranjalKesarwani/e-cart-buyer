@@ -20,6 +20,7 @@ import {FlatList} from 'react-native-gesture-handler';
 import {showToast} from '../../utils/toast';
 import {apiClient} from '../../services/api';
 import {Theme} from '../../theme/theme';
+import axios from 'axios';
 
 type HomeProps = NativeStackScreenProps<RootDrawerParamList, 'HomeScreen'>;
 
@@ -163,20 +164,35 @@ const HomeScreen = ({navigation}: HomeProps) => {
     latitude: number,
     longitude: number,
   ) => {
-    const API_KEY = 'YOUR_GOOGLE_API_KEY'; // Replace with your actual API key
+    const API_KEY = 'AIzaSyDOz_eMVh03ENc2EBiAgr0eRImieYsu6fk'; // Should be server-side!
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${API_KEY}`;
 
     try {
-      const response = await fetch(url);
-      const data = await response.json();
-      if (data.status === 'OK') {
-        const address = data.results[0].formatted_address;
-        return address;
-      } else {
-        throw new Error(data.status);
+      const response = await axios.get(url);
+      const data = response.data;
+      console.log('Geocoding response:', data);
+      switch (data.status) {
+        case 'OK':
+          return data.results[0].formatted_address;
+        case 'ZERO_RESULTS':
+          console.warn('No address found for these coordinates');
+          return null;
+        default:
+          throw new Error(
+            `Geocoding error: ${data.status} - ${data.error_message || ''}`,
+          );
       }
     } catch (error) {
-      console.error('Error getting address:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('API request failed:', {
+          message: error.message,
+          code: error.code,
+          status: error.response?.status,
+          data: error.response?.data,
+        });
+      } else {
+        console.error('Unexpected error:', error);
+      }
       return null;
     }
   };
