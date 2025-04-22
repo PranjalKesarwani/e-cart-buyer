@@ -117,15 +117,9 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}>
-          <Icons name="left" size={24} color="#1A1A1A" />
+          <Icons name="left" size={24} color={Theme.colors.darkText} />
         </TouchableOpacity>
-        <Text
-          style={[
-            styles.shopTitle,
-            {width: '100%', textAlign: 'left', paddingLeft: 5},
-          ]}>
-          {shop.shopName}
-        </Text>
+        <Text style={styles.shopTitle}>{shop.shopName}</Text>
       </View>
 
       {/* Main Content */}
@@ -135,74 +129,49 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
         ListHeaderComponent={
           <>
             {/* Shop Info Section */}
-            <View style={[styles.shopInfoContainer]}>
-              <View style={[styles.shopImage, {position: 'relative'}]}>
+            <View style={styles.shopInfoContainer}>
+              <View style={styles.shopImageContainer}>
                 <Image
                   source={{
-                    uri:
-                      shop?.shopPic ||
-                      'https://d27k8xmh3cuzik.cloudfront.net/wp-content/uploads/2018/03/street-shopping-in-india-cover.jpg',
+                    uri: shop?.shopPic || Theme.defaultImages.shop,
                   }}
-                  style={[styles.shopImage]}
+                  style={styles.shopImage}
                   resizeMode="cover"
                 />
-                <View
-                  style={{
-                    position: 'absolute',
-                    top: 16,
-                    right: 16,
-                    zIndex: 1,
-                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                    padding: 7,
-                    borderRadius: 50,
-                  }}>
-                  <Icons
-                    name="hearto"
-                    size={20}
-                    color="#FFF"
-                    // style={{position: 'absolute', top: 16, right: 16}}
-                  />
+                <View style={styles.imageOverlayIcon}>
+                  <Icons name="hearto" size={20} color={Theme.colors.white} />
                 </View>
                 <TouchableOpacity
                   onPress={() => onChatPress(shop)}
-                  style={{
-                    position: 'absolute',
-                    bottom: 16,
-                    right: 16,
-                    zIndex: 1,
-                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                    padding: 7,
-                    borderRadius: 50,
-                  }}>
-                  <Icons
-                    name="message1"
-                    size={20}
-                    color="#FFF"
-                    // style={{position: 'absolute', top: 16, right: 16}}
-                  />
+                  style={styles.imageOverlayIcon}>
+                  <Icons name="message1" size={20} color={Theme.colors.white} />
                 </TouchableOpacity>
               </View>
 
               <View style={styles.infoContainer}>
                 <View style={styles.infoRow}>
-                  <Icons name="clockcircleo" size={16} color="#FFA725" />
+                  <Icons
+                    name="clockcircleo"
+                    size={16}
+                    color={Theme.colors.warning}
+                  />
                   <Text style={styles.infoText}>
                     {shop.shopTiming.open} - {shop.shopTiming.close}
                   </Text>
                 </View>
                 <View style={styles.infoRow}>
-                  <Icons name="enviromento" size={16} color="#1F7D53" />
+                  <Icons
+                    name="enviromento"
+                    size={16}
+                    color={Theme.colors.success}
+                  />
                   <Text style={styles.infoText}>
                     {(shop.sellerId as TSeller).address.street},{' '}
                     {(shop.sellerId as TSeller).address.city}
                   </Text>
                 </View>
                 <View style={styles.infoRow}>
-                  <Icons
-                    name="play"
-                    size={16}
-                    color={Theme.colors.mainYellow}
-                  />
+                  <Icons name="play" size={16} color={Theme.colors.primary} />
                   <Text style={styles.infoText}>{shop.titleMsg}</Text>
                 </View>
               </View>
@@ -217,8 +186,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
               renderItem={({item}) => (
                 <TouchableOpacity
                   style={[
-                    // styles.categoryButton,
-                    Theme.buttons.primary,
+                    styles.categoryButton,
                     selectedCat?._id === item._id && styles.selectedCategory,
                   ]}
                   onPress={() => {
@@ -236,7 +204,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
                 </TouchableOpacity>
               )}
               keyExtractor={item => item._id}
-              nestedScrollEnabled // Add this for Android
+              nestedScrollEnabled
             />
           </>
         }
@@ -268,124 +236,86 @@ export default ShopScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: Theme.colors.background,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#FFFFFF',
+    padding: Theme.spacing.md,
+    backgroundColor: Theme.colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEE',
+    borderBottomColor: Theme.colors.lightGray,
   },
   backButton: {
-    marginRight: 10,
+    marginRight: Theme.spacing.sm,
   },
   shopTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#1A1A1A',
+    ...Theme.typography.h5,
+    color: Theme.colors.darkText,
+    flex: 1,
+    paddingLeft: Theme.spacing.xs,
   },
-  // scrollContent: {
-  //   paddingBottom: 20,
-  // },
   shopInfoContainer: {
-    backgroundColor: '#FFF',
-    marginBottom: 16,
-    paddingBottom: 16,
+    backgroundColor: Theme.colors.white,
+    marginBottom: Theme.spacing.lg,
+    paddingBottom: Theme.spacing.md,
+  },
+  shopImageContainer: {
+    position: 'relative',
   },
   shopImage: {
     width: '100%',
     height: 200,
-    borderBottomLeftRadius: 12,
-    borderBottomRightRadius: 12,
+    borderBottomLeftRadius: Theme.borderRadius.lg,
+    borderBottomRightRadius: Theme.borderRadius.lg,
+  },
+  imageOverlayIcon: {
+    position: 'absolute',
+    backgroundColor: Theme.colors.overlay,
+    padding: Theme.spacing.xs,
+    borderRadius: Theme.borderRadius.full,
+    zIndex: 1,
   },
   infoContainer: {
-    paddingHorizontal: 16,
-    marginTop: 16,
+    paddingHorizontal: Theme.spacing.md,
+    marginTop: Theme.spacing.md,
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: Theme.spacing.sm,
   },
   infoText: {
-    fontSize: 14,
-    color: '#666',
-    marginLeft: 8,
+    ...Theme.typography.body2,
+    color: Theme.colors.gray,
+    marginLeft: Theme.spacing.sm,
   },
   categoryButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
-    backgroundColor: '#FFD65A',
-    marginRight: 12,
+    paddingHorizontal: Theme.spacing.lg,
+    paddingVertical: Theme.spacing.sm,
+    borderRadius: Theme.borderRadius.md,
+    backgroundColor: Theme.colors.lightPrimary,
+    marginRight: Theme.spacing.sm,
   },
   selectedCategory: {
-    backgroundColor: Theme.colors.mainYellow,
+    backgroundColor: Theme.colors.primary,
   },
   categoryText: {
-    fontSize: 14,
-    color: 'black',
-    fontWeight: '500',
+    ...Theme.typography.button,
+    color: Theme.colors.darkText,
   },
   selectedCategoryText: {
-    color: 'black',
-  },
-  productCard: {
-    width: CARD_WIDTH,
-    backgroundColor: '#FFF',
-    borderRadius: 12,
-    marginBottom: 16,
-    padding: 12,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  productImage: {
-    width: '100%',
-    height: 150,
-    borderRadius: 8,
-    marginBottom: 12,
-  },
-  productDetails: {
-    paddingHorizontal: 4,
-  },
-  productName: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#1A1A1A',
-    marginBottom: 8,
-    height: 40,
-  },
-  productPrice: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#2A59FE',
-    marginBottom: 4,
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  ratingText: {
-    fontSize: 12,
-    color: '#666',
-    marginLeft: 4,
+    color: Theme.colors.white,
   },
   scrollContent: {
-    paddingBottom: 20,
-    // Remove flexGrow: 1 if present
+    paddingBottom: Theme.spacing.xl,
   },
   productsWrapper: {
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: Theme.spacing.md,
   },
-  // Ensure categoriesContainer has no height constraint
   categoriesContainer: {
-    paddingVertical: 12,
-    paddingLeft: 10,
+    paddingVertical: Theme.spacing.sm,
+    paddingLeft: Theme.spacing.sm,
   },
 });

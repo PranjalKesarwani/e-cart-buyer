@@ -25,6 +25,10 @@ const BASE_COLORS = {
   gray: '#636E72',
   lightGray: '#DFE6E9',
   white: '#FFFFFF',
+  overlay: 'rgba(0, 0, 0, 0.7)',
+  warning: '#FFA725',
+  success: '#1F7D53',
+  lightPrimary: '#FFD65A',
 };
 
 export const Theme = {
@@ -34,7 +38,9 @@ export const Theme = {
     heading: 'Poppins-Bold',
     body: 'Poppins-Regular',
   }, // Fixed missing comma here
-
+  defaultImages: {
+    shop: 'https://d27k8xmh3cuzik.cloudfront.net/wp-content/uploads/2018/03/street-shopping-in-india-cover.jpg',
+  },
   spacing: {
     xs: 4,
     sm: 8,
@@ -46,6 +52,7 @@ export const Theme = {
     sm: 8,
     md: 12,
     lg: 24,
+    full: 50,
   },
   shadows: {
     xs: {
@@ -176,6 +183,11 @@ export const Theme = {
       fontSize: 16,
       lineHeight: 24,
       fontFamily: 'Inter-SemiBold',
+    },
+    body2: {
+      fontSize: 14,
+      lineHeight: 20,
+      fontFamily: 'Inter-Regular',
     },
   },
 };
