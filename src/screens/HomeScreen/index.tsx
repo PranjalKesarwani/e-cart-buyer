@@ -228,7 +228,11 @@ const HomeScreen = ({navigation}: HomeProps) => {
           onPress={() => setModalVisible(true)}
           style={styles.locationSelector}>
           <View style={styles.locationContent}>
-            <Icons name="enviromento" size={20} color={Theme.colors.primary} />
+            <Icons
+              name="enviromento"
+              size={20}
+              color={Theme.colors.bharatPurple}
+            />
             <View style={styles.locationTextContainer}>
               <Text style={styles.locationTitle}>Username</Text>
               <Text
@@ -238,7 +242,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
                 {confirmedAddress}
               </Text>
             </View>
-            <Icons name="down" size={16} color={Theme.colors.primary} />
+            <Icons name="down" size={16} color={Theme.colors.bharatPurple} />
           </View>
         </TouchableOpacity>
       </View>
@@ -254,13 +258,13 @@ const HomeScreen = ({navigation}: HomeProps) => {
           data={globalCats}
           renderItem={({item}) => (
             <TouchableOpacity
-              style={styles.categoryCard}
+              style={[styles.categoryCard]}
               activeOpacity={0.9}
               onPress={() => handleCardPress(item)}>
-              <View style={styles.categoryContent}>
-                <View style={styles.imageContainer}>
+              <View style={[styles.categoryContent]}>
+                <View style={[styles.imageContainer]}>
                   <Image
-                    style={styles.categoryImage}
+                    style={[styles.categoryImage, {borderTopRightRadius: 5.6}]}
                     source={{uri: item.image}}
                     resizeMode="cover"
                   />
@@ -287,12 +291,46 @@ const HomeScreen = ({navigation}: HomeProps) => {
             <TouchableOpacity
               onPress={() => setModalVisible(false)}
               style={styles.closeButton}>
-              <Icons name="close" size={24} color={Theme.colors.primary} />
+              <Icons name="close" size={24} color={Theme.colors.baseYellow} />
             </TouchableOpacity>
           </View>
 
-          {/* ... map view remains the same ... */}
+          <MapView
+            style={styles.map}
+            ref={mapRef}
+            provider="google"
+            region={
+              userLocation
+                ? {
+                    latitude: userLocation.latitude,
+                    longitude: userLocation.longitude,
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01,
+                  }
+                : undefined
+            }
+            onRegionChangeComplete={region => {
+              setUserLocation({
+                latitude: region.latitude,
+                longitude: region.longitude,
+              });
+            }}
+            showsUserLocation={true}
+            followsUserLocation={false}>
+            {userLocation && (
+              <Marker coordinate={userLocation}>
+                <View style={styles.customMarker}>
+                  <Icons name="enviromento" size={30} color="#003366" />
+                  <View style={styles.markerPulse} />
+                </View>
+              </Marker>
+            )}
+          </MapView>
 
+          <View style={styles.centerMarker}>
+            <Icons name="enviromento" size={30} color="#003366" />
+            <View style={styles.markerPulse} />
+          </View>
           <TouchableOpacity
             style={styles.confirmButton}
             onPress={async () => {
@@ -314,7 +352,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
           <TouchableOpacity
             onPress={getCurrentLocation}
             style={styles.currentLocationButton}>
-            <Icons name="enviromento" size={24} color={Theme.colors.white} />
+            <Icons name="enviromento" size={30} color="#FFF" />
             <Text style={styles.locationButtonText}>Use Current Location</Text>
           </TouchableOpacity>
         </View>
@@ -337,19 +375,23 @@ const colors = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Theme.colors.background,
+    backgroundColor: colors.background,
   },
   header: {
-    padding: Theme.spacing.md,
-    backgroundColor: Theme.colors.white,
+    padding: 16,
+    backgroundColor: 'white',
     borderBottomWidth: 1,
-    borderBottomColor: Theme.colors.lightGray,
+    borderBottomColor: colors.lightGray,
   },
   locationSelector: {
-    backgroundColor: Theme.colors.white,
-    borderRadius: Theme.borderRadius.md,
-    padding: Theme.spacing.md,
-    ...Theme.shadows.sm,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
   },
   locationContent: {
     flexDirection: 'row',
@@ -357,88 +399,139 @@ const styles = StyleSheet.create({
   },
   locationTextContainer: {
     flex: 1,
-    marginLeft: Theme.spacing.md,
+    marginLeft: 12,
   },
   locationTitle: {
-    ...Theme.typography.caption,
-    color: Theme.colors.gray,
+    fontSize: 14,
+    color: colors.darkGray,
+    fontWeight: '500',
   },
   locationAddress: {
-    ...Theme.typography.body1,
-    color: Theme.colors.darkText,
-    marginTop: Theme.spacing.xs,
+    fontSize: 16,
+    color: colors.text,
+    fontWeight: '600',
+    marginTop: 4,
   },
   contentContainer: {
     flex: 1,
-    paddingHorizontal: Theme.spacing.sm,
+    paddingHorizontal: 7,
   },
   welcomeMessage: {
-    ...Theme.typography.h4,
-    color: Theme.colors.darkText,
-    marginVertical: Theme.spacing.lg,
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.text,
+    marginVertical: 24,
     textAlign: 'center',
+    lineHeight: 32,
   },
-  categoryCard: {
-    flex: 1,
-    margin: Theme.spacing.sm,
-    borderWidth: 1,
-    borderColor: Theme.colors.lightGray,
-    borderRadius: Theme.borderRadius.sm,
-    backgroundColor: Theme.colors.white,
-    ...Theme.shadows.xs,
-    paddingBottom: Theme.spacing.xs,
-  },
-  categoryContent: {
-    alignItems: 'center',
-    width: '100%',
-    paddingBottom: Theme.spacing.xs,
-  },
-  imageContainer: {
-    width: '100%',
-    height: 100,
-    borderTopEndRadius: Theme.borderRadius.sm,
-  },
-  categoryImage: {
-    width: '100%',
-    height: '100%',
-    borderTopRightRadius: Theme.borderRadius.sm,
-  },
-  categoryName: {
-    ...Theme.typography.body1,
-    color: Theme.colors.darkText,
-    marginTop: Theme.spacing.sm,
-    textAlign: 'center',
-  },
-  gridContainer: {
-    padding: Theme.spacing.sm,
+  // gridContainer: {
+  //   paddingBottom: 24,
+  // },
+  categoryIcon: {
+    backgroundColor: '#F0F2FE',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: Theme.colors.white,
+    backgroundColor: 'white',
   },
   modalHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: Theme.spacing.md,
+    padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: Theme.colors.lightGray,
+    borderBottomColor: colors.lightGray,
   },
   modalTitle: {
-    ...Theme.typography.h5,
-    color: Theme.colors.darkText,
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.text,
   },
   closeButton: {
-    padding: Theme.spacing.xs,
+    padding: 8,
   },
+  // modalContent: {
+  //   flex: 1,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  // },
+  // modalText: {
+  //   fontSize: 16,
+  //   color: colors.darkGray,
+  //   marginBottom: 20,
+  // },
+  // currentLocationButton: {
+  //   position: 'absolute',
+  //   bottom: 20,
+  //   alignSelf: 'center',
+  //   backgroundColor: 'white',
+  //   padding: 15,
+  //   borderRadius: 30,
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   elevation: 5,
+  // },
   locationButtonText: {
-    ...Theme.typography.button,
-    color: Theme.colors.primary,
-    marginLeft: Theme.spacing.sm,
+    marginLeft: 10,
+    color: '#003366',
+    fontWeight: 'bold',
   },
+  categoryCard: {
+    flex: 1,
+    margin: 8,
+    borderWidth: 1, // Subtle border
+    borderColor: '#E0E0E0', // Light gray for professionalism
+    borderRadius: 8, // Rounded corners
+    backgroundColor: '#FFFFFF', // Clean white background
+    elevation: 2, // Subtle shadow for depth
+    paddingBottom: 3, // Internal spacing
+  },
+  categoryContent: {
+    alignItems: 'center',
+    width: '100%',
+    paddingBottom: 8, // Space at the bottom
+  },
+  imageContainer: {
+    width: '100%',
+    height: 100, // Increased height for better image visibility
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopEndRadius: 8, // Rounded top corners
+  },
+  categoryImage: {
+    width: '100%', // Slightly less than full width for padding
+    height: '100%', // Maintains aspect ratio
+    resizeMode: 'cover', // Ensures image fits without distortion
+  },
+  categoryName: {
+    fontSize: 16,
+    fontWeight: '600', // Slightly bold for a polished look
+    color: '#333', // Dark gray for readability
+    marginTop: 8, // Space between image and text
+    textAlign: 'center', // Center text for consistency
+  },
+  gridContainer: {
+    padding: 10, // Padding around the grid
+  },
+  customMarker: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  // markerPulse: {
+  //   position: 'absolute',
+  //   backgroundColor: '#00336622',
+  //   width: 40,
+  //   height: 40,
+  //   borderRadius: 20,
+  //   zIndex: -1,
+  // },
+  // Ensure your map has proper dimensions
   map: {
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height * 0.8,
+    height: Dimensions.get('window').height * 0.8, // Use 80% of screen height
   },
   centerMarker: {
     position: 'absolute',
@@ -451,7 +544,7 @@ const styles = StyleSheet.create({
   },
   markerPulse: {
     position: 'absolute',
-    backgroundColor: `${Theme.colors.primary}22`,
+    backgroundColor: 'rgba(0, 51, 102, 0.2)',
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -462,27 +555,35 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 100,
     alignSelf: 'center',
-    backgroundColor: Theme.colors.primary,
-    paddingVertical: Theme.spacing.sm,
-    paddingHorizontal: Theme.spacing.lg,
-    borderRadius: Theme.borderRadius.lg,
+    backgroundColor: Theme.colors.bharatPurple,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 24,
     flexDirection: 'row',
     alignItems: 'center',
-    ...Theme.shadows.md,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   confirmButtonText: {
-    ...Theme.typography.button,
-    color: Theme.colors.white,
+    color: '#FFF',
+    fontSize: 16,
+    marginLeft: 8,
+    fontWeight: '500',
   },
   currentLocationButton: {
     position: 'absolute',
-    bottom: Theme.spacing.xl,
-    right: Theme.spacing.md,
-    backgroundColor: Theme.colors.primary,
-    padding: Theme.spacing.sm,
-    borderRadius: Theme.borderRadius.lg,
+    bottom: 40,
+    right: 20,
+    backgroundColor: Theme.colors.bharatPurple,
+    padding: 12,
+    borderRadius: 24,
     flexDirection: 'row',
     alignItems: 'center',
-    ...Theme.shadows.md,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
 });
