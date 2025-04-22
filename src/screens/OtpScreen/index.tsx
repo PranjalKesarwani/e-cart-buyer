@@ -57,8 +57,14 @@ const OTPScreen = ({route}: OtpProps) => {
     newOTP[index] = value;
     setOTP(newOTP);
 
-    if (value && index < 5) {
-      refs.current[index + 1]?.focus();
+    if (value) {
+      if (index < 5) {
+        refs.current[index + 1]?.focus();
+      }
+    } else {
+      if (index > 0) {
+        refs.current[index - 1]?.focus();
+      }
     }
   };
 
