@@ -15,15 +15,16 @@ const BASE_COLORS = {
   baseYellow: '#FFD65A',
   mainYellow: '#FFB200',
   mainOrange: '#FB641B',
-  white: '#FFFFFF',
   black: '#000000',
-  gray: '#808080',
-  lightGray: '#D3D3D3',
   lightBackground: '#F0F0F0',
   darkGray: '#A9A9A9',
-  darkText: '#2D2D2D', // Added for text contrast
   primary: '#FF9933',
-  background: '#F5F5F5',
+  secondary: '#FF9F43',
+  background: '#F8F9FA',
+  darkText: '#2D3436',
+  gray: '#636E72',
+  lightGray: '#DFE6E9',
+  white: '#FFFFFF',
 };
 
 export const Theme = {
@@ -35,11 +36,39 @@ export const Theme = {
   }, // Fixed missing comma here
 
   spacing: {
-    s: 8,
-    m: 16,
-    l: 24,
+    xs: 4,
+    sm: 8,
+    md: 16,
+    lg: 24,
     xl: 32,
-    xxl: 40,
+  },
+  borderRadius: {
+    sm: 8,
+    md: 12,
+    lg: 24,
+  },
+  shadows: {
+    xs: {
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 1},
+      shadowOpacity: 0.05,
+      shadowRadius: 2,
+      elevation: 1,
+    },
+    sm: {
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 2},
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    md: {
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 4},
+      shadowOpacity: 0.2,
+      shadowRadius: 6,
+      elevation: 5,
+    },
   },
 
   textVariants: {
@@ -99,27 +128,54 @@ export const Theme = {
     },
   } as Record<string, LinearGradientProps>,
 
-  shadows: {
-    small: {
-      shadowColor: BASE_COLORS.black,
-      shadowOffset: {width: 0, height: 2},
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 2,
-    },
-    medium: {
-      shadowColor: BASE_COLORS.black,
-      shadowOffset: {width: 0, height: 4},
-      shadowOpacity: 0.1,
-      shadowRadius: 8,
-      elevation: 5,
-    },
-  },
+  // shadows: {
+  //   small: {
+  //     shadowColor: BASE_COLORS.black,
+  //     shadowOffset: {width: 0, height: 2},
+  //     shadowOpacity: 0.1,
+  //     shadowRadius: 4,
+  //     elevation: 2,
+  //   },
+  //   medium: {
+  //     shadowColor: BASE_COLORS.black,
+  //     shadowOffset: {width: 0, height: 4},
+  //     shadowOpacity: 0.1,
+  //     shadowRadius: 8,
+  //     elevation: 5,
+  //   },
+  // },
 
   radii: {
     s: 8,
     m: 15,
     l: 25,
     xl: 40,
+  },
+  typography: {
+    h4: {
+      fontSize: 24,
+      lineHeight: 32,
+      fontFamily: 'Inter-Bold',
+    },
+    h5: {
+      fontSize: 20,
+      lineHeight: 28,
+      fontFamily: 'Inter-Bold',
+    },
+    body1: {
+      fontSize: 16,
+      lineHeight: 24,
+      fontFamily: 'Inter-Regular',
+    },
+    caption: {
+      fontSize: 14,
+      lineHeight: 20,
+      fontFamily: 'Inter-Medium',
+    },
+    button: {
+      fontSize: 16,
+      lineHeight: 24,
+      fontFamily: 'Inter-SemiBold',
+    },
   },
 };
