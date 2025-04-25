@@ -53,7 +53,7 @@ const SplashScreen = ({navigation}: SplashProps) => {
     <View style={styles.container}>
       <Title fontSize={42} fontWeight="800" />
       <Text style={styles.subtitle}>Authenticating User...</Text>
-      <ActivityIndicator size="small" color={Theme.colors.primary} />
+      <ActivityIndicator size="large" color={Theme.colors.primary} />
     </View>
   );
 };
