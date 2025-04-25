@@ -55,7 +55,7 @@ const AddressInputScreen = ({navigation}: AddressInputProps) => {
 
   const translateY = slideAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [500, 0],
+    outputRange: [1000, 0], // Increase this value for smoother entry
   });
 
   const handleSubmit = async () => {
@@ -93,7 +93,7 @@ const AddressInputScreen = ({navigation}: AddressInputProps) => {
 
   return (
     <KeyboardAvoidingView
-      style={[styles.container, Theme.showBorder]}
+      style={[styles.container]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <Animated.View style={[styles.content, {transform: [{translateY}]}]}>
         <View style={styles.header}>
@@ -202,13 +202,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
   },
   content: {
     backgroundColor: Theme.colors.background,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     padding: 25,
-    height: '85%',
+    maxHeight: '90%', // Changed from height to maxHeight
+    minHeight: '85%', // Ensure minimum height
   },
   header: {
     flexDirection: 'row',
