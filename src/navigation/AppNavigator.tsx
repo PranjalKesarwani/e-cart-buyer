@@ -22,6 +22,8 @@ import OrderStatusScreen from '../screens/OrderStatusScreen';
 import PersonalChatScreen from '../screens/PersonalChatScreen';
 import OrderedItemDetailScreen from '../screens/OrderedItemDetailScreen';
 import StatusViewer from '../screens/StatusViewer/StatusViewer';
+import LocationSetupScreen from '../screens/LocationSetupScreen';
+import AddressInputScreen from '../screens/AddressInputScreen';
 // import StatusViewer from '../screens/StatusViewer/StatusViewer';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -61,6 +63,23 @@ const AppNavigator = () => {
         component={NameInfoScreen}
         options={{
           title: 'Name info Screen',
+        }}
+      />
+
+      <Stack.Screen
+        name="LocationSetupScreen"
+        component={LocationSetupScreen}
+        options={{
+          title: 'Location Setup',
+          animation: 'slide_from_bottom', // For iOS
+        }}
+      />
+      <Stack.Screen
+        name="AddressInputScreen"
+        component={AddressInputScreen}
+        options={{
+          title: 'Location Setup',
+          animation: 'slide_from_bottom', // For iOS
         }}
       />
 

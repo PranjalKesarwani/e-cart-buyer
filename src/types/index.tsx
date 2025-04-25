@@ -22,7 +22,8 @@ export type RootStackParamList = {
   PersonalChatScreen: {shop: TShop};
   OrderedItemDetailScreen: undefined;
   StatusViewer: {statusUpdates: any; currentIndex: any};
-  // StatusScreen: undefined;
+  LocationSetupScreen: undefined;
+  AddressInputScreen: undefined;
 };
 
 export type RootDrawerParamList = {
@@ -59,6 +60,7 @@ export interface TBuyer {
   name: string | null;
   success: boolean;
   profilePic: string | null;
+  hasSetLocation: boolean;
   createdAt: string | null;
   activeSessions: string[];
   loading: boolean;

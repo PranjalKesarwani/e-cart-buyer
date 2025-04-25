@@ -41,6 +41,10 @@ export const Theme = {
   defaultImages: {
     shop: 'https://d27k8xmh3cuzik.cloudfront.net/wp-content/uploads/2018/03/street-shopping-in-india-cover.jpg',
   },
+  showBorder: {
+    borderWidth: 1,
+    borderColor: 'red',
+  },
   spacing: {
     xs: 4,
     sm: 8,

@@ -28,6 +28,10 @@ const SplashScreen = ({navigation}: SplashProps) => {
             navigation.replace('NameInfoScreen');
             return;
           }
+          if (!data.buyerInfo.hasSetLocation) {
+            navigation.replace('LocationSetupScreen');
+            return;
+          }
           await dispatch(getWishlists());
           const cartInfo: any = await dispatch(getCarts()).unwrap();
           const cartItemsCount = calculateCartItemsCount(cartInfo.cart);
