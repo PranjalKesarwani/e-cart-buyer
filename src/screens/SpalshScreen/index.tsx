@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
+import {View, Text, StyleSheet, Button} from 'react-native';
+import {NavigationProp} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../types';
 import Title from '../../components/Title';
-import {useAppDispatch} from '../../redux/hooks';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {
   fetchBuyer,
   getCarts,
@@ -11,7 +12,6 @@ import {
   setCartItemsCount,
 } from '../../redux/slices/buyerSlice';
 import {calculateCartItemsCount} from '../../utils/helper';
-import {Theme} from '../../theme/theme';
 
 type SplashProps = NativeStackScreenProps<RootStackParamList, 'SplashScreen'>;
 
@@ -51,9 +51,8 @@ const SplashScreen = ({navigation}: SplashProps) => {
 
   return (
     <View style={styles.container}>
-      <Title fontSize={42} fontWeight="800" />
+      <Title fontSize={36} fontWeight={'bold'} />
       <Text style={styles.subtitle}>Authenticating User...</Text>
-      <ActivityIndicator size="large" color={Theme.colors.primary} />
     </View>
   );
 };
@@ -65,13 +64,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Theme.colors.background,
-    padding: 30,
+    backgroundColor: '#f0f0f0', // Background color chosen for the screen
   },
   subtitle: {
     fontSize: 18,
-    color: Theme.colors.gray,
-    marginTop: 10,
-    fontFamily: Theme.fonts.body,
+    marginTop: 20,
   },
 });
