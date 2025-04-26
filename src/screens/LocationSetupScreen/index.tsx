@@ -13,6 +13,7 @@ import {RootStackParamList} from '../../types';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import {Theme} from '../../theme/theme';
 import Title from '../../components/Title';
+import {getCurrentLocation} from '../../services/locationService';
 
 type LocationSetupProps = NativeStackScreenProps<
   RootStackParamList,
@@ -40,7 +41,8 @@ const LocationSetupScreen = ({navigation}: LocationSetupProps) => {
   }, []);
 
   const handleLocationPermission = async () => {
-    // Add your location permission logic here
+    const res = await getCurrentLocation();
+    console.log('-----------', res);
   };
 
   const handleManualAddress = () => {
