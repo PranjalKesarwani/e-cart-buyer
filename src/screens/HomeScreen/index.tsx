@@ -21,11 +21,15 @@ import {showToast} from '../../utils/toast';
 import {apiClient} from '../../services/api';
 import {Theme} from '../../theme/theme';
 import axios from 'axios';
+import {useAppSelector} from '../../redux/hooks';
 
 type HomeProps = NativeStackScreenProps<RootDrawerParamList, 'HomeScreen'>;
 
 const HomeScreen = ({navigation}: HomeProps) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const {lastSavedformattedAddress, hasSetLocation, name} = useAppSelector(
+    state => state.buyer,
+  );
   const mapRef = useRef<MapView>(null);
 
   const [userLocation, setUserLocation] = useState<{
@@ -232,13 +236,13 @@ const HomeScreen = ({navigation}: HomeProps) => {
             <View style={[styles.locationTextContainer]}>
               <Text
                 style={[styles.locationTitle, {color: Theme.colors.primary}]}>
-                Username
+                {name}
               </Text>
               <Text
                 numberOfLines={1}
                 ellipsizeMode="tail"
                 style={[styles.locationAddress]}>
-                {confirmedAddress}
+                {lastSavedformattedAddress}
               </Text>
             </View>
             <Icons name="down" size={16} color={Theme.colors.bharatPurple} />

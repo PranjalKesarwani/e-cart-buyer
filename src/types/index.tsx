@@ -61,6 +61,7 @@ export interface TBuyer {
   success: boolean;
   profilePic: string | null;
   hasSetLocation: boolean;
+  lastSavedformattedAddress: string;
   createdAt: string | null;
   activeSessions: string[];
   loading: boolean;

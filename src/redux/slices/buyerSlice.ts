@@ -10,6 +10,8 @@ const initialState: TBuyer = {
   profilePic: null,
   createdAt: null,
   activeSessions: [],
+  hasSetLocation: false,
+  lastSavedformattedAddress: '',
   loading: false,
   error: null,
   cart: [],
