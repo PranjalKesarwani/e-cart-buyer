@@ -22,12 +22,12 @@ import {API_URL} from '../../config';
 
 type LocationSetupProps = NativeStackScreenProps<
   RootStackParamList,
-  'LocationSetupScreen'
+  'LocationConfirmationScreen'
 >;
 
 const {width, height} = Dimensions.get('window');
 
-const LocationSetupScreen = ({navigation}: LocationSetupProps) => {
+const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
   const slideAnim = useRef(new Animated.Value(0)).current;
   const [markerPosition, setMarkerPosition] = useState({
     latitude: 25.3176,
@@ -290,4 +290,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LocationSetupScreen;
+export default LocationConfirmationScreen;
