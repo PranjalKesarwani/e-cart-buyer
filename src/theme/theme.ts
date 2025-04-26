@@ -29,6 +29,10 @@ const BASE_COLORS = {
   warning: '#FFA725',
   success: '#1F7D53',
   lightPrimary: '#FFD65A',
+  warningText: '#856404',
+  warningBackground: '#fff3cd',
+  warningBorder: '#ffeeba',
+  text: '#333333',
 };
 
 export const Theme = {
@@ -37,6 +41,8 @@ export const Theme = {
   fonts: {
     heading: 'Poppins-Bold',
     body: 'Poppins-Regular',
+    // heading: 'System',
+    // body: 'System'
   }, // Fixed missing comma here
   defaultImages: {
     shop: 'https://d27k8xmh3cuzik.cloudfront.net/wp-content/uploads/2018/03/street-shopping-in-india-cover.jpg',
@@ -59,6 +65,13 @@ export const Theme = {
     full: 50,
   },
   shadows: {
+    primary: {
+      elevation: 2,
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 2},
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+    },
     xs: {
       shadowColor: '#000',
       shadowOffset: {width: 0, height: 1},
@@ -79,6 +92,20 @@ export const Theme = {
       shadowOpacity: 0.2,
       shadowRadius: 6,
       elevation: 5,
+    },
+    card: {
+      elevation: 2,
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 1},
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+    },
+    button: {
+      elevation: 5,
+      shadowColor: '#4a90e2',
+      shadowOffset: {width: 0, height: 4},
+      shadowOpacity: 0.2,
+      shadowRadius: 8,
     },
   },
 
@@ -162,6 +189,7 @@ export const Theme = {
     l: 25,
     xl: 40,
   },
+
   typography: {
     h4: {
       fontSize: 24,

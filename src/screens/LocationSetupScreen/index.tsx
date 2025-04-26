@@ -61,7 +61,7 @@ const LocationSetupScreen = ({navigation}: LocationSetupProps) => {
   };
 
   const handleManualAddress = () => {
-    navigation.navigate('AddressInputScreen');
+    navigation.navigate('LocationConfirmationScreen');
   };
 
   const translateY = slideAnim.interpolate({

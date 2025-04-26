@@ -24,6 +24,7 @@ export type RootStackParamList = {
   StatusViewer: {statusUpdates: any; currentIndex: any};
   LocationSetupScreen: undefined;
   AddressInputScreen: undefined;
+  LocationConfirmationScreen: undefined;
 };
 
 export type RootDrawerParamList = {

@@ -24,6 +24,7 @@ import OrderedItemDetailScreen from '../screens/OrderedItemDetailScreen';
 import StatusViewer from '../screens/StatusViewer/StatusViewer';
 import LocationSetupScreen from '../screens/LocationSetupScreen';
 import AddressInputScreen from '../screens/AddressInputScreen';
+import LocationConfirmationScreen from '../screens/LocationConfirmationScreen';
 // import StatusViewer from '../screens/StatusViewer/StatusViewer';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -77,6 +78,14 @@ const AppNavigator = () => {
       <Stack.Screen
         name="AddressInputScreen"
         component={AddressInputScreen}
+        options={{
+          title: 'Location Setup',
+          animation: 'slide_from_bottom', // For iOS
+        }}
+      />
+      <Stack.Screen
+        name="LocationConfirmationScreen"
+        component={LocationConfirmationScreen}
         options={{
           title: 'Location Setup',
           animation: 'slide_from_bottom', // For iOS
