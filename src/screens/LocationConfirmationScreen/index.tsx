@@ -1,80 +1,154 @@
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
+  Animated,
+  Easing,
+  BackHandler,
+  Dimensions,
   TextInput,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import MapView, {Marker} from 'react-native-maps';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../../types';
+import Icons from 'react-native-vector-icons/MaterialIcons';
 import {Theme} from '../../theme/theme';
+import Title from '../../components/Title';
+import {getCurrentLocation} from '../../services/locationService';
+import {apiClient} from '../../services/api';
+import {API_URL} from '../../config';
 
-const LocationConfirmationScreen = () => {
-  const [selectedLocation, setSelectedLocation] = useState(
-    'SHANKAR LAL PUBLIC SCHOOL',
-  );
-  const [locationPermissionEnabled, setLocationPermissionEnabled] =
-    useState(false);
+type LocationSetupProps = NativeStackScreenProps<
+  RootStackParamList,
+  'LocationSetupScreen'
+>;
 
-  const LocationItem = ({title, address}: {title: string; address: string}) => (
-    <TouchableOpacity
-      style={styles.locationItem}
-      onPress={() => setSelectedLocation(title)}>
-      <View style={styles.locationIcon}>
-        <Icon name="location-pin" size={24} color="#4a90e2" />
-      </View>
-      <View style={styles.locationTextContainer}>
-        <Text style={styles.locationTitle}>{title}</Text>
-        <Text style={styles.locationAddress}>{address}</Text>
-      </View>
-      {selectedLocation === title && (
-        <Text style={styles.deliveryNote}>
-          Your order will be delivered here
-        </Text>
-      )}
-    </TouchableOpacity>
-  );
+const {width, height} = Dimensions.get('window');
+
+const LocationSetupScreen = ({navigation}: LocationSetupProps) => {
+  const slideAnim = useRef(new Animated.Value(0)).current;
+  const [markerPosition, setMarkerPosition] = useState({
+    latitude: 25.3176,
+    longitude: 82.9739,
+  });
+  const [address, setAddress] = useState('');
+  const [locationEnabled, setLocationEnabled] = useState(false);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => true,
+    );
+
+    Animated.timing(slideAnim, {
+      toValue: 1,
+      duration: 300,
+      easing: Easing.ease,
+      useNativeDriver: true,
+    }).start();
+
+    return () => backHandler.remove();
+  }, []);
+
+  const handleLocationPermission = async () => {
+    try {
+      const location = await getCurrentLocation();
+      if (location) {
+        setMarkerPosition({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        });
+        const response = await apiClient.get(
+          `${API_URL}/buyer/get-address-latlang?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}`,
+        );
+        setAddress(response.data.formattedAddress);
+        setLocationEnabled(true);
+      }
+    } catch (error) {
+      console.error('Error getting location:', error);
+    }
+  };
+
+  const handleManualAddress = () => {
+    navigation.navigate('LocationConfirmationScreen');
+  };
+
+  const translateY = slideAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [500, 0],
+  });
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Confirm delivery location</Text>
-      <Text style={styles.subHeader}>Swami Vivekanand</Text>
+      {/* Map Section */}
+      <MapView
+        style={styles.map}
+        initialRegion={{
+          latitude: markerPosition.latitude,
+          longitude: markerPosition.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }}>
+        <Marker coordinate={markerPosition} />
+      </MapView>
 
+      {/* Search Bar Overlay */}
       <View style={styles.searchContainer}>
-        <Icon name="search" size={20} color="#666" />
+        <Icons name="search" size={20} color={Theme.colors.gray} />
         <TextInput
           style={styles.searchInput}
           placeholder="Search for area, street name..."
-          placeholderTextColor="#999"
+          placeholderTextColor={Theme.colors.gray}
         />
       </View>
 
-      <LocationItem title="SHANKAR LAL PUBLIC SCHOOL" address="Sahson Rd" />
-
-      <TouchableOpacity style={styles.movePinButton}>
-        <Text style={styles.movePinText}>Move pin to your exact location</Text>
+      {/* Back Button */}
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}>
+        <Icons name="arrow-back" size={24} color={Theme.colors.text} />
       </TouchableOpacity>
 
-      <LocationItem title="VIKAS INTER COLLEGE" address="Ranxi sex aria" />
+      {/* Location Floating Button */}
+      <TouchableOpacity
+        style={styles.locationButton}
+        onPress={handleLocationPermission}>
+        <Icons name="my-location" size={24} color={Theme.colors.primary} />
+      </TouchableOpacity>
 
-      {!locationPermissionEnabled && (
-        <View style={styles.permissionAlert}>
+      {/* Address Details Section */}
+      {locationEnabled ? (
+        <Animated.View
+          style={[styles.addressContainer, {transform: [{translateY}]}]}>
+          <Text style={styles.deliveryText}>Delivering Your Order To</Text>
+          <Text style={styles.addressText}>{address}</Text>
+          <TouchableOpacity style={styles.addDetailsButton}>
+            <Text style={styles.addDetailsText}>Add More Address Details</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      ) : (
+        <Animated.View
+          style={[styles.permissionSheet, {transform: [{translateY}]}]}>
           <Text style={styles.permissionTitle}>
-            Location permission not enabled
+            Location Permission Not Enabled
           </Text>
           <Text style={styles.permissionText}>
-            Please enable location permission to give us your exact delivery
-            address
+            Please enable your location permission to get accurate delivery
+            options
           </Text>
-        </View>
+          <TouchableOpacity style={styles.enableButton}>
+            <Text style={styles.enableButtonText}>Enable Device Location</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.continueButton}>
+            <Text style={styles.continueButtonText}>
+              Continue with{' '}
+              <Text style={styles.boldAddress}>Jhunsi Rd, Sahson...</Text>
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
       )}
-
-      <TouchableOpacity style={styles.continueButton}>
-        <Text style={styles.continueButtonText}>
-          Continue with{' '}
-          <Text style={styles.boldAddress}>Jhunsi Rd, Sahson...</Text>
-        </Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -83,121 +157,137 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Theme.colors.background,
-    padding: Theme.spacing.lg,
   },
-  header: {
-    fontSize: 32,
-    fontFamily: Theme.fonts.heading,
-    fontWeight: '800',
-    color: Theme.colors.text,
-    marginBottom: Theme.spacing.sm,
-  },
-  subHeader: {
-    fontSize: 18,
-    fontFamily: Theme.fonts.body,
-    fontWeight: '600',
-    color: Theme.colors.gray,
-    marginBottom: Theme.spacing.xl,
+  map: {
+    width: '100%',
+    height: '100%',
   },
   searchContainer: {
+    position: 'absolute',
+    top: 60,
+    left: 20,
+    right: 20,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Theme.colors.white,
-    borderRadius: Theme.borderRadius.md,
-    paddingHorizontal: Theme.spacing.md,
-    marginBottom: Theme.spacing.lg,
-    ...Theme.shadows.primary,
+    borderRadius: 25,
+    paddingHorizontal: 16,
+    height: 50,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   searchInput: {
     flex: 1,
-    height: 40,
-    marginLeft: Theme.spacing.sm,
+    marginLeft: 10,
     color: Theme.colors.text,
     fontSize: 16,
-    fontFamily: Theme.fonts.body,
   },
-  locationItem: {
-    backgroundColor: Theme.colors.white,
-    borderRadius: Theme.borderRadius.md,
-    padding: Theme.spacing.lg,
-    marginBottom: Theme.spacing.md,
-    ...Theme.shadows.card,
-  },
-  locationIcon: {
+  backButton: {
     position: 'absolute',
-    left: Theme.spacing.lg,
-    top: Theme.spacing.lg,
+    top: 40,
+    left: 20,
+    padding: 10,
+    backgroundColor: Theme.colors.white,
+    borderRadius: 20,
+    elevation: 2,
   },
-  locationTextContainer: {
-    marginLeft: 40,
+  locationButton: {
+    position: 'absolute',
+    bottom: 120,
+    right: 20,
+    padding: 15,
+    backgroundColor: Theme.colors.white,
+    borderRadius: 30,
+    elevation: 4,
   },
-  locationTitle: {
+  addressContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: Theme.colors.white,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    padding: 30,
+    elevation: 10,
+  },
+  deliveryText: {
     fontSize: 16,
-    fontFamily: Theme.fonts.heading,
-    fontWeight: '600',
-    color: Theme.colors.text,
-  },
-  locationAddress: {
-    fontSize: 14,
-    fontFamily: Theme.fonts.body,
     color: Theme.colors.gray,
-    marginTop: Theme.spacing.xs,
+    marginBottom: 8,
   },
-  deliveryNote: {
-    color: Theme.colors.primary,
-    fontSize: 14,
-    fontFamily: Theme.fonts.body,
-    marginTop: Theme.spacing.md,
-  },
-  movePinButton: {
-    backgroundColor: Theme.colors.lightPrimary,
-    padding: Theme.spacing.md,
-    borderRadius: Theme.borderRadius.md,
-    borderWidth: 2,
-    borderColor: Theme.colors.primary + '33',
-    alignItems: 'center',
-    marginBottom: Theme.spacing.lg,
-  },
-  movePinText: {
-    color: Theme.colors.primary,
-    fontFamily: Theme.fonts.heading,
+  addressText: {
+    fontSize: 18,
+    color: Theme.colors.text,
     fontWeight: '600',
+    marginBottom: 20,
   },
-  permissionAlert: {
-    backgroundColor: Theme.colors.warningBackground,
-    padding: Theme.spacing.md,
-    borderRadius: Theme.borderRadius.md,
-    marginVertical: Theme.spacing.lg,
-    borderWidth: 1,
-    borderColor: Theme.colors.warningBorder,
+  addDetailsButton: {
+    borderWidth: 2,
+    borderColor: Theme.colors.primary,
+    borderRadius: 15,
+    padding: 16,
+    alignItems: 'center',
+  },
+  addDetailsText: {
+    color: Theme.colors.primary,
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  permissionSheet: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: Theme.colors.white,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    padding: 30,
+    height: height * 0.4,
+    elevation: 10,
   },
   permissionTitle: {
-    color: Theme.colors.warningText,
-    fontFamily: Theme.fonts.heading,
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: Theme.spacing.xs,
+    color: Theme.colors.text,
+    marginBottom: 12,
   },
   permissionText: {
-    color: Theme.colors.warningText,
-    fontSize: 14,
-    fontFamily: Theme.fonts.body,
+    fontSize: 16,
+    color: Theme.colors.gray,
+    marginBottom: 30,
+    lineHeight: 24,
+  },
+  enableButton: {
+    backgroundColor: Theme.colors.success,
+    borderRadius: 15,
+    padding: 18,
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  enableButtonText: {
+    color: Theme.colors.white,
+    fontWeight: '600',
+    fontSize: 16,
   },
   continueButton: {
-    backgroundColor: Theme.colors.primary,
-    padding: Theme.spacing.lg,
-    borderRadius: Theme.borderRadius.md,
+    borderWidth: 2,
+    borderColor: Theme.colors.success,
+    borderRadius: 15,
+    padding: 18,
     alignItems: 'center',
-    marginTop: 'auto',
-    ...Theme.shadows.button,
   },
   continueButtonText: {
-    color: Theme.colors.white,
-    fontFamily: Theme.fonts.heading,
+    color: Theme.colors.success,
     fontWeight: '600',
+    fontSize: 16,
   },
   boldAddress: {
     fontWeight: '700',
   },
 });
 
-export default LocationConfirmationScreen;
+export default LocationSetupScreen;
