@@ -105,11 +105,16 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
       </View>
 
       {/* Back Button */}
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => navigation.goBack()}>
-        <Icons name="arrow-back" size={24} color={Theme.colors.text} />
-      </TouchableOpacity>
+      <View style={[styles.backButtonHeader]}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}>
+          <Icons name="arrow-back" size={24} color={Theme.colors.text} />
+        </TouchableOpacity>
+        <Text style={{fontSize: 20, color: Theme.colors.black}}>
+          Confirm Delivery Location
+        </Text>
+      </View>
 
       {/* Location Floating Button */}
       <TouchableOpacity
@@ -185,14 +190,27 @@ const styles = StyleSheet.create({
     color: Theme.colors.text,
     fontSize: 16,
   },
-  backButton: {
+  backButtonHeader: {
     position: 'absolute',
-    top: 40,
-    left: 20,
+    top: 0,
+    left: 0,
     padding: 10,
     backgroundColor: Theme.colors.white,
-    borderRadius: 20,
     elevation: 2,
+    width: width,
+    height: 51,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    gap: 10,
+
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  backButton: {
+    paddingRight: 5,
   },
   locationButton: {
     position: 'absolute',
@@ -254,12 +272,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: Theme.colors.text,
     marginBottom: 12,
+    textAlign: 'center',
   },
   permissionText: {
     fontSize: 16,
     color: Theme.colors.gray,
     marginBottom: 30,
     lineHeight: 24,
+    textAlign: 'center',
   },
   enableButton: {
     backgroundColor: Theme.colors.success,
