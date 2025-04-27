@@ -18,6 +18,7 @@ import Icons from 'react-native-vector-icons/MaterialIcons';
 import {Theme} from '../../theme/theme';
 import {showToast} from '../../utils/toast';
 import {apiClient} from '../../services/api';
+import {addBuyerAddress} from '../../services/apiService';
 
 type AddressInputProps = NativeStackScreenProps<
   RootStackParamList,
@@ -29,9 +30,12 @@ const AddressInputScreen = ({route, navigation}: AddressInputProps) => {
     formattedAddress,
     markerPosition,
   }: {formattedAddress: string; markerPosition: any} = route.params;
-  const [completeAddress, setCompleteAddress] = useState('');
-  const [floor, setFloor] = useState('');
-  const [landmark, setLandmark] = useState('');
+  const [addressInput, setAddressInput] = useState({
+    floor: '',
+    landmark: '',
+    completeAddress: '',
+  });
+
   const [addressType, setAddressType] = useState<
     'Home' | 'Work' | 'Hotel' | 'Other'
   >('Home');
@@ -63,35 +67,33 @@ const AddressInputScreen = ({route, navigation}: AddressInputProps) => {
   });
 
   const handleSubmit = async () => {
-    if (!completeAddress.trim()) {
+    if (!addressInput.completeAddress.trim()) {
       showToast('error', 'Please enter complete address');
       return;
     }
+    setIsLoading(true);
+    const payload = {
+      addressType,
+      completeAddress: addressInput.completeAddress,
+      floor: addressInput.floor,
+      landmark: addressInput.landmark,
+      isDefault: false,
+      location: {
+        type: 'Point',
+        coordinates: [
+          parseFloat(markerPosition.latitude),
+          parseFloat(markerPosition.longitude),
+        ],
+      },
+    };
 
-    try {
-      setIsLoading(true);
-      const response = await apiClient.post('/buyer/add-address', {
-        address: {
-          addressType,
-          completeAddress,
-          floor,
-          landmark,
-          isDefault: true,
-        },
-      });
+    const res = await addBuyerAddress(payload);
 
-      if (response.data.success) {
-        showToast('success', 'Address added successfully!');
-        navigation.goBack();
-      }
-    } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        'Failed to save address';
-      showToast(errorMessage, 'error');
-    } finally {
-      setIsLoading(false);
+    if (res?.status) {
+      showToast('success', res.message);
+      navigation.navigate('DrawerNavigator');
+    } else {
+      showToast('error', res?.message);
     }
   };
 
@@ -143,8 +145,10 @@ const AddressInputScreen = ({route, navigation}: AddressInputProps) => {
                 style={styles.input}
                 placeholder="House number, street, area"
                 placeholderTextColor={Theme.colors.lightGray}
-                value={completeAddress}
-                onChangeText={setCompleteAddress}
+                value={addressInput.completeAddress}
+                onChangeText={text =>
+                  setAddressInput({...addressInput, completeAddress: text})
+                }
                 multiline
                 numberOfLines={3}
               />
@@ -157,8 +161,10 @@ const AddressInputScreen = ({route, navigation}: AddressInputProps) => {
                   style={styles.input}
                   placeholder="Ex: 3rd Floor"
                   placeholderTextColor={Theme.colors.lightGray}
-                  value={floor}
-                  onChangeText={setFloor}
+                  value={addressInput.floor}
+                  onChangeText={text =>
+                    setAddressInput({...addressInput, floor: text})
+                  }
                 />
               </View>
 
@@ -168,8 +174,10 @@ const AddressInputScreen = ({route, navigation}: AddressInputProps) => {
                   style={styles.input}
                   placeholder="Nearby famous place"
                   placeholderTextColor={Theme.colors.lightGray}
-                  value={landmark}
-                  onChangeText={setLandmark}
+                  value={addressInput.landmark}
+                  onChangeText={text =>
+                    setAddressInput({...addressInput, landmark: text})
+                  }
                 />
               </View>
             </View>
