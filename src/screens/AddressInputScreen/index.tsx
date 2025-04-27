@@ -102,7 +102,7 @@ const AddressInputScreen = ({navigation}: AddressInputProps) => {
             onPress={() => navigation.goBack()}>
             <Icons name="close" size={24} color={Theme.colors.gray} />
           </TouchableOpacity>
-          <Text style={styles.title}>Add New Address</Text>
+          <Text style={styles.title}>Enter Complete Address</Text>
         </View>
 
         <ScrollView contentContainerStyle={styles.formContainer}>
@@ -118,6 +118,19 @@ const AddressInputScreen = ({navigation}: AddressInputProps) => {
                 color={Theme.colors.gray}
               />
             </TouchableOpacity>
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.selectedLocation}
+              placeholder="House number, street, area"
+              placeholderTextColor={Theme.colors.lightGray}
+              value={'Sahson Prayagraj'}
+              // onChangeText={setCompleteAddress}
+              editable={false}
+              multiline
+              numberOfLines={3}
+            />
           </View>
 
           <View style={styles.inputContainer}>
@@ -240,8 +253,19 @@ const styles = StyleSheet.create({
     color: Theme.colors.gray,
     marginBottom: 8,
   },
-  input: {
+  selectedLocation: {
     backgroundColor: Theme.colors.lightBackground,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 0,
+    fontSize: 16,
+    color: Theme.colors.gray,
+    fontFamily: Theme.fonts.body,
+    borderWidth: 1,
+    borderColor: Theme.colors.lightGray,
+  },
+  input: {
+    backgroundColor: Theme.colors.white,
     borderRadius: 12,
     padding: 16,
     fontSize: 16,

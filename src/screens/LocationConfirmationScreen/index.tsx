@@ -33,8 +33,8 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
     latitude: 25.3176,
     longitude: 82.9739,
   });
-  const [address, setAddress] = useState('');
-  const [locationEnabled, setLocationEnabled] = useState(false);
+  const [address, setAddress] = useState('Sahson Bazar prayagraj');
+  const [locationEnabled, setLocationEnabled] = useState(true);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -129,7 +129,9 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
           style={[styles.addressContainer, {transform: [{translateY}]}]}>
           <Text style={styles.deliveryText}>Delivering Your Order To</Text>
           <Text style={styles.addressText}>{address}</Text>
-          <TouchableOpacity style={styles.addDetailsButton}>
+          <TouchableOpacity
+            style={styles.addDetailsButton}
+            onPress={() => navigation.navigate('AddressInputScreen')}>
             <Text style={styles.addDetailsText}>Add More Address Details</Text>
           </TouchableOpacity>
         </Animated.View>
