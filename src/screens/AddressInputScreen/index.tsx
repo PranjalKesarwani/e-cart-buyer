@@ -105,70 +105,71 @@ const AddressInputScreen = ({navigation}: AddressInputProps) => {
           <Text style={styles.title}>Enter Complete Address</Text>
         </View>
 
-        <ScrollView contentContainerStyle={styles.formContainer}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Address Type</Text>
-            <TouchableOpacity
-              style={styles.typePicker}
-              onPress={() => setShowTypePicker(true)}>
-              <Text style={styles.typePickerText}>{addressType}</Text>
-              <Icons
-                name="arrow-drop-down"
-                size={24}
-                color={Theme.colors.gray}
-              />
-            </TouchableOpacity>
-          </View>
+        <View style={styles.scrollContainer}>
+          <ScrollView contentContainerStyle={styles.formContainer}>
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Address Type</Text>
+              <TouchableOpacity
+                style={styles.typePicker}
+                onPress={() => setShowTypePicker(true)}>
+                <Text style={styles.typePickerText}>{addressType}</Text>
+                <Icons
+                  name="arrow-drop-down"
+                  size={24}
+                  color={Theme.colors.gray}
+                />
+              </TouchableOpacity>
+            </View>
 
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.selectedLocation}
-              placeholder="House number, street, area"
-              placeholderTextColor={Theme.colors.lightGray}
-              value={'Sahson Prayagraj'}
-              // onChangeText={setCompleteAddress}
-              editable={false}
-              multiline
-              numberOfLines={3}
-            />
-          </View>
-
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Complete Address</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="House number, street, area"
-              placeholderTextColor={Theme.colors.lightGray}
-              value={completeAddress}
-              onChangeText={setCompleteAddress}
-              multiline
-              numberOfLines={3}
-            />
-          </View>
-
-          <View style={styles.inputRow}>
-            <View style={[styles.inputContainer, {flex: 1, marginRight: 10}]}>
-              <Text style={styles.inputLabel}>Floor (Optional)</Text>
+            <View style={styles.inputContainer}>
               <TextInput
-                style={styles.input}
-                placeholder="Ex: 3rd Floor"
+                style={styles.selectedLocation}
+                placeholder="House number, street, area"
                 placeholderTextColor={Theme.colors.lightGray}
-                value={floor}
-                onChangeText={setFloor}
+                value={'Sahson Prayagraj'}
+                editable={false}
+                multiline
+                numberOfLines={3}
               />
             </View>
 
-            <View style={[styles.inputContainer, {flex: 1}]}>
-              <Text style={styles.inputLabel}>Landmark (Optional)</Text>
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Complete Address</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Nearby famous place"
+                placeholder="House number, street, area"
                 placeholderTextColor={Theme.colors.lightGray}
-                value={landmark}
-                onChangeText={setLandmark}
+                value={completeAddress}
+                onChangeText={setCompleteAddress}
+                multiline
+                numberOfLines={3}
               />
             </View>
-          </View>
+
+            <View style={styles.inputRow}>
+              <View style={[styles.inputContainer, {flex: 1, marginRight: 10}]}>
+                <Text style={styles.inputLabel}>Floor (Optional)</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Ex: 3rd Floor"
+                  placeholderTextColor={Theme.colors.lightGray}
+                  value={floor}
+                  onChangeText={setFloor}
+                />
+              </View>
+
+              <View style={[styles.inputContainer, {flex: 1}]}>
+                <Text style={styles.inputLabel}>Landmark (Optional)</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Nearby famous place"
+                  placeholderTextColor={Theme.colors.lightGray}
+                  value={landmark}
+                  onChangeText={setLandmark}
+                />
+              </View>
+            </View>
+          </ScrollView>
 
           <TouchableOpacity
             style={styles.submitButton}
@@ -177,36 +178,36 @@ const AddressInputScreen = ({navigation}: AddressInputProps) => {
             {isLoading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.buttonText}>Save Address</Text>
+              <Text style={styles.buttonText}>Confirm Address</Text>
             )}
           </TouchableOpacity>
-        </ScrollView>
-      </Animated.View>
-
-      {/* Address Type Picker Modal */}
-      {showTypePicker && (
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            {(['Home', 'Work', 'Hotel', 'Other'] as const).map(type => (
-              <TouchableOpacity
-                key={type}
-                style={styles.modalItem}
-                onPress={() => {
-                  setAddressType(type);
-                  setShowTypePicker(false);
-                }}>
-                <Text
-                  style={[
-                    styles.modalText,
-                    addressType === type && styles.selectedType,
-                  ]}>
-                  {type}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
         </View>
-      )}
+
+        {/* Address Type Picker Modal */}
+        {showTypePicker && (
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              {(['Home', 'Work', 'Hotel', 'Other'] as const).map(type => (
+                <TouchableOpacity
+                  key={type}
+                  style={styles.modalItem}
+                  onPress={() => {
+                    setAddressType(type);
+                    setShowTypePicker(false);
+                  }}>
+                  <Text
+                    style={[
+                      styles.modalText,
+                      addressType === type && styles.selectedType,
+                    ]}>
+                    {type}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
+      </Animated.View>
     </KeyboardAvoidingView>
   );
 };
@@ -224,6 +225,10 @@ const styles = StyleSheet.create({
     padding: 25,
     maxHeight: '90%', // Changed from height to maxHeight
     minHeight: '85%', // Ensure minimum height
+    width: '100%',
+  },
+  scrollContainer: {
+    flex: 1,
   },
   header: {
     flexDirection: 'row',
@@ -242,7 +247,7 @@ const styles = StyleSheet.create({
     marginRight: 24,
   },
   formContainer: {
-    paddingBottom: 30,
+    paddingBottom: 100,
   },
   inputContainer: {
     marginVertical: 10,
@@ -294,12 +299,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   submitButton: {
+    position: 'absolute',
+    left: 5,
+    bottom: 0,
     backgroundColor: Theme.colors.primary,
     height: 56,
-    borderRadius: 15,
+    width: '98%',
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 30,
     shadowColor: Theme.colors.primary,
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.2,
