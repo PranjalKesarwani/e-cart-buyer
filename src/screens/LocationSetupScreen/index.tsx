@@ -13,9 +13,7 @@ import {RootStackParamList} from '../../types';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import {Theme} from '../../theme/theme';
 import Title from '../../components/Title';
-import {getCurrentLocation} from '../../services/locationService';
-import {apiClient} from '../../services/api';
-import {API_URL} from '../../config';
+import {giveLocationPermission} from '../../services/apiService';
 
 type LocationSetupProps = NativeStackScreenProps<
   RootStackParamList,
@@ -44,17 +42,20 @@ const LocationSetupScreen = ({navigation}: LocationSetupProps) => {
 
   const handleLocationPermission = async () => {
     try {
-      const location = await getCurrentLocation();
-      if (location) {
-        console.log('Location is:', location.coords);
-        const updateLocationInfo = await apiClient.get(
-          `${API_URL}/buyer/get-address-latlang?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}`,
-        );
-        console.log('Location updated successfully:', updateLocationInfo.data);
+      const locationInfo = await giveLocationPermission();
+      if (locationInfo.status) {
         navigation.navigate('DrawerNavigator');
-      } else {
-        console.log('Location permission denied or unavailable');
       }
+      // if (location) {
+      //   console.log('Location is:', location.coords);
+      //   const updateLocationInfo = await apiClient.get(
+      //     `${API_URL}/buyer/get-address-latlang?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}`,
+      //   );
+      //   console.log('Location updated successfully:', updateLocationInfo.data);
+      //   navigation.navigate('DrawerNavigator');
+      // } else {
+      //   console.log('Location permission denied or unavailable');
+      // }
     } catch (error) {
       console.error('Error getting location:', error);
     }

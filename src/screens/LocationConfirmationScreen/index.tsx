@@ -19,6 +19,8 @@ import Title from '../../components/Title';
 import {getCurrentLocation} from '../../services/locationService';
 import {apiClient} from '../../services/api';
 import {API_URL} from '../../config';
+import {giveLocationPermission} from '../../services/apiService';
+import {cleanAddress} from '../../utils/helper';
 
 type LocationSetupProps = NativeStackScreenProps<
   RootStackParamList,
@@ -34,7 +36,7 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
     longitude: 82.9739,
   });
   const [address, setAddress] = useState('Sahson Bazar prayagraj');
-  const [locationEnabled, setLocationEnabled] = useState(true);
+  const [locationEnabled, setLocationEnabled] = useState(false);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -54,16 +56,15 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
 
   const handleLocationPermission = async () => {
     try {
-      const location = await getCurrentLocation();
-      if (location) {
+      const res = await giveLocationPermission();
+      if (res.status) {
+        console.log('----->>>>>>', res.data);
         setMarkerPosition({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
+          latitude: parseFloat(res.data.lat),
+          longitude: parseFloat(res.data.lng),
         });
-        const response = await apiClient.get(
-          `${API_URL}/buyer/get-address-latlang?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}`,
-        );
-        setAddress(response.data.formattedAddress);
+        const cleanAdd = cleanAddress(res.data.address);
+        setAddress(cleanAdd);
         setLocationEnabled(true);
       }
     } catch (error) {
@@ -161,7 +162,9 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
             Please enable your location permission to get accurate delivery
             options
           </Text>
-          <TouchableOpacity style={styles.enableButton}>
+          <TouchableOpacity
+            onPress={() => handleLocationPermission()}
+            style={styles.enableButton}>
             <Text style={styles.enableButtonText}>Enable Device Location</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.continueButton}>

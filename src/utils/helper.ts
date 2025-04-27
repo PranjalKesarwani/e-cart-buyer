@@ -87,3 +87,8 @@ export const manageWishList = async (
     showToast('error', 'Error', error.message);
   }
 };
+
+export const cleanAddress = (address: string): string => {
+  // This regex matches Plus Codes like "FXJG+VGR" or "7MQ3+XJ"
+  return address.replace(/^[A-Z0-9]{4,}\+[A-Z0-9]{2,},\s*/i, '');
+};
