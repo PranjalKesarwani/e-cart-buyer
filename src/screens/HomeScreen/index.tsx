@@ -12,6 +12,7 @@ import {
   Image,
   Linking,
 } from 'react-native';
+import LocationBottomSheet from '../../components/LocationBottomSheet';
 import {RootDrawerParamList} from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
 import MapView, {Marker} from 'react-native-maps';
@@ -22,14 +23,19 @@ import {apiClient} from '../../services/api';
 import {Theme} from '../../theme/theme';
 import axios from 'axios';
 import {useAppSelector} from '../../redux/hooks';
+import {isLocationEnabled} from '../../utils/helper';
 
 type HomeProps = NativeStackScreenProps<RootDrawerParamList, 'HomeScreen'>;
 
 const HomeScreen = ({navigation}: HomeProps) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [checkLocationEnabled, setCheckLocationEnabled] =
+    useState<boolean>(false);
+  const [showLocationSheet, setShowLocationSheet] = useState(false);
   const {lastSavedformattedAddress, hasSetLocation, name} = useAppSelector(
     state => state.buyer,
   );
+  const savedAddresses: any[] = [];
   const mapRef = useRef<MapView>(null);
 
   const [userLocation, setUserLocation] = useState<{
@@ -215,13 +221,25 @@ const HomeScreen = ({navigation}: HomeProps) => {
     }
   };
 
+  const checkIsLocationEnabled = async () => {
+    const locationEnableInfo = await isLocationEnabled();
+    if (!locationEnableInfo) setShowLocationSheet(true);
+    setCheckLocationEnabled(locationEnableInfo);
+  };
+
   useEffect(() => {
+    checkIsLocationEnabled();
     getGlobalCategories();
     initializeLocation();
   }, []);
 
   const handleCardPress = (item: any) => {
     navigation.navigate('ShopListScreen', {category: item});
+  };
+
+  const handleAddressSelect = (address: string) => {
+    setConfirmedAddress(address);
+    // You might want to update the location coordinates here as well
   };
 
   const handleHomeScreenLocation = () => {
@@ -372,6 +390,13 @@ const HomeScreen = ({navigation}: HomeProps) => {
           </TouchableOpacity>
         </View>
       </Modal>
+      <LocationBottomSheet
+        isVisible={showLocationSheet}
+        onClose={() => setShowLocationSheet(false)}
+        savedAddresses={savedAddresses}
+        onEnableLocation={getCurrentLocation}
+        onAddressSelect={handleAddressSelect}
+      />
     </View>
   );
 };
