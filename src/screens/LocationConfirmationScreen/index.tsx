@@ -81,6 +81,18 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
     outputRange: [500, 0],
   });
 
+  const addMoreAddressDetails = () => {
+    try {
+      const payload = {
+        formattedAddress: address,
+        markerPosition,
+      };
+      navigation.navigate('AddressInputScreen', payload);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Map Section */}
@@ -148,7 +160,9 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
           </View>
           <TouchableOpacity
             style={styles.addDetailsButton}
-            onPress={() => navigation.navigate('AddressInputScreen')}>
+            onPress={() => {
+              addMoreAddressDetails();
+            }}>
             <Text style={styles.addDetailsText}>Add More Address Details</Text>
           </TouchableOpacity>
         </Animated.View>

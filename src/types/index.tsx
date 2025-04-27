@@ -23,7 +23,7 @@ export type RootStackParamList = {
   OrderedItemDetailScreen: undefined;
   StatusViewer: {statusUpdates: any; currentIndex: any};
   LocationSetupScreen: undefined;
-  AddressInputScreen: undefined;
+  AddressInputScreen: {formattedAddress: string; markerPosition: any};
   LocationConfirmationScreen: undefined;
 };
 

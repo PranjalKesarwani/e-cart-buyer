@@ -24,7 +24,11 @@ type AddressInputProps = NativeStackScreenProps<
   'AddressInputScreen'
 >;
 
-const AddressInputScreen = ({navigation}: AddressInputProps) => {
+const AddressInputScreen = ({route, navigation}: AddressInputProps) => {
+  const {
+    formattedAddress,
+    markerPosition,
+  }: {formattedAddress: string; markerPosition: any} = route.params;
   const [completeAddress, setCompleteAddress] = useState('');
   const [floor, setFloor] = useState('');
   const [landmark, setLandmark] = useState('');
@@ -126,7 +130,7 @@ const AddressInputScreen = ({navigation}: AddressInputProps) => {
                 style={styles.selectedLocation}
                 placeholder="House number, street, area"
                 placeholderTextColor={Theme.colors.lightGray}
-                value={'Sahson Prayagraj'}
+                value={formattedAddress}
                 editable={false}
                 multiline
                 numberOfLines={3}
