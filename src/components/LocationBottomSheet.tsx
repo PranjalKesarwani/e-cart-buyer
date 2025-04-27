@@ -33,60 +33,90 @@ const LocationBottomSheet: React.FC<LocationBottomSheetProps> = ({
     : Dimensions.get('window').height * 0.3;
 
   return (
-    <View style={[styles.container, {height: sheetHeight}]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Select Location</Text>
-        <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-          <Icons name="close" size={24} color={Theme.colors.text} />
-        </TouchableOpacity>
-      </View>
-
-      {/* Enable Location Button */}
+    <View style={styles.overlay}>
+      {/* Touchable to dismiss when tapping outside */}
       <TouchableOpacity
-        style={styles.enableButton}
-        onPress={async () => {
-          await onEnableLocation();
-          onClose();
-        }}>
-        <Text style={styles.buttonText}>Enable Location Services</Text>
-      </TouchableOpacity>
+        style={styles.backdrop}
+        activeOpacity={1}
+        onPress={onClose}
+      />
 
-      {/* Saved Addresses List */}
-      {hasAddresses ? (
-        <>
-          <Text style={styles.sectionTitle}>SAVED ADDRESSES</Text>
-          <FlatList
-            data={savedAddresses.slice(0, 2)}
-            renderItem={({item}) => (
-              <TouchableOpacity
-                style={styles.addressItem}
-                onPress={() => {
-                  onAddressSelect(item);
-                  onClose();
-                }}>
-                <Icons
-                  name="enviromento"
-                  size={20}
-                  color={Theme.colors.primary}
-                />
-                <Text style={styles.addressText}>{item}</Text>
-              </TouchableOpacity>
-            )}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        </>
-      ) : (
-        <View style={styles.emptyState}>
-          <Icons name="enviromento" size={40} color={Theme.colors.lightGray} />
-          <Text style={styles.emptyText}>No saved addresses found</Text>
+      <View style={[styles.container, {height: sheetHeight}]}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Select Location</Text>
+          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+            <Icons name="close" size={24} color={Theme.colors.text} />
+          </TouchableOpacity>
         </View>
-      )}
+
+        {/* Enable Location Button */}
+        <TouchableOpacity
+          style={styles.enableButton}
+          onPress={async () => {
+            await onEnableLocation();
+            onClose();
+          }}>
+          <Text style={styles.buttonText}>Enable Location Services</Text>
+        </TouchableOpacity>
+
+        {/* Saved Addresses List */}
+        {hasAddresses ? (
+          <>
+            <Text style={styles.sectionTitle}>SAVED ADDRESSES</Text>
+            <FlatList
+              data={savedAddresses.slice(0, 2)}
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  style={styles.addressItem}
+                  onPress={() => {
+                    onAddressSelect(item);
+                    onClose();
+                  }}>
+                  <Icons
+                    name="enviromento"
+                    size={20}
+                    color={Theme.colors.primary}
+                  />
+                  <Text style={styles.addressText}>{item}</Text>
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </>
+        ) : (
+          <View style={styles.emptyState}>
+            <Icons
+              name="enviromento"
+              size={40}
+              color={Theme.colors.lightGray}
+            />
+            <Text style={styles.emptyText}>No saved addresses found</Text>
+          </View>
+        )}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // translucent black
+    justifyContent: 'flex-end', // keep the sheet at the bottom
+  },
+
+  backdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
   container: {
     position: 'absolute',
     bottom: 0,
