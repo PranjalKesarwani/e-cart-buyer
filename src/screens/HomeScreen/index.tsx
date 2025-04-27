@@ -224,12 +224,24 @@ const HomeScreen = ({navigation}: HomeProps) => {
     navigation.navigate('ShopListScreen', {category: item});
   };
 
+  const handleHomeScreenLocation = () => {
+    try {
+      // setModalVisible(true);
+
+      navigation.navigate('LocationConfirmationScreen');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Header Section */}
       <View style={styles.header}>
         <TouchableOpacity
-          onPress={() => setModalVisible(true)}
+          onPress={() => {
+            handleHomeScreenLocation();
+          }}
           style={styles.locationSelector}>
           <View style={styles.locationContent}>
             <Icons name="enviromento" size={20} color={Theme.colors.primary} />

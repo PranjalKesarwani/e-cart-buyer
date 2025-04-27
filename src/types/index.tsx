@@ -28,6 +28,7 @@ export type RootStackParamList = {
 };
 
 export type RootDrawerParamList = {
+  LocationConfirmationScreen: undefined;
   HomeScreen: undefined;
   ShopListScreen: {category: any};
   ShopScreen: {shop: any};
