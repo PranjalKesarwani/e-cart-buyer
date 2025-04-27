@@ -27,8 +27,13 @@ const LocationBottomSheet: React.FC<LocationBottomSheetProps> = ({
 }) => {
   if (!isVisible) return null;
 
+  const hasAddresses = savedAddresses.length > 0;
+  const sheetHeight = hasAddresses
+    ? Dimensions.get('window').height * 0.5
+    : Dimensions.get('window').height * 0.3;
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {height: sheetHeight}]}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Select Location</Text>
@@ -48,22 +53,35 @@ const LocationBottomSheet: React.FC<LocationBottomSheetProps> = ({
       </TouchableOpacity>
 
       {/* Saved Addresses List */}
-      <Text style={styles.sectionTitle}>SAVED ADDRESSES</Text>
-      <FlatList
-        data={savedAddresses.slice(0, 2)}
-        renderItem={({item}) => (
-          <TouchableOpacity
-            style={styles.addressItem}
-            onPress={() => {
-              onAddressSelect(item);
-              onClose();
-            }}>
-            <Icons name="enviromento" size={20} color={Theme.colors.primary} />
-            <Text style={styles.addressText}>{item}</Text>
-          </TouchableOpacity>
-        )}
-        keyExtractor={(item, index) => index.toString()}
-      />
+      {hasAddresses ? (
+        <>
+          <Text style={styles.sectionTitle}>SAVED ADDRESSES</Text>
+          <FlatList
+            data={savedAddresses.slice(0, 2)}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                style={styles.addressItem}
+                onPress={() => {
+                  onAddressSelect(item);
+                  onClose();
+                }}>
+                <Icons
+                  name="enviromento"
+                  size={20}
+                  color={Theme.colors.primary}
+                />
+                <Text style={styles.addressText}>{item}</Text>
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </>
+      ) : (
+        <View style={styles.emptyState}>
+          <Icons name="enviromento" size={40} color={Theme.colors.lightGray} />
+          <Text style={styles.emptyText}>No saved addresses found</Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -74,7 +92,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: Dimensions.get('window').height * 0.5,
     backgroundColor: 'white',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
@@ -128,6 +145,17 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     fontSize: 14,
     color: Theme.colors.text,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  emptyText: {
+    color: Theme.colors.darkGray,
+    fontSize: 14,
+    marginTop: 8,
   },
 });
 
