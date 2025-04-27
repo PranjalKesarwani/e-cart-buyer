@@ -128,7 +128,23 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
         <Animated.View
           style={[styles.addressContainer, {transform: [{translateY}]}]}>
           <Text style={styles.deliveryText}>Delivering Your Order To</Text>
-          <Text style={styles.addressText}>{address}</Text>
+          <View
+            style={[
+              {
+                flex: 1,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'flex-start',
+              },
+            ]}>
+            <Icons
+              name="location-on"
+              size={32}
+              color={Theme.colors.primary}
+              style={styles.locationIcon}
+            />
+            <Text style={styles.addressText}>{address}</Text>
+          </View>
           <TouchableOpacity
             style={styles.addDetailsButton}
             onPress={() => navigation.navigate('AddressInputScreen')}>
@@ -245,16 +261,18 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 20,
   },
+  locationIcon: {
+    marginBottom: 20,
+  },
   addDetailsButton: {
-    borderWidth: 2,
-    borderColor: Theme.colors.primary,
+    backgroundColor: Theme.colors.primary,
     borderRadius: 15,
-    padding: 16,
+    padding: 14,
     alignItems: 'center',
   },
   addDetailsText: {
-    color: Theme.colors.primary,
-    fontWeight: '600',
+    color: Theme.colors.white,
+    fontWeight: '500',
     fontSize: 16,
   },
   permissionSheet: {
