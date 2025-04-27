@@ -20,7 +20,7 @@ import {getCurrentLocation} from '../../services/locationService';
 import {apiClient} from '../../services/api';
 import {API_URL} from '../../config';
 import {giveLocationPermission} from '../../services/apiService';
-import {cleanAddress} from '../../utils/helper';
+import {cleanAddress, isLocationEnabled} from '../../utils/helper';
 
 type LocationSetupProps = NativeStackScreenProps<
   RootStackParamList,
@@ -38,11 +38,19 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
   const [address, setAddress] = useState('Sahson Bazar prayagraj');
   const [locationEnabled, setLocationEnabled] = useState(false);
 
+  const checkLocationEnabled = async () => {
+    const isEnabled = await isLocationEnabled();
+    console.log('-----}}}}}222222', isEnabled);
+    setLocationEnabled(isEnabled);
+  };
+
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => true,
     );
+
+    checkLocationEnabled();
 
     Animated.timing(slideAnim, {
       toValue: 1,
@@ -70,10 +78,6 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
     } catch (error) {
       console.error('Error getting location:', error);
     }
-  };
-
-  const handleManualAddress = () => {
-    navigation.navigate('LocationConfirmationScreen');
   };
 
   const translateY = slideAnim.interpolate({

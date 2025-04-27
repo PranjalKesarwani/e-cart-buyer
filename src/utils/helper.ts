@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {apiClient} from '../services/api';
 import {showToast} from './toast';
 import {Dispatch} from '@reduxjs/toolkit';
+import Geolocation from 'react-native-geolocation-service';
+
 import {
   getCarts,
   getWishlists,
@@ -91,4 +93,23 @@ export const manageWishList = async (
 export const cleanAddress = (address: string): string => {
   // This regex matches Plus Codes like "FXJG+VGR" or "7MQ3+XJ"
   return address.replace(/^[A-Z0-9]{4,}\+[A-Z0-9]{2,},\s*/i, '');
+};
+
+export const isLocationEnabled = async (): Promise<boolean> => {
+  return new Promise(resolve => {
+    Geolocation.getCurrentPosition(
+      () => resolve(true),
+      error => {
+        if (error.code === 2) resolve(false);
+        else resolve(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0,
+        forceRequestLocation: true,
+        showLocationDialog: false,
+      },
+    );
+  });
 };
