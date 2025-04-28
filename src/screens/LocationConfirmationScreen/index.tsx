@@ -15,10 +15,6 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../types';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import {Theme} from '../../theme/theme';
-import Title from '../../components/Title';
-import {getCurrentLocation} from '../../services/locationService';
-import {apiClient} from '../../services/api';
-import {API_URL} from '../../config';
 import {giveLocationPermission} from '../../services/apiService';
 import {cleanAddress, isLocationEnabled} from '../../utils/helper';
 

@@ -61,47 +61,10 @@ export const getCurrentLocation = async (): Promise<GeoPosition | null> => {
   });
 };
 
-// export const getAddressFromCoordinates = async (
-//   latitude: number,
-//   longitude: number,
-// ): Promise<string | null> => {
-//   const API_KEY = 'AIzaSyDOz_eMVh03ENc2EBiAgr0eRImieYsu6fk'; // ⚠️ Move this to an env file in production
-//   const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${API_KEY}`;
-
-//   try {
-//     const response = await axios.get(url);
-//     const data = response.data;
-//     if (data.status === 'OK') {
-//       return data.results[0].formatted_address;
-//     } else if (data.status === 'ZERO_RESULTS') {
-//       console.warn('No address found for these coordinates');
-//       return null;
-//     } else {
-//       throw new Error(
-//         `Geocoding error: ${data.status} - ${data.error_message || ''}`,
-//       );
-//     }
-//   } catch (error: any) {
-//     if (axios.isAxiosError(error)) {
-//       console.error('API request failed:', {
-//         message: error.message,
-//         code: error.code,
-//         status: error.response?.status,
-//         data: error.response?.data,
-//       });
-//     } else {
-//       console.error('Unexpected error:', error);
-//     }
-//     return null;
-//   }
-// };
 export const getAddressFromCoordinates = async (
   latitude: number,
   longitude: number,
 ): Promise<string | null> => {
-  // const API_KEY = 'AIzaSyDOz_eMVh03ENc2EBiAgr0eRImieYsu6fk'; // ⚠️ Move this to an env file in production
-  // const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${API_KEY}`;
-
   try {
     const response = await axios.get(
       `${API_URL}/get-address-latlang?latitude=${latitude}&longitude=${longitude}`,

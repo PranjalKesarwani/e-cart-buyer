@@ -24,16 +24,19 @@ import {Theme} from '../../theme/theme';
 import axios from 'axios';
 import {useAppSelector} from '../../redux/hooks';
 import {isLocationEnabled} from '../../utils/helper';
+import {giveLocationPermission} from '../../services/apiService';
 
 type HomeProps = NativeStackScreenProps<RootDrawerParamList, 'HomeScreen'>;
 
 const HomeScreen = ({navigation}: HomeProps) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [checkLocationEnabled, setCheckLocationEnabled] =
-    useState<boolean>(false);
+
   const [showLocationSheet, setShowLocationSheet] = useState(false);
   const {lastSavedformattedAddress, hasSetLocation, name} = useAppSelector(
     state => state.buyer,
+  );
+  const [addressToShow, setAddressToShow] = useState<string>(
+    lastSavedformattedAddress,
   );
   const savedAddresses: any[] = [];
   const mapRef = useRef<MapView>(null);
@@ -42,16 +45,16 @@ const HomeScreen = ({navigation}: HomeProps) => {
     latitude: number;
     longitude: number;
   } | null>(null);
-  const [confirmedLocation, setConfirmedLocation] = useState<{
-    latitude: number;
-    longitude: number;
-  } | null>(null);
-  const [confirmedAddress, setConfirmedAddress] = useState<string>(
-    'Opposite Ramleela Maidan, 221507',
-  );
+  // const [confirmedLocation, setConfirmedLocation] = useState<{
+  //   latitude: number;
+  //   longitude: number;
+  // } | null>(null);
+  // const [confirmedAddress, setConfirmedAddress] = useState<string>(
+  //   'Opposite Ramleela Maidan, 221507',
+  // );
 
   const windowHeight = Dimensions.get('window').height;
-  const modalHeight = windowHeight;
+  // const modalHeight = windowHeight;
 
   const [globalCats, setGlobalCats] = useState<any>([]);
 
@@ -179,6 +182,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
 
     try {
       const response = await axios.get(url);
+      // const x = giveLocationPermission()
       const data = response.data;
       console.log('Geocoding response:', data);
       switch (data.status) {
@@ -208,23 +212,26 @@ const HomeScreen = ({navigation}: HomeProps) => {
   };
 
   const initializeLocation = async () => {
-    await checkLocationServices();
-    if (userLocation) {
-      setConfirmedLocation(userLocation);
-      const address = await getAddressFromCoordinates(
-        userLocation.latitude,
-        userLocation.longitude,
-      );
-      if (address) {
-        setConfirmedAddress(address);
-      }
+    // await checkLocationServices();
+    // if (userLocation) {
+    //   // setConfirmedLocation(userLocation);
+    //   const address = await getAddressFromCoordinates(
+    //     userLocation.latitude,
+    //     userLocation.longitude,
+    //   );
+    //   if (address) {
+    //     // setConfirmedAddress(address);
+    //   }
+    // }
+    const {status, message, data} = await giveLocationPermission();
+    if (status) {
+      setAddressToShow(data.address);
     }
   };
 
   const checkIsLocationEnabled = async () => {
     const locationEnableInfo = await isLocationEnabled();
     if (!locationEnableInfo) setShowLocationSheet(true);
-    setCheckLocationEnabled(locationEnableInfo);
   };
 
   useEffect(() => {
@@ -238,7 +245,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
   };
 
   const handleAddressSelect = (address: string) => {
-    setConfirmedAddress(address);
+    // setConfirmedAddress(address);
     // You might want to update the location coordinates here as well
   };
 
@@ -272,7 +279,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
                 numberOfLines={1}
                 ellipsizeMode="tail"
                 style={[styles.locationAddress]}>
-                {lastSavedformattedAddress}
+                {addressToShow}
               </Text>
             </View>
             <Icons name="down" size={16} color={Theme.colors.bharatPurple} />
@@ -368,13 +375,13 @@ const HomeScreen = ({navigation}: HomeProps) => {
             style={styles.confirmButton}
             onPress={async () => {
               if (userLocation) {
-                setConfirmedLocation(userLocation);
+                // setConfirmedLocation(userLocation);
                 const address = await getAddressFromCoordinates(
                   userLocation.latitude,
                   userLocation.longitude,
                 );
                 if (address) {
-                  setConfirmedAddress(address);
+                  // setConfirmedAddress(address);
                 }
                 setModalVisible(false);
               }
