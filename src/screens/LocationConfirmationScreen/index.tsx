@@ -28,8 +28,8 @@ const {width, height} = Dimensions.get('window');
 const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
   const slideAnim = useRef(new Animated.Value(0)).current;
   const [markerPosition, setMarkerPosition] = useState({
-    latitude: 25.3176,
-    longitude: 82.9739,
+    latitude: 25.4822367,
+    longitude: 81.9762467,
   });
   const [address, setAddress] = useState('Sahson Bazar prayagraj');
   const [locationEnabled, setLocationEnabled] = useState(false);

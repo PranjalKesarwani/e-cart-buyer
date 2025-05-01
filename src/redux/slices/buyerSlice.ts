@@ -98,6 +98,7 @@ const buyerSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchBuyer.fulfilled, (state, action: PayloadAction<any>) => {
+        // console.log('------->>>>>>>>>', action.payload.buyerInfo);
         Object.assign(state, action.payload.buyerInfo); // Update state with API response
         state.loading = false;
         state.success = true;

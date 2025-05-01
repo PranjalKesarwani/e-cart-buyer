@@ -88,43 +88,43 @@ const HomeScreen = ({navigation}: HomeProps) => {
     }
   };
 
-  const checkLocationServices = async () => {
-    const hasPermission = await requestLocationPermission();
-    if (!hasPermission) {
-      showToast('error', 'Location permission denied');
-      return;
-    }
+  // const checkLocationServices = async () => {
+  //   const hasPermission = await requestLocationPermission();
+  //   if (!hasPermission) {
+  //     showToast('error', 'Location permission denied');
+  //     return;
+  //   }
 
-    try {
-      Geolocation.getCurrentPosition(
-        position => {
-          const newCoords = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          };
-          setUserLocation(newCoords);
-          console.log('Location enabled:', newCoords);
-        },
-        error => {
-          console.log('Location error:', error.code, error.message);
-          showToast('error', `Location error: ${error.message}`);
-          if (error.code === 2) {
-            Alert.alert(
-              'Location Required',
-              'Please enable device location services',
-              [
-                {text: 'Cancel', style: 'cancel'},
-                {text: 'Settings', onPress: () => Linking.openSettings()},
-              ],
-            );
-          }
-        },
-        {enableHighAccuracy: true, timeout: 15000, maximumAge: 0},
-      );
-    } catch (error) {
-      console.log('Error checking location:', error);
-    }
-  };
+  //   try {
+  //     Geolocation.getCurrentPosition(
+  //       position => {
+  //         const newCoords = {
+  //           latitude: position.coords.latitude,
+  //           longitude: position.coords.longitude,
+  //         };
+  //         setUserLocation(newCoords);
+  //         console.log('Location enabled:', newCoords);
+  //       },
+  //       error => {
+  //         console.log('Location error:', error.code, error.message);
+  //         showToast('error', `Location error: ${error.message}`);
+  //         if (error.code === 2) {
+  //           Alert.alert(
+  //             'Location Required',
+  //             'Please enable device location services',
+  //             [
+  //               {text: 'Cancel', style: 'cancel'},
+  //               {text: 'Settings', onPress: () => Linking.openSettings()},
+  //             ],
+  //           );
+  //         }
+  //       },
+  //       {enableHighAccuracy: true, timeout: 15000, maximumAge: 0},
+  //     );
+  //   } catch (error) {
+  //     console.log('Error checking location:', error);
+  //   }
+  // };
 
   const getCurrentLocation = async () => {
     try {
@@ -176,6 +176,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
 
   const initializeLocation = async () => {
     const {status, message, data} = await giveLocationPermission();
+    console.log('test id:12345', data);
     if (status) {
       setAddressToShow(data.address);
     }
@@ -183,13 +184,16 @@ const HomeScreen = ({navigation}: HomeProps) => {
 
   const checkIsLocationEnabled = async () => {
     const locationEnableInfo = await isLocationEnabled();
-    if (!locationEnableInfo) setShowLocationSheet(true);
+    if (!locationEnableInfo) {
+      setShowLocationSheet(true);
+      return;
+    }
+    initializeLocation();
   };
 
   useEffect(() => {
     checkIsLocationEnabled();
     getGlobalCategories();
-    initializeLocation();
   }, []);
 
   const handleCardPress = (item: any) => {
