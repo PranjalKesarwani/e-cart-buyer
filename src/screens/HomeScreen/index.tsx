@@ -25,6 +25,7 @@ import axios from 'axios';
 import {useAppSelector} from '../../redux/hooks';
 import {isLocationEnabled} from '../../utils/helper';
 import {giveLocationPermission} from '../../services/apiService';
+import {getAddressFromCoordinates} from '../../services/locationService';
 
 type HomeProps = NativeStackScreenProps<RootDrawerParamList, 'HomeScreen'>;
 
@@ -173,56 +174,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
     }
   };
 
-  const getAddressFromCoordinates = async (
-    latitude: number,
-    longitude: number,
-  ) => {
-    const API_KEY = 'AIzaSyDOz_eMVh03ENc2EBiAgr0eRImieYsu6fk'; // Should be server-side!
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${API_KEY}`;
-
-    try {
-      const response = await axios.get(url);
-      // const x = giveLocationPermission()
-      const data = response.data;
-      console.log('Geocoding response:', data);
-      switch (data.status) {
-        case 'OK':
-          return data.results[0].formatted_address;
-        case 'ZERO_RESULTS':
-          console.warn('No address found for these coordinates');
-          return null;
-        default:
-          throw new Error(
-            `Geocoding error: ${data.status} - ${data.error_message || ''}`,
-          );
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error('API request failed:', {
-          message: error.message,
-          code: error.code,
-          status: error.response?.status,
-          data: error.response?.data,
-        });
-      } else {
-        console.error('Unexpected error:', error);
-      }
-      return null;
-    }
-  };
-
   const initializeLocation = async () => {
-    // await checkLocationServices();
-    // if (userLocation) {
-    //   // setConfirmedLocation(userLocation);
-    //   const address = await getAddressFromCoordinates(
-    //     userLocation.latitude,
-    //     userLocation.longitude,
-    //   );
-    //   if (address) {
-    //     // setConfirmedAddress(address);
-    //   }
-    // }
     const {status, message, data} = await giveLocationPermission();
     if (status) {
       setAddressToShow(data.address);
@@ -380,9 +332,6 @@ const HomeScreen = ({navigation}: HomeProps) => {
                   userLocation.latitude,
                   userLocation.longitude,
                 );
-                if (address) {
-                  // setConfirmedAddress(address);
-                }
                 setModalVisible(false);
               }
             }}>
