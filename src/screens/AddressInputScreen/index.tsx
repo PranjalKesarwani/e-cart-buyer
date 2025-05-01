@@ -78,6 +78,7 @@ const AddressInputScreen = ({route, navigation}: AddressInputProps) => {
       floor: addressInput.floor,
       landmark: addressInput.landmark,
       isDefault: false,
+      formattedAddress,
       location: {
         type: 'Point',
         coordinates: [
