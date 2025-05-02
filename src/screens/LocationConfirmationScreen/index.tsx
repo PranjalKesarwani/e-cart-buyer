@@ -29,6 +29,7 @@ const {width, height} = Dimensions.get('window');
 const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
   const slideAnim = useRef(new Animated.Value(0)).current;
   const {lastSavedformattedAddress} = useAppSelector(state => state.buyer);
+  console.log('777777777777', lastSavedformattedAddress);
   const [markerPosition, setMarkerPosition] = useState({
     latitude: 25.4822367,
     longitude: 81.9762467,
@@ -62,14 +63,15 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
 
   const handleLocationPermission = async () => {
     try {
-      const res = await giveLocationPermission();
-      if (res.status) {
-        console.log('----->>>>>>', res.data);
+      const {status, message, data} = await giveLocationPermission();
+
+      if (status) {
         setMarkerPosition({
-          latitude: parseFloat(res.data.lat),
-          longitude: parseFloat(res.data.lng),
+          latitude: parseFloat(data.lat),
+          longitude: parseFloat(data.lng),
         });
-        const cleanAdd = cleanAddress(res.data.address);
+        console.log('------jjjj', data.formattedAddress);
+        const cleanAdd = cleanAddress(data.formattedAddress);
         setAddress(cleanAdd);
         setLocationEnabled(true);
       }
@@ -77,6 +79,10 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
       console.error('Error getting location:', error);
     }
   };
+
+  useEffect(() => {
+    handleLocationPermission();
+  }, []);
 
   const translateY = slideAnim.interpolate({
     inputRange: [0, 1],
@@ -186,7 +192,9 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
           <TouchableOpacity style={styles.continueButton}>
             <Text style={styles.continueButtonText}>
               Continue with{' '}
-              <Text style={styles.boldAddress}>Jhunsi Rd, Sahson...</Text>
+              <Text style={styles.boldAddress}>
+                {lastSavedformattedAddress}
+              </Text>
             </Text>
           </TouchableOpacity>
         </Animated.View>

@@ -23,7 +23,7 @@ import {apiClient} from '../../services/api';
 import {Theme} from '../../theme/theme';
 import axios from 'axios';
 import {useAppSelector} from '../../redux/hooks';
-import {isLocationEnabled} from '../../utils/helper';
+import {cleanAddress, isLocationEnabled} from '../../utils/helper';
 import {giveLocationPermission} from '../../services/apiService';
 import {getAddressFromCoordinates} from '../../services/locationService';
 
@@ -179,7 +179,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
     if (status) {
       const displayAddress = data.address ?? data.formattedAddress;
       console.log('test id:12345', displayAddress);
-      setAddressToShow(displayAddress);
+      setAddressToShow(cleanAddress(displayAddress));
     }
   };
 
