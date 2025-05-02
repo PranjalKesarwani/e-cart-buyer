@@ -176,9 +176,10 @@ const HomeScreen = ({navigation}: HomeProps) => {
 
   const initializeLocation = async () => {
     const {status, message, data} = await giveLocationPermission();
-    console.log('test id:12345', data);
     if (status) {
-      setAddressToShow(data.address);
+      const displayAddress = data.address ?? data.formattedAddress;
+      console.log('test id:12345', displayAddress);
+      setAddressToShow(displayAddress);
     }
   };
 
