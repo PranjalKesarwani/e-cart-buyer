@@ -58,10 +58,10 @@ export const handleSearch = debounce(
     if (text.trim().length > 1) {
       try {
         const encodedSearch = encodeURIComponent(text.trim());
-        console.log('search test::::1234', text, encodedSearch);
         const res = await apiClient.get(
           `${API_URL}/buyer/get-location-search-results?search=${encodedSearch}`,
         );
+        console.log(res.data.searchResult);
         setPredictions(res.data?.searchResult || []);
       } catch (error) {
         console.error(error);
