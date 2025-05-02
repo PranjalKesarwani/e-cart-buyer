@@ -52,12 +52,13 @@ export const addBuyerAddress = async (payload: any) => {
   }
 };
 
-const handleSearch = debounce(
+export const handleSearch = debounce(
   async (text: string, setSearchQuery: any, setPredictions: any) => {
     setSearchQuery(text);
     if (text.trim().length > 1) {
       try {
         const encodedSearch = encodeURIComponent(text.trim());
+        console.log('search test::::1234', text, encodedSearch);
         const res = await axios.get(
           `${API_URL}/buyer/get-location-search-results?search=${encodedSearch}`,
         );
@@ -72,7 +73,7 @@ const handleSearch = debounce(
   500,
 );
 
-const handlePlaceSelected = async (
+export const handlePlaceSelected = async (
   placeId: any,
   setMarkerPosition: any,
   setAddress: any,

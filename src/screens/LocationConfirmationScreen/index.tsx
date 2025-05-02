@@ -9,13 +9,18 @@ import {
   BackHandler,
   Dimensions,
   TextInput,
+  FlatList,
 } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../types';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import {Theme} from '../../theme/theme';
-import {giveLocationPermission} from '../../services/apiService';
+import {
+  giveLocationPermission,
+  handlePlaceSelected,
+  handleSearch,
+} from '../../services/apiService';
 import {cleanAddress, isLocationEnabled} from '../../utils/helper';
 import {useAppSelector} from '../../redux/hooks';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'; // Install this package
@@ -37,6 +42,7 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
   });
   const [predictions, setPredictions] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showResults, setShowResults] = useState(false);
   const [address, setAddress] = useState(lastSavedformattedAddress);
   const [locationEnabled, setLocationEnabled] = useState(false);
 
@@ -123,7 +129,40 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
           style={styles.searchInput}
           placeholder="Search for area, street name..."
           placeholderTextColor={Theme.colors.gray}
+          value={searchQuery}
+          onChangeText={text => {
+            setSearchQuery(text);
+            setShowResults(text.length > 0);
+            handleSearch(text, setSearchQuery, setPredictions);
+          }}
+          onBlur={() => setShowResults(false)}
         />
+
+        {/* Search results list */}
+        {showResults && (
+          <FlatList
+            style={styles.predictionsList}
+            data={predictions}
+            keyboardShouldPersistTaps="always"
+            keyExtractor={(item: any) => item.placeId}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                style={styles.predictionItem}
+                onPress={() =>
+                  handlePlaceSelected(
+                    item.placeId,
+                    setMarkerPosition,
+                    setAddress,
+                    setPredictions,
+                    setSearchQuery,
+                  )
+                }>
+                <Text style={styles.mainText}>{item.main_text}</Text>
+                <Text style={styles.secondaryText}>{item.secondary_text}</Text>
+              </TouchableOpacity>
+            )}
+          />
+        )}
       </View>
 
       {/* Back Button */}
@@ -209,6 +248,31 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
 };
 
 const styles = StyleSheet.create({
+  predictionsList: {
+    position: 'absolute',
+    top: 50,
+    width: '100%',
+    backgroundColor: 'white',
+    borderRadius: 8,
+    maxHeight: 200,
+    elevation: 3,
+    zIndex: 999,
+  },
+  predictionItem: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  mainText: {
+    fontSize: 16,
+    color: Theme.colors.black,
+    fontWeight: '500',
+  },
+  secondaryText: {
+    fontSize: 14,
+    color: Theme.colors.gray,
+    marginTop: 4,
+  },
   container: {
     flex: 1,
     backgroundColor: Theme.colors.background,
