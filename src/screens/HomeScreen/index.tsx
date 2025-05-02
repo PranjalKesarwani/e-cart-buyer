@@ -46,16 +46,6 @@ const HomeScreen = ({navigation}: HomeProps) => {
     latitude: number;
     longitude: number;
   } | null>(null);
-  // const [confirmedLocation, setConfirmedLocation] = useState<{
-  //   latitude: number;
-  //   longitude: number;
-  // } | null>(null);
-  // const [confirmedAddress, setConfirmedAddress] = useState<string>(
-  //   'Opposite Ramleela Maidan, 221507',
-  // );
-
-  const windowHeight = Dimensions.get('window').height;
-  // const modalHeight = windowHeight;
 
   const [globalCats, setGlobalCats] = useState<any>([]);
 
@@ -87,44 +77,6 @@ const HomeScreen = ({navigation}: HomeProps) => {
       return false;
     }
   };
-
-  // const checkLocationServices = async () => {
-  //   const hasPermission = await requestLocationPermission();
-  //   if (!hasPermission) {
-  //     showToast('error', 'Location permission denied');
-  //     return;
-  //   }
-
-  //   try {
-  //     Geolocation.getCurrentPosition(
-  //       position => {
-  //         const newCoords = {
-  //           latitude: position.coords.latitude,
-  //           longitude: position.coords.longitude,
-  //         };
-  //         setUserLocation(newCoords);
-  //         console.log('Location enabled:', newCoords);
-  //       },
-  //       error => {
-  //         console.log('Location error:', error.code, error.message);
-  //         showToast('error', `Location error: ${error.message}`);
-  //         if (error.code === 2) {
-  //           Alert.alert(
-  //             'Location Required',
-  //             'Please enable device location services',
-  //             [
-  //               {text: 'Cancel', style: 'cancel'},
-  //               {text: 'Settings', onPress: () => Linking.openSettings()},
-  //             ],
-  //           );
-  //         }
-  //       },
-  //       {enableHighAccuracy: true, timeout: 15000, maximumAge: 0},
-  //     );
-  //   } catch (error) {
-  //     console.log('Error checking location:', error);
-  //   }
-  // };
 
   const getCurrentLocation = async () => {
     try {
