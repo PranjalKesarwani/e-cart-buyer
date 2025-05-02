@@ -12,6 +12,8 @@ const initialState: TBuyer = {
   activeSessions: [],
   hasSetLocation: false,
   lastSavedformattedAddress: '',
+  formattedAddress: null,
+  address: null,
   loading: false,
   error: null,
   cart: [],
@@ -89,6 +91,12 @@ const buyerSlice = createSlice({
     },
     setSelectedShop: (state, action) => {
       state.selectedShop = action.payload;
+    },
+    setFormattedAddress: (state, action) => {
+      state.formattedAddress = action.payload;
+    },
+    setAddress: (state, action) => {
+      state.address = action.payload;
     },
   },
   extraReducers: builder => {

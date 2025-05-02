@@ -73,6 +73,8 @@ export interface TBuyer {
   cartItemsCount: number;
   selectedCart: TCart | null;
   selectedShop: TShop | null;
+  formattedAddress: string | null;
+  address: string | null;
 }
 
 export type TWishlist = {

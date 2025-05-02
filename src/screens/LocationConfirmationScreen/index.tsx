@@ -17,6 +17,7 @@ import Icons from 'react-native-vector-icons/MaterialIcons';
 import {Theme} from '../../theme/theme';
 import {giveLocationPermission} from '../../services/apiService';
 import {cleanAddress, isLocationEnabled} from '../../utils/helper';
+import {useAppSelector} from '../../redux/hooks';
 
 type LocationSetupProps = NativeStackScreenProps<
   RootStackParamList,
@@ -27,11 +28,12 @@ const {width, height} = Dimensions.get('window');
 
 const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
   const slideAnim = useRef(new Animated.Value(0)).current;
+  const {lastSavedformattedAddress} = useAppSelector(state => state.buyer);
   const [markerPosition, setMarkerPosition] = useState({
     latitude: 25.4822367,
     longitude: 81.9762467,
   });
-  const [address, setAddress] = useState('Sahson Bazar prayagraj');
+  const [address, setAddress] = useState(lastSavedformattedAddress);
   const [locationEnabled, setLocationEnabled] = useState(false);
 
   const checkLocationEnabled = async () => {
