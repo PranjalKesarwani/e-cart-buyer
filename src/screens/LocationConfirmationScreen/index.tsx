@@ -39,7 +39,6 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
 
   const checkLocationEnabled = async () => {
     const isEnabled = await isLocationEnabled();
-    console.log('-----}}}}}222222', isEnabled);
     setLocationEnabled(isEnabled);
   };
 
@@ -70,7 +69,6 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
           latitude: parseFloat(data.lat),
           longitude: parseFloat(data.lng),
         });
-        console.log('------jjjj', data.formattedAddress);
         const cleanAdd = cleanAddress(data.formattedAddress);
         setAddress(cleanAdd);
         setLocationEnabled(true);
@@ -189,14 +187,18 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
             style={styles.enableButton}>
             <Text style={styles.enableButtonText}>Enable Device Location</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.continueButton}>
-            <Text style={styles.continueButtonText}>
-              Continue with{' '}
-              <Text style={styles.boldAddress}>
-                {lastSavedformattedAddress}
+          {lastSavedformattedAddress ? (
+            <TouchableOpacity
+              style={styles.continueButton}
+              onPress={() => addMoreAddressDetails()}>
+              <Text style={styles.continueButtonText}>
+                Continue with{' '}
+                <Text style={styles.boldAddress}>
+                  {lastSavedformattedAddress}
+                </Text>
               </Text>
-            </Text>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          ) : null}
         </Animated.View>
       )}
     </View>
