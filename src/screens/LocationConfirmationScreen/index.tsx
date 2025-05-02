@@ -41,6 +41,7 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
     longitude: 81.9762467,
   });
   const [predictions, setPredictions] = useState([]);
+  const mapRef = useRef<MapView>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [showResults, setShowResults] = useState(false);
   const [address, setAddress] = useState(lastSavedformattedAddress);
@@ -68,6 +69,20 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
 
     return () => backHandler.remove();
   }, []);
+
+  useEffect(() => {
+    if (mapRef.current) {
+      mapRef.current.animateToRegion(
+        {
+          latitude: markerPosition.latitude,
+          longitude: markerPosition.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        },
+        1000,
+      ); // 1000ms animation duration
+    }
+  }, [markerPosition]);
 
   const handleLocationPermission = async () => {
     try {
@@ -112,6 +127,7 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
     <View style={styles.container}>
       {/* Map Section */}
       <MapView
+        ref={mapRef}
         style={styles.map}
         initialRegion={{
           latitude: markerPosition.latitude,
@@ -119,7 +135,11 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}>
-        <Marker coordinate={markerPosition} />
+        <Marker
+          coordinate={markerPosition}
+          draggable
+          onDragEnd={e => setMarkerPosition(e.nativeEvent.coordinate)}
+        />
       </MapView>
 
       {/* Search Bar Overlay */}
