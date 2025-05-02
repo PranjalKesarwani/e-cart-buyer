@@ -251,6 +251,7 @@ const styles = StyleSheet.create({
   predictionsList: {
     position: 'absolute',
     top: 50,
+    left: 20,
     width: '100%',
     backgroundColor: 'white',
     borderRadius: 8,
