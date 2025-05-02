@@ -123,6 +123,20 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
     }
   };
 
+  const handleRecenterMap = () => {
+    if (mapRef.current) {
+      mapRef.current.animateToRegion(
+        {
+          latitude: markerPosition.latitude,
+          longitude: markerPosition.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        },
+        1000,
+      );
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Map Section */}
@@ -204,6 +218,12 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
         <Icons name="my-location" size={24} color={Theme.colors.primary} />
       </TouchableOpacity>
 
+      <TouchableOpacity
+        style={[styles.locationButton, styles.recenterButton]}
+        onPress={handleRecenterMap}>
+        <Icons name="gps-fixed" size={24} color={Theme.colors.primary} />
+      </TouchableOpacity>
+
       {/* Address Details Section */}
       {locationEnabled ? (
         <Animated.View
@@ -268,6 +288,15 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
 };
 
 const styles = StyleSheet.create({
+  recenterButton: {
+    position: 'absolute',
+    bottom: 225, // Adjust based on your layout
+    right: 20,
+    padding: 15,
+    backgroundColor: Theme.colors.white,
+    borderRadius: 30,
+    elevation: 4,
+  },
   predictionsList: {
     position: 'absolute',
     top: 50,
