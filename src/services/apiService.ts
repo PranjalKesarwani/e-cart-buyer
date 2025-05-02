@@ -59,7 +59,7 @@ export const handleSearch = debounce(
       try {
         const encodedSearch = encodeURIComponent(text.trim());
         console.log('search test::::1234', text, encodedSearch);
-        const res = await axios.get(
+        const res = await apiClient.get(
           `${API_URL}/buyer/get-location-search-results?search=${encodedSearch}`,
         );
         setPredictions(res.data?.searchResult || []);
@@ -81,7 +81,7 @@ export const handlePlaceSelected = async (
   setSearchQuery: any,
 ) => {
   try {
-    const res = await axios.get(
+    const res = await apiClient.get(
       `${API_URL}/buyer/selected-location-result?placeId=${placeId}`,
     );
     if (res.data.success) {
