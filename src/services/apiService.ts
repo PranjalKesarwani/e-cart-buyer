@@ -1,4 +1,6 @@
+import axios from 'axios';
 import {API_URL} from '../config';
+import {debounce} from '../utils/helper';
 import {apiClient} from './api';
 import {getCurrentLocation} from './locationService';
 
@@ -47,5 +49,50 @@ export const addBuyerAddress = async (payload: any) => {
     const errorMessage =
       error?.message || error?.response?.message || 'Something went wrong!';
     return {status: false, data: null, message: errorMessage};
+  }
+};
+
+const handleSearch = debounce(
+  async (text: string, setSearchQuery: any, setPredictions: any) => {
+    setSearchQuery(text);
+    if (text.trim().length > 1) {
+      try {
+        const encodedSearch = encodeURIComponent(text.trim());
+        const res = await axios.get(
+          `${API_URL}/buyer/get-location-search-results?search=${encodedSearch}`,
+        );
+        setPredictions(res.data?.searchResult || []);
+      } catch (error) {
+        console.error(error);
+        setPredictions([]);
+        return;
+      }
+    }
+  },
+  500,
+);
+
+const handlePlaceSelected = async (
+  placeId: any,
+  setMarkerPosition: any,
+  setAddress: any,
+  setPredictions: any,
+  setSearchQuery: any,
+) => {
+  try {
+    const res = await axios.get(
+      `${API_URL}/buyer/selected-location-result?placeId=${placeId}`,
+    );
+    if (res.data.success) {
+      setMarkerPosition({
+        latitude: res.data.result.lat,
+        longitude: res.data.result.long,
+      });
+      setPredictions([]);
+      setSearchQuery('');
+      setAddress(res.data.result.formattedAddress);
+    }
+  } catch (error) {
+    console.error(error);
   }
 };

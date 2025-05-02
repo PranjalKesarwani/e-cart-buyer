@@ -18,6 +18,7 @@ import {Theme} from '../../theme/theme';
 import {giveLocationPermission} from '../../services/apiService';
 import {cleanAddress, isLocationEnabled} from '../../utils/helper';
 import {useAppSelector} from '../../redux/hooks';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'; // Install this package
 
 type LocationSetupProps = NativeStackScreenProps<
   RootStackParamList,
@@ -34,6 +35,8 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
     latitude: 25.4822367,
     longitude: 81.9762467,
   });
+  const [predictions, setPredictions] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [address, setAddress] = useState(lastSavedformattedAddress);
   const [locationEnabled, setLocationEnabled] = useState(false);
 
