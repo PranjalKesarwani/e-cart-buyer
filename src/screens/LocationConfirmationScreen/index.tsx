@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -11,11 +11,13 @@ import {
   TextInput,
   FlatList,
 } from 'react-native';
-import MapView, {Marker} from 'react-native-maps';
+import MapView, {Marker, Region} from 'react-native-maps';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../types';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import {Theme} from '../../theme/theme';
+import {debounce} from 'lodash';
+
 import {
   giveLocationPermission,
   handlePlaceSelected,
@@ -24,6 +26,7 @@ import {
 import {cleanAddress, isLocationEnabled} from '../../utils/helper';
 import {useAppSelector} from '../../redux/hooks';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete'; // Install this package
+import {getAddressFromCoordinates} from '../../services/locationService';
 
 type LocationSetupProps = NativeStackScreenProps<
   RootStackParamList,
@@ -33,9 +36,11 @@ type LocationSetupProps = NativeStackScreenProps<
 const {width, height} = Dimensions.get('window');
 
 const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
+  const useDebounce = (callback: any, delay: number) => {
+    return useCallback(debounce(callback, delay), []);
+  };
   const slideAnim = useRef(new Animated.Value(0)).current;
   const {lastSavedformattedAddress} = useAppSelector(state => state.buyer);
-  console.log('777777777777', lastSavedformattedAddress);
   const [markerPosition, setMarkerPosition] = useState({
     latitude: 25.4822367,
     longitude: 81.9762467,
@@ -70,22 +75,21 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
     return () => backHandler.remove();
   }, []);
 
-  useEffect(() => {
-    if (mapRef.current) {
-      mapRef.current.animateToRegion(
-        {
-          latitude: markerPosition.latitude,
-          longitude: markerPosition.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        },
-        1000,
-      ); // 1000ms animation duration
-    }
-  }, [markerPosition]);
-
+  const handleMapDragEnd = useDebounce(async (region: Region) => {
+    setMarkerPosition({
+      latitude: region.latitude,
+      longitude: region.longitude,
+    });
+    // Fetch address immediately after position update
+    const addressDetail = await getAddressFromCoordinates(
+      region.latitude,
+      region.longitude,
+    );
+    setAddress(addressDetail as string);
+  }, 500); // 500ms debounce
   const handleLocationPermission = async () => {
     try {
+      console.log('1111111dsfsdfsfds');
       const {status, message, data} = await giveLocationPermission();
 
       if (status) {
@@ -123,17 +127,27 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
     }
   };
 
-  const handleRecenterMap = () => {
-    if (mapRef.current) {
-      mapRef.current.animateToRegion(
-        {
-          latitude: markerPosition.latitude,
-          longitude: markerPosition.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        },
-        1000,
-      );
+  const handleRecenterMap = async () => {
+    try {
+      const {status, data} = await giveLocationPermission();
+      if (status && mapRef.current) {
+        const newCoords = {
+          latitude: parseFloat(data.lat),
+          longitude: parseFloat(data.lng),
+        };
+
+        setMarkerPosition(newCoords);
+        mapRef.current.animateToRegion(
+          {
+            ...newCoords,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          },
+          1000,
+        );
+      }
+    } catch (error) {
+      console.error('Error recentering map:', error);
     }
   };
 
@@ -148,13 +162,17 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
           longitude: markerPosition.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
-        }}>
-        <Marker
+        }}
+        onRegionChangeComplete={handleMapDragEnd}>
+        {/* <Marker
           coordinate={markerPosition}
           draggable
           onDragEnd={e => setMarkerPosition(e.nativeEvent.coordinate)}
-        />
+        /> */}
       </MapView>
+      <View style={styles.markerFixed}>
+        <Icons name="location-on" size={40} color={Theme.colors.primary} />
+      </View>
 
       {/* Search Bar Overlay */}
       <View style={styles.searchContainer}>
@@ -165,6 +183,7 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
           placeholderTextColor={Theme.colors.gray}
           value={searchQuery}
           onChangeText={text => {
+            console.log('555kfgd5555');
             setSearchQuery(text);
             setShowResults(text.length > 0);
             handleSearch(text, setSearchQuery, setPredictions);
@@ -182,15 +201,17 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
             renderItem={({item}) => (
               <TouchableOpacity
                 style={styles.predictionItem}
-                onPress={() =>
+                onPress={() => {
+                  console.log('sf222222222dskfj');
                   handlePlaceSelected(
                     item.placeId,
                     setMarkerPosition,
                     setAddress,
                     setPredictions,
                     setSearchQuery,
-                  )
-                }>
+                    mapRef,
+                  );
+                }}>
                 <Text style={styles.mainText}>{item.main_text}</Text>
                 <Text style={styles.secondaryText}>{item.secondary_text}</Text>
               </TouchableOpacity>
@@ -473,6 +494,14 @@ const styles = StyleSheet.create({
   },
   boldAddress: {
     fontWeight: '700',
+  },
+  markerFixed: {
+    position: 'absolute',
+    left: '50%',
+    top: '50%',
+    marginLeft: -24, // Half of icon width
+    marginTop: -48, // Position icon point at center
+    zIndex: 1,
   },
 });
 

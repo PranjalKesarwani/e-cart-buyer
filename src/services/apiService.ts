@@ -3,9 +3,11 @@ import {API_URL} from '../config';
 import {debounce} from '../utils/helper';
 import {apiClient} from './api';
 import {getCurrentLocation} from './locationService';
+import MapView from 'react-native-maps';
 
 export const giveLocationPermission = async () => {
   try {
+    console.log('-----UUUUUUUÚ');
     const location = await getCurrentLocation();
     if (location) {
       console.log('Location is:', location.coords);
@@ -79,6 +81,7 @@ export const handlePlaceSelected = async (
   setAddress: any,
   setPredictions: any,
   setSearchQuery: any,
+  mapRef: React.RefObject<MapView>,
 ) => {
   try {
     const res = await apiClient.get(
@@ -92,6 +95,20 @@ export const handlePlaceSelected = async (
       setPredictions([]);
       setSearchQuery('');
       setAddress(res.data.result.formattedAddress);
+      const newCoords = {
+        latitude: parseFloat(res.data.result.lat),
+        longitude: parseFloat(res.data.result.long),
+      };
+      if (mapRef.current) {
+        mapRef.current.animateToRegion(
+          {
+            ...newCoords,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          },
+          1000,
+        );
+      }
     }
   } catch (error) {
     console.error(error);

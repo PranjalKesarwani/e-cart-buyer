@@ -3,6 +3,7 @@ import Geolocation, {GeoPosition} from 'react-native-geolocation-service';
 import axios from 'axios';
 import {showToast} from '../utils/toast';
 import {API_URL} from '../config';
+import {apiClient} from './api';
 
 export const requestLocationPermission = async (): Promise<boolean> => {
   if (Platform.OS === 'ios') return true;
@@ -66,18 +67,19 @@ export const getAddressFromCoordinates = async (
   longitude: number,
 ): Promise<string | null> => {
   try {
-    const response = await axios.get(
-      `${API_URL}/get-address-latlang?latitude=${latitude}&longitude=${longitude}`,
+    console.log('--------YYYYYYY--------', latitude, longitude);
+    const response = await apiClient.get(
+      `${API_URL}/buyer/get-address-latlang?latitude=${latitude}&longitude=${longitude}`,
     );
     const data = response.data;
-    if (data.status === 'OK') {
-      return data.results[0].formatted_address;
-    } else if (data.status === 'ZERO_RESULTS') {
+    if (data.success) {
+      return data.formattedAddress;
+    } else if (!data.success) {
       console.warn('No address found for these coordinates');
       return null;
     } else {
       throw new Error(
-        `Geocoding error: ${data.status} - ${data.error_message || ''}`,
+        `Geocoding error: ${data.success} - ${data.error_message || ''}`,
       );
     }
   } catch (error: any) {
