@@ -171,7 +171,7 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
         /> */}
       </MapView>
       <View style={styles.markerFixed}>
-        <Icons name="location-on" size={40} color={Theme.colors.primary} />
+        <Icons name="location-on" size={50} color={Theme.colors.red} />
       </View>
 
       {/* Search Bar Overlay */}

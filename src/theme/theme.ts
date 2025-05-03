@@ -33,6 +33,7 @@ const BASE_COLORS = {
   warningBackground: '#fff3cd',
   warningBorder: '#ffeeba',
   text: '#333333',
+  red: 'red',
 };
 
 export const Theme = {
