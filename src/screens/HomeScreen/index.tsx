@@ -130,7 +130,6 @@ const HomeScreen = ({navigation}: HomeProps) => {
     const {status, message, data} = await giveLocationPermission();
     if (status) {
       const displayAddress = data.address ?? data.formattedAddress;
-      console.log('test id:12345', displayAddress);
       setAddressToShow(cleanAddress(displayAddress));
     }
   };

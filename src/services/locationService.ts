@@ -67,7 +67,6 @@ export const getAddressFromCoordinates = async (
   longitude: number,
 ): Promise<string | null> => {
   try {
-    console.log('--------YYYYYYY--------', latitude, longitude);
     const response = await apiClient.get(
       `${API_URL}/buyer/get-address-latlang?latitude=${latitude}&longitude=${longitude}`,
     );

@@ -89,7 +89,6 @@ const LocationConfirmationScreen = ({navigation}: LocationSetupProps) => {
   }, 500); // 500ms debounce
   const handleLocationPermission = async () => {
     try {
-      console.log('1111111dsfsdfsfds');
       const {status, message, data} = await giveLocationPermission();
 
       if (status) {

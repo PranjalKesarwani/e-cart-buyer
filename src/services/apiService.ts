@@ -7,7 +7,6 @@ import MapView from 'react-native-maps';
 
 export const giveLocationPermission = async () => {
   try {
-    console.log('-----UUUUUUUÚ');
     const location = await getCurrentLocation();
     if (location) {
       console.log('Location is:', location.coords);
