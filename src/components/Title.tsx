@@ -10,14 +10,6 @@ type TitleProps = {
 
 const Title = ({fontSize, fontWeight}: TitleProps) => {
   return (
-    // <Text style={{fontSize: fontSize, fontWeight: fontWeight}}>
-    //   <Text style={styles.red}>B</Text>
-    //   <Text style={styles.orange}>o</Text>
-    //   <Text style={styles.yellow}>l</Text>
-    //   <Text style={styles.green}>t</Text>
-    //   <Text style={styles.blue}>i</Text>
-    //   <Text style={styles.indigo}>X</Text>
-    // </Text>
     <Image
       source={require('../../src/assets/images/boltix.png')} // Replace with your actual image path
       style={styles.image}
