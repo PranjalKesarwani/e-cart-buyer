@@ -125,7 +125,7 @@ export const placeOrder = async (cartId: string, activeAddress: IAddress) => {
       };
     const res = await apiClient.post(`${API_URL}/buyer/place-order`, {
       cartId,
-      activeAddress,
+      deliveryAddress: activeAddress,
     });
     if (res.status === 201) {
       return {

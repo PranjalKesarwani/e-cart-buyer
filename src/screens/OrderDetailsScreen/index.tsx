@@ -9,6 +9,7 @@ import {
   ScrollView,
   Image,
   Dimensions,
+  Alert,
 } from 'react-native';
 import {RootStackParamList, TCart, TProduct} from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
@@ -80,15 +81,31 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
       showToast('error', 'Please set your location before placing an order');
       return;
     }
+    Alert.alert(
+      'Confirm Order',
+      'Are you sure you want to place this order?',
+      [
+        {text: 'Cancel', style: 'cancel'},
+        {
+          text: 'Confirm',
+          onPress: async () => {
+            const {status, data, message} = await placeOrder(
+              selectedCart?._id as string,
+              activeAddress,
+            );
 
-    const {status, data, message} = await placeOrder(
-      selectedCart?._id as string,
-      activeAddress,
+            if (status) {
+              showToast('success', message);
+              // navigation.navigate('OrderStatusScreen');
+            } else {
+              showToast('error', message);
+            }
+          },
+          style: 'default',
+        },
+      ],
+      {cancelable: true},
     );
-    if (status) {
-      showToast('success', message);
-      navigation.navigate('OrderStatusScreen');
-    }
   };
 
   return (
