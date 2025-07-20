@@ -166,8 +166,8 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
                     color={Theme.colors.success}
                   />
                   <Text style={styles.infoText}>
-                    {(shop.sellerId as TSeller).address.street},{' '}
-                    {(shop.sellerId as TSeller).address.city}
+                    {(shop.sellerId as TSeller)?.address?.street ?? 'N/A'},{' '}
+                    {(shop.sellerId as TSeller)?.address?.city ?? 'N/A'}
                   </Text>
                 </View>
                 <View style={styles.infoRow}>
