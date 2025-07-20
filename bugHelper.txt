@@ -1,0 +1,17 @@
+
+=======FULL RESET========
+killall node
+killall java
+
+watchman watch-del-all
+rm -rf node_modules
+rm -rf android/build
+rm -rf android/app/build
+rm -rf /tmp/metro-*
+rm -rf /tmp/haste-map-*
+npm cache clean --force
+npm install
+
+npx react-native start --reset-cache
+
+npx react-native run-android
