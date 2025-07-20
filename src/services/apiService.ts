@@ -4,6 +4,7 @@ import {debounce} from '../utils/helper';
 import {apiClient} from './api';
 import {getCurrentLocation} from './locationService';
 import MapView from 'react-native-maps';
+import {IAddress, TProduct} from '../types';
 
 export const giveLocationPermission = async () => {
   try {
@@ -111,5 +112,36 @@ export const handlePlaceSelected = async (
     }
   } catch (error) {
     console.error(error);
+  }
+};
+
+export const placeOrder = async (cartId: string, activeAddress: IAddress) => {
+  try {
+    if (!cartId || !activeAddress)
+      return {
+        status: false,
+        data: null,
+        message: 'Cart ID &  active address is required!',
+      };
+    const res = await apiClient.post(`${API_URL}/buyer/place-order`, {
+      cartId,
+      activeAddress,
+    });
+    if (res.status === 201) {
+      return {
+        status: true,
+        message: 'Order placed successfully!',
+        data: res.data,
+      };
+    }
+    return {
+      status: false,
+      data: null,
+      message: 'Failed to place order. Please try again.',
+    };
+  } catch (error: any) {
+    const errorMessage =
+      error?.message || error?.response?.message || 'Something went wrong!';
+    return {status: false, data: null, message: errorMessage};
   }
 };

@@ -206,7 +206,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
           data={globalCats}
           renderItem={({item}) => (
             <TouchableOpacity
-              style={[styles.categoryCard]}
+              style={[styles.categoryCard, Theme.showBorder]}
               activeOpacity={0.9}
               onPress={() => handleCardPress(item)}>
               <View style={[styles.categoryContent]}>

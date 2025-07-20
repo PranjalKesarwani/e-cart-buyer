@@ -19,6 +19,8 @@ import {Theme} from '../../theme/theme';
 import {useFocusEffect} from '@react-navigation/native';
 import {getCarts, setSelectedCart} from '../../redux/slices/buyerSlice';
 import {Dispatch} from '@reduxjs/toolkit';
+import {placeOrder} from '../../services/apiService';
+import {showToast} from '../../utils/toast';
 
 type OrderDetailsScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -28,7 +30,16 @@ type OrderDetailsScreenProps = NativeStackScreenProps<
 const {width} = Dimensions.get('window');
 
 const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
-  const {selectedCart} = useAppSelector(state => state.buyer);
+  const {
+    selectedCart,
+    hasSetLocation,
+    lastSavedformattedAddress,
+    formattedAddress,
+    address,
+    addresses,
+    activeAddress,
+    _id: buyerId,
+  } = useAppSelector(state => state.buyer);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [deliveryCharge] = useState(40);
   const [totalSavings, setTotalSavings] = useState<number>(0);
@@ -58,6 +69,27 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
       calculatePrices();
     }
   }, [selectedCart, navigation]);
+
+  const handlePlacingOrder = async () => {
+    console.log(
+      'Placing order...',
+
+      addresses,
+    );
+    if (!activeAddress) {
+      showToast('error', 'Please set your location before placing an order');
+      return;
+    }
+
+    const {status, data, message} = await placeOrder(
+      selectedCart?._id as string,
+      activeAddress,
+    );
+    if (status) {
+      showToast('success', message);
+      navigation.navigate('OrderStatusScreen');
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -197,13 +229,21 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
       </ScrollView>
       <View style={[styles.addressDetail, Theme.showBorder]}>
         <Text style={{padding: 16, color: '#2A2A2A'}}>
-          <MaterialIcons name="info" size={16} color="black" /> Sahson,
-          Prayagraj(Here show the current location)
+          <MaterialIcons name="info" size={16} color="black" />{' '}
+          {[
+            activeAddress?.completeAddress,
+            activeAddress?.floor,
+            activeAddress?.landmark,
+          ]
+            .filter(Boolean)
+            .join(', ')}
         </Text>
       </View>
       <TouchableOpacity
         style={styles.proceedButton}
-        onPress={() => navigation.navigate('AddressScreen')}
+        onPress={() => {
+          handlePlacingOrder();
+        }}
         activeOpacity={0.9}>
         <Text style={styles.proceedButtonText}>Continue</Text>
         <MaterialIcons name="arrow-forward" size={24} color="white" />

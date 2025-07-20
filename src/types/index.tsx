@@ -57,6 +57,19 @@ export interface ApiResponse<T> {
   status: number;
 }
 
+export type TLocation = {
+  type: 'Point';
+  coordinates: [number, number]; // [longitude, latitude]
+};
+export interface IAddress {
+  addressType: 'Home' | 'Work' | 'Hotel' | 'Other';
+  location: TLocation;
+  landmark?: string;
+  completeAddress: string;
+  floor: string;
+  formattedAddress: string;
+  isDefault?: boolean;
+}
 export interface TBuyer {
   _id: string | null;
   name: string | null;
@@ -75,6 +88,8 @@ export interface TBuyer {
   selectedShop: TShop | null;
   formattedAddress: string | null;
   address: string | null;
+  activeAddress: IAddress | null;
+  addresses: IAddress[] | null;
 }
 
 export type TWishlist = {

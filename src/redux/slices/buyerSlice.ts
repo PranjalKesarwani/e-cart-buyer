@@ -14,6 +14,8 @@ const initialState: TBuyer = {
   lastSavedformattedAddress: '',
   formattedAddress: null,
   address: null,
+  addresses: [],
+  activeAddress: null,
   loading: false,
   error: null,
   cart: [],
