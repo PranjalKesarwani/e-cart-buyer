@@ -195,7 +195,12 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
           You will save ₹{totalSavings} on this order
         </Text>
       </ScrollView>
-
+      <View style={[styles.addressDetail, Theme.showBorder]}>
+        <Text style={{padding: 16, color: '#2A2A2A'}}>
+          <MaterialIcons name="info" size={16} color="black" /> Sahson,
+          Prayagraj(Here show the current location)
+        </Text>
+      </View>
       <TouchableOpacity
         style={styles.proceedButton}
         onPress={() => navigation.navigate('AddressScreen')}
@@ -398,6 +403,17 @@ const styles = StyleSheet.create({
     marginTop: 16,
     fontSize: 14,
     textAlign: 'center',
+  },
+  addressDetail: {
+    position: 'absolute',
+    bottom: 50,
+    left: 0,
+    right: 0,
+    backgroundColor: Theme.colors.baseYellow,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingVertical: 8,
   },
   proceedButton: {
     position: 'absolute',
