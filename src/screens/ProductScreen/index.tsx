@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, Dimensions, Modal} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  Modal,
+  TouchableOpacity,
+} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {
   TProductAttribute,
@@ -12,11 +19,7 @@ import {
 import Icons from 'react-native-vector-icons/AntDesign';
 import {Image} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
-import {
-  FlatList,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native-gesture-handler';
+import {FlatList, ScrollView} from 'react-native-gesture-handler';
 import {showToast} from '../../utils/toast';
 import {apiClient} from '../../services/api';
 import ProductCard from '../../components/ProductCard';
@@ -40,9 +43,8 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
   const [isBuyModalVisible, setIsBuyModalVisible] = useState(false);
 
   const [products, setProducts] = useState<[] | TProduct[]>([]);
-  const {cartItemsCount, wishlist, cart, selectedShop} = useAppSelector(
-    state => state.buyer,
-  );
+  const {cartItemsCount, wishlist, cart, selectedShop, activeAddress} =
+    useAppSelector(state => state.buyer);
   const [isItemInCart, setIsItemInCart] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const toggleFavorite = () => {
@@ -332,11 +334,13 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
                 <Text style={styles.addressTitle}>Delivery Address</Text>
               </View>
               <Text style={styles.addressText}>
-                123 Main Street, Tech Park, Bengaluru, Karnataka 560001, India
+                {activeAddress?.completeAddress}
               </Text>
-              <TouchableOpacity style={styles.changeAddressButton}>
+              {/* <TouchableOpacity
+                style={styles.changeAddressButton}
+                onPress={() => console.log('dalksdflkjs')}>
                 <Text style={styles.changeAddressText}>Change Address</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
 
             {/* Action Buttons */}
@@ -344,9 +348,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
               <TouchableOpacity
                 style={[styles.cancelButton]}
                 onPress={() => setIsBuyModalVisible(false)}>
-                <Text style={[styles.cancelButtonText, Theme.showBorder]}>
-                  Cancel
-                </Text>
+                <Text style={[styles.cancelButtonText]}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.placeOrderButton]}
@@ -763,9 +765,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   cancelButton: {
-    // flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    flex: 1,
+    paddingVertical: 16,
     backgroundColor: '#f5f5f6',
     borderRadius: 12,
     marginRight: 12,
@@ -778,8 +779,7 @@ const styles = StyleSheet.create({
   },
   placeOrderButton: {
     flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
+    paddingVertical: 16,
     backgroundColor: '#ff3f6c',
     borderRadius: 12,
     alignItems: 'center',
