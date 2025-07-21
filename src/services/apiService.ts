@@ -145,3 +145,40 @@ export const placeOrder = async (cartId: string, activeAddress: IAddress) => {
     return {status: false, data: null, message: errorMessage};
   }
 };
+
+export const placeBuyNowOrder = async (
+  product: TProduct,
+  activeAddress: IAddress,
+  quantity: number,
+) => {
+  try {
+    if (!product || !activeAddress)
+      return {
+        status: false,
+        data: null,
+        message: 'product &  active address is required!',
+      };
+    const res = await apiClient.post(`${API_URL}/buyer/place-buy-now-order`, {
+      product,
+      shopId: product.shopId,
+      deliveryAddress: activeAddress,
+      quantity: quantity,
+    });
+    if (res.status === 201) {
+      return {
+        status: true,
+        message: 'Order placed successfully!',
+        data: res.data,
+      };
+    }
+    return {
+      status: false,
+      data: null,
+      message: 'Failed to place order. Please try again.',
+    };
+  } catch (error: any) {
+    const errorMessage =
+      error?.message || error?.response?.message || 'Something went wrong!';
+    return {status: false, data: null, message: errorMessage};
+  }
+};

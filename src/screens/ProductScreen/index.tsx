@@ -15,6 +15,7 @@ import {
   TCategory,
   TCart,
   TShop,
+  IAddress,
 } from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
 import {Image} from 'react-native';
@@ -27,6 +28,7 @@ import {Theme} from '../../theme/theme';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {manageCart, manageWishList} from '../../utils/helper';
 import {Dispatch} from '@reduxjs/toolkit';
+import {placeBuyNowOrder} from '../../services/apiService';
 
 type ProductScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -125,7 +127,17 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
   const handleOrderProduct = async () => {
     console.log('handleOrderProduct', product._id, selectedShop);
-    setIsBuyModalVisible(true);
+    const {status, message, data} = await placeBuyNowOrder(
+      product,
+      activeAddress as IAddress,
+      orderQuantity,
+    );
+    if (!status) {
+      showToast('error', 'Error', message);
+      return;
+    }
+    setIsBuyModalVisible(false);
+    showToast('success', 'Success', 'Order placed successfully!');
   };
 
   return (
@@ -379,9 +391,9 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.placeOrderButton}
-                onPress={() =>
-                  console.log('Place Order:', product._id, orderQuantity)
-                }>
+                onPress={() => {
+                  handleOrderProduct();
+                }}>
                 <Text style={styles.placeOrderText}>
                   Place Order • ₹{(product.price * orderQuantity).toFixed(2)}
                 </Text>
@@ -415,7 +427,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
           <TouchableOpacity
             style={[styles.buyNowButton]}
             onPress={() => {
-              handleOrderProduct();
+              setIsBuyModalVisible(true);
             }}>
             <Text style={styles.buyNowText}>Buy Now</Text>
           </TouchableOpacity>
