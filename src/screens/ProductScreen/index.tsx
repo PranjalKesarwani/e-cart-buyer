@@ -41,6 +41,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
   const [subCats, setSubCats] = useState<any[]>([]);
   const [selectedSubCat, setSelectedSubCat] = useState<null | TCategory>(null);
   const [isBuyModalVisible, setIsBuyModalVisible] = useState(false);
+  const [orderQuantity, setOrderQuantity] = useState(1);
 
   const [products, setProducts] = useState<[] | TProduct[]>([]);
   const {cartItemsCount, wishlist, cart, selectedShop, activeAddress} =
@@ -326,7 +327,33 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
                 </Text>
               )}
             </View>
-
+            {/* Quantity Selector */}
+            <View style={styles.quantityContainer}>
+              <Text style={styles.quantityLabel}>Quantity</Text>
+              <View style={styles.quantitySelector}>
+                <TouchableOpacity
+                  style={[
+                    styles.quantityButton,
+                    orderQuantity === 1 && styles.disabledButton,
+                  ]}
+                  onPress={() =>
+                    orderQuantity > 1 && setOrderQuantity(orderQuantity - 1)
+                  }
+                  disabled={orderQuantity === 1}>
+                  <Icons
+                    name="minus"
+                    size={20}
+                    color={orderQuantity === 1 ? '#ccc' : '#000'}
+                  />
+                </TouchableOpacity>
+                <Text style={styles.quantityValue}>{orderQuantity}</Text>
+                <TouchableOpacity
+                  style={styles.quantityButton}
+                  onPress={() => setOrderQuantity(orderQuantity + 1)}>
+                  <Icons name="plus" size={20} color="#000" />
+                </TouchableOpacity>
+              </View>
+            </View>
             {/* Address Section */}
             <View style={styles.addressContainer}>
               <View style={styles.addressHeader}>
@@ -344,16 +371,20 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
             </View>
 
             {/* Action Buttons */}
-            <View style={[styles.modalButtonContainer]}>
+            <View style={styles.modalButtonContainer}>
               <TouchableOpacity
-                style={[styles.cancelButton]}
+                style={styles.cancelButton}
                 onPress={() => setIsBuyModalVisible(false)}>
-                <Text style={[styles.cancelButtonText]}>Cancel</Text>
+                <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.placeOrderButton]}
-                onPress={() => console.log('Place Order:', product._id)}>
-                <Text style={styles.placeOrderText}>Place Order</Text>
+                style={styles.placeOrderButton}
+                onPress={() =>
+                  console.log('Place Order:', product._id, orderQuantity)
+                }>
+                <Text style={styles.placeOrderText}>
+                  Place Order • ₹{(product.price * orderQuantity).toFixed(2)}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -788,5 +819,42 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+  },
+  quantityContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  quantityLabel: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#2e2e2e',
+  },
+  quantitySelector: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#d4d5d9',
+    borderRadius: 8,
+  },
+  quantityButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  quantityValue: {
+    paddingHorizontal: 16,
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#2e2e2e',
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderColor: '#d4d5d9',
+  },
+  disabledButton: {
+    opacity: 0.5,
   },
 });
