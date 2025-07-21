@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, Dimensions} from 'react-native';
+import {View, Text, StyleSheet, Dimensions, Modal} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {
   TProductAttribute,
@@ -37,6 +37,8 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [subCats, setSubCats] = useState<any[]>([]);
   const [selectedSubCat, setSelectedSubCat] = useState<null | TCategory>(null);
+  const [isBuyModalVisible, setIsBuyModalVisible] = useState(false);
+
   const [products, setProducts] = useState<[] | TProduct[]>([]);
   const {cartItemsCount, wishlist, cart, selectedShop} = useAppSelector(
     state => state.buyer,
@@ -116,6 +118,11 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
   const onChatPress = () => {
     navigation.navigate('PersonalChatScreen', {shop: selectedShop as TShop});
+  };
+
+  const handleOrderProduct = async () => {
+    console.log('handleOrderProduct', product._id, selectedShop);
+    setIsBuyModalVisible(true);
   };
 
   return (
@@ -294,7 +301,62 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
         )}
         ListFooterComponent={<View style={{height: 80}} />}
       />
+      <Modal
+        visible={isBuyModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setIsBuyModalVisible(false)}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            {/* Product Image */}
+            <Image
+              source={{uri: product.media.images[0]}}
+              style={styles.modalImage}
+              resizeMode="contain"
+            />
 
+            {/* Product Price */}
+            <View style={styles.priceRow}>
+              <Text style={styles.modalPrice}>₹{product.price}</Text>
+              {product.price < product.productMrp && (
+                <Text style={styles.modalOriginalPrice}>
+                  ₹{product.productMrp}
+                </Text>
+              )}
+            </View>
+
+            {/* Address Section */}
+            <View style={styles.addressContainer}>
+              <View style={styles.addressHeader}>
+                <Icons name="enviromento" size={20} color="#ff3f6c" />
+                <Text style={styles.addressTitle}>Delivery Address</Text>
+              </View>
+              <Text style={styles.addressText}>
+                123 Main Street, Tech Park, Bengaluru, Karnataka 560001, India
+              </Text>
+              <TouchableOpacity style={styles.changeAddressButton}>
+                <Text style={styles.changeAddressText}>Change Address</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Action Buttons */}
+            <View style={[styles.modalButtonContainer]}>
+              <TouchableOpacity
+                style={[styles.cancelButton]}
+                onPress={() => setIsBuyModalVisible(false)}>
+                <Text style={[styles.cancelButtonText, Theme.showBorder]}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.placeOrderButton]}
+                onPress={() => console.log('Place Order:', product._id)}>
+                <Text style={styles.placeOrderText}>Place Order</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
       {/* Fixed Footer */}
       <View style={[styles.footer]}>
         <View style={{width: '50%'}}>
@@ -320,7 +382,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
           <TouchableOpacity
             style={[styles.buyNowButton]}
             onPress={() => {
-              /* Add to cart logic */
+              handleOrderProduct();
             }}>
             <Text style={styles.buyNowText}>Buy Now</Text>
           </TouchableOpacity>
@@ -421,19 +483,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  // priceContainer: {
-  //   marginBottom: 24,
-  // },
+
   priceText: {
     fontSize: 19,
     fontWeight: '700',
     color: '#2e2e2e',
   },
-  // originalPrice: {
-  //   fontSize: 18,
-  //   color: '#7e808c',
-  //   textDecorationLine: 'line-through',
-  // },
+
   discount: {
     fontSize: 18,
     color: '#26a541',
@@ -630,5 +686,107 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     textAlign: 'right',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 24,
+    paddingBottom: 34,
+  },
+  modalImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 12,
+    marginBottom: 16,
+  },
+  priceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  modalPrice: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#2e2e2e',
+    marginRight: 12,
+  },
+  modalOriginalPrice: {
+    fontSize: 18,
+    color: '#7e808c',
+    textDecorationLine: 'line-through',
+  },
+  addressContainer: {
+    borderWidth: 1.5,
+    borderColor: '#ff3f6c',
+    borderRadius: 12,
+    padding: 16,
+    backgroundColor: '#fff9fa',
+    marginBottom: 24,
+  },
+  addressHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  addressTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#2e2e2e',
+    marginLeft: 8,
+  },
+  addressText: {
+    fontSize: 16,
+    color: '#4a4a4a',
+    lineHeight: 24,
+    marginBottom: 12,
+  },
+  changeAddressButton: {
+    alignSelf: 'flex-start',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    backgroundColor: '#f5f5f6',
+    borderRadius: 6,
+  },
+  changeAddressText: {
+    color: '#ff3f6c',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  cancelButton: {
+    // flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    backgroundColor: '#f5f5f6',
+    borderRadius: 12,
+    marginRight: 12,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    color: '#2e2e2e',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  placeOrderButton: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    backgroundColor: '#ff3f6c',
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  placeOrderText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
