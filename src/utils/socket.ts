@@ -1,4 +1,5 @@
 import {io, Socket} from 'socket.io-client';
+import {SOCKET_URL} from '../config';
 
 // Define the TypeScript type for the socket
 export interface ServerToClientEvents {
@@ -23,7 +24,7 @@ export interface ClientToServerEvents {
   read: (data: any) => void;
 }
 
-const SOCKET_URL = 'http://10.0.2.2:8080'; // Replace with your backend URL
+// const SOCKET_URL = 'http://10.0.2.2:8080'; // Replace with your backend URL
 
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
   SOCKET_URL,

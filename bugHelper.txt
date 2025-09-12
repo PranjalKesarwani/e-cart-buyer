@@ -15,3 +15,10 @@ npm install
 npx react-native start --reset-cache
 
 npx react-native run-android
+
+==========
+cd android
+./gradlew clean
+cd ..
+npx react-native run-android
+==========
