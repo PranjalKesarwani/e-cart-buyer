@@ -8,6 +8,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
 import {store} from './src/redux/store';
+import {navigationRef} from './src/navigation/navigationService';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -16,7 +17,7 @@ function App(): React.JSX.Element {
     <Provider store={store}>
       <GestureHandlerRootView>
         <SafeAreaProvider>
-          <NavigationContainer>
+          <NavigationContainer ref={navigationRef}>
             <AppNavigator />
           </NavigationContainer>
           <Toast />

@@ -4,10 +4,11 @@ import {debounce} from '../utils/helper';
 import {apiClient} from './api';
 import {getCurrentLocation} from './locationService';
 import MapView from 'react-native-maps';
-import {IAddress, TProduct} from '../types';
+import {IAddress, OTPResult, SendOTPOptions, TProduct} from '../types';
 import {Alert} from 'react-native';
 import {showToast} from '../utils/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {navigate} from '../navigation/navigationService';
 
 export const giveLocationPermission = async () => {
   try {
@@ -229,4 +230,90 @@ export const handleLogout = async (navigation: any) => {
     showToast('error', errorMessage);
     return {status: false, message: 'Error!'};
   }
+};
+
+export const handleSendOTP = async (
+  phoneNumber: string,
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  options?: SendOTPOptions,
+): Promise<OTPResult> => {
+  const opts = {
+    timeout: 10000,
+    showToasts: true,
+    ...options,
+  };
+
+  // Normalize input
+  const number = phoneNumber?.trim() ?? '';
+
+  const invalidResult: OTPResult = {
+    status: false,
+    message: 'Please enter a valid phone number',
+    data: null,
+  };
+
+  if (!number || number.length != 10) {
+    if (opts.showToasts) showToast('error', invalidResult.message);
+    return invalidResult;
+  }
+
+  let result: OTPResult = {status: false, message: 'Unknown error', data: null};
+
+  // set loading only if component still mounted or no ref provided
+  if (!opts.isMountedRef || opts.isMountedRef.current) setIsLoading(true);
+
+  try {
+    const res = await apiClient.post(
+      '/buyer/send-otp',
+      {mobile: number},
+      {
+        // axios supports both timeout and signal in modern versions
+        timeout: opts.timeout,
+        signal: opts.signal,
+      },
+    );
+
+    if (res?.data?.success) {
+      result = {
+        status: true,
+        message: res.data.message || 'OTP sent',
+        data: null,
+      };
+      if (opts.showToasts) showToast('success', result.message);
+    } else {
+      result = {
+        status: false,
+        message: res?.data?.message || 'Failed to send OTP',
+        data: null,
+      };
+      if (opts.showToasts) showToast('error', result.message);
+    }
+  } catch (error: any) {
+    // cancelled?
+    const isCanceled =
+      axios.isCancel?.(error) ||
+      error?.name === 'CanceledError' ||
+      error?.message === 'canceled' ||
+      opts.signal?.aborted;
+
+    if (isCanceled) {
+      result = {status: false, message: 'Request cancelled', data: null};
+      // Usually don't toast on cancellation (noisy); leave it to caller if needed
+    } else {
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.response?.message ||
+        error?.message ||
+        'An error occurred while sending OTP';
+      result = {status: false, message: errorMessage, data: null};
+      if (opts.showToasts) showToast('error', errorMessage);
+    }
+  } finally {
+    // Only set loading false if component still mounted (if a ref was provided)
+    if (!opts.isMountedRef || opts.isMountedRef.current) {
+      setIsLoading(false);
+    }
+  }
+
+  return result;
 };

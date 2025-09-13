@@ -409,3 +409,17 @@ export type StatusUpdateType = {
   createdAt: Date;
   expiresAt: Date;
 };
+
+export type OTPResult = {
+  status: boolean;
+  message: string;
+  data: null | any;
+};
+
+export type SendOTPOptions = {
+  signal?: AbortSignal;
+  timeout?: number; // milliseconds
+  showToasts?: boolean;
+  // Optional mounted ref to avoid setState after unmount: use `const mountedRef = useRef(true)` in component.
+  isMountedRef?: React.MutableRefObject<boolean> | null;
+};

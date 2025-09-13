@@ -20,6 +20,7 @@ import {showToast} from '../../utils/toast';
 import {setBuyToken} from '../../utils/helper';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import {Theme} from '../../theme/theme';
+import {navigate} from '../../navigation/navigationService';
 
 type OtpProps = NativeStackScreenProps<RootStackParamList, 'OtpScreen'>;
 
@@ -108,7 +109,7 @@ const OTPScreen = ({route}: OtpProps) => {
       <Animated.View
         style={[styles.content, {transform: [{translateY: translateYValue}]}]}>
         <View style={styles.header}>
-          <Title fontSize={42} fontWeight="800" />
+          <Title />
           <Icons
             name="lock-outline"
             size={32}
@@ -175,7 +176,10 @@ const OTPScreen = ({route}: OtpProps) => {
         </Animated.View>
 
         <Text style={styles.footerText}>
-          Didn't receive code? <Text style={styles.resendText}>Resend OTP</Text>
+          Didn't receive code?
+          <TouchableOpacity onPress={() => navigate('LoginScreen')}>
+            <Text style={styles.resendText}>Resend OTP</Text>
+          </TouchableOpacity>
         </Text>
       </Animated.View>
     </KeyboardAvoidingView>

@@ -18,6 +18,8 @@ import {showToast} from '../../utils/toast';
 import {apiClient} from '../../services/api';
 import {Theme} from '../../theme/theme';
 import Title from '../../components/Title';
+import {handleSendOTP} from '../../services/apiService';
+import {navigate} from '../../navigation/navigationService';
 
 type OtpProps = NativeStackScreenProps<RootStackParamList, 'LoginScreen'>;
 
@@ -45,35 +47,6 @@ const LoginScreen = ({navigation}: OtpProps) => {
     ]).start();
   };
 
-  const handleSendOTP = async () => {
-    if (!phoneNumber.trim() || phoneNumber.length < 10) {
-      showToast('error', 'Please enter a valid phone number');
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      const res = await apiClient.post('/buyer/send-otp', {
-        mobile: phoneNumber,
-      });
-
-      if (res.data.success) {
-        showToast(
-          'success',
-          'OTP Sent Successfully!',
-          'OTP has been sent to your mobile number',
-        );
-        navigation.replace('OtpScreen', {phoneNumber});
-      }
-    } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || error.message || 'Failed to send OTP';
-      showToast('error', errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -81,7 +54,7 @@ const LoginScreen = ({navigation}: OtpProps) => {
       <Animated.View
         style={[styles.content, {transform: [{translateY: translateYValue}]}]}>
         <View style={styles.header}>
-          <Title fontSize={42} fontWeight="800" />
+          <Title />
           <Text style={styles.subtitle}>Login with your mobile number</Text>
         </View>
 
@@ -130,7 +103,16 @@ const LoginScreen = ({navigation}: OtpProps) => {
               (!phoneNumber || isLoading) && styles.buttonDisabled,
             ]}
             onPressIn={animateButton}
-            onPress={handleSendOTP}
+            onPress={async () => {
+              const {status, message, data} = await handleSendOTP(
+                phoneNumber,
+                setIsLoading,
+              );
+              if (status) {
+                showToast('success', message);
+                navigate('OtpScreen', {phoneNumber});
+              }
+            }}
             disabled={!phoneNumber || isLoading}
             activeOpacity={0.9}>
             {isLoading ? (
