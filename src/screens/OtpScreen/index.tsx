@@ -21,6 +21,7 @@ import {setBuyToken} from '../../utils/helper';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import {Theme} from '../../theme/theme';
 import {navigate} from '../../navigation/navigationService';
+import {verifyOtp} from '../../services/apiService';
 
 type OtpProps = NativeStackScreenProps<RootStackParamList, 'OtpScreen'>;
 
@@ -75,32 +76,32 @@ const OTPScreen = ({route}: OtpProps) => {
     }
   };
 
-  const handleSendOtp = async () => {
-    if (otp.join('').length !== 6) {
-      showToast('error', 'Please enter complete OTP');
-      return;
-    }
+  // const verifyOtp = async () => {
+  //   if (otp.join('').length !== 6) {
+  //     showToast('error', 'Please enter complete OTP');
+  //     return;
+  //   }
 
-    try {
-      setIsLoading(true);
-      const res = await apiClient.post('/buyer/verify-otp', {
-        mobile: phoneNumber,
-        otp: otp.join(''),
-      });
+  //   try {
+  //     setIsLoading(true);
+  //     const res = await apiClient.post('/buyer/verify-otp', {
+  //       mobile: phoneNumber,
+  //       otp: otp.join(''),
+  //     });
 
-      if (res.data.success) {
-        setBuyToken(res.data.buyerToken);
-        showToast('success', 'Success!', 'OTP Verified Successfully!');
-        navigation.navigate('DrawerNavigator');
-      }
-    } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || error.message || 'Verification failed';
-      showToast('error', errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     if (res.data.success) {
+  //       setBuyToken(res.data.buyerToken);
+  //       showToast('success', 'Success!', 'OTP Verified Successfully!');
+  //       navigation.navigate('DrawerNavigator');
+  //     }
+  //   } catch (error: any) {
+  //     const errorMessage =
+  //       error.response?.data?.message || error.message || 'Verification failed';
+  //     showToast('error', errorMessage);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   return (
     <KeyboardAvoidingView
@@ -164,7 +165,7 @@ const OTPScreen = ({route}: OtpProps) => {
               (otp.join('').length !== 6 || isLoading) && styles.buttonDisabled,
             ]}
             onPressIn={animateButton}
-            onPress={handleSendOtp}
+            onPress={() => verifyOtp(otp, setIsLoading, phoneNumber)}
             disabled={otp.join('').length !== 6 || isLoading}
             activeOpacity={0.9}>
             {isLoading ? (
@@ -175,12 +176,17 @@ const OTPScreen = ({route}: OtpProps) => {
           </TouchableOpacity>
         </Animated.View>
 
-        <Text style={styles.footerText}>
-          Didn't receive code?
-          <TouchableOpacity onPress={() => navigate('LoginScreen')}>
+        <View style={[styles.footerContainer]}>
+          <Text style={styles.footerText}>Didn't receive code?</Text>
+
+          <TouchableOpacity
+            onPress={() => navigate('LoginScreen')}
+            accessibilityRole="button"
+            hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}
+            activeOpacity={0.7}>
             <Text style={styles.resendText}>Resend OTP</Text>
           </TouchableOpacity>
-        </Text>
+        </View>
       </Animated.View>
     </KeyboardAvoidingView>
   );
@@ -263,16 +269,26 @@ const styles = StyleSheet.create({
     fontFamily: Theme.fonts.heading,
     letterSpacing: 0.5,
   },
+  footerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center', // vertically center both texts
+    justifyContent: 'center', // center the row content as a group
+    marginTop: 30,
+    paddingHorizontal: 16, // safe horizontal padding
+  },
+
   footerText: {
-    textAlign: 'center',
     color: Theme.colors.gray,
     fontSize: 14,
-    marginTop: 30,
     fontFamily: Theme.fonts.body,
   },
+
   resendText: {
     color: Theme.colors.primary,
     fontFamily: Theme.fonts.heading,
+    fontSize: 14,
+    marginLeft: 10, // space between the two texts
+    textDecorationLine: 'underline', // optional, makes it look clickable
   },
 });
 

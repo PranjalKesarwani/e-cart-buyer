@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {API_URL} from '../config';
-import {debounce} from '../utils/helper';
+import {debounce, setBuyToken} from '../utils/helper';
 import {apiClient} from './api';
 import {getCurrentLocation} from './locationService';
 import MapView from 'react-native-maps';
@@ -238,7 +238,7 @@ export const handleSendOTP = async (
   options?: SendOTPOptions,
 ): Promise<OTPResult> => {
   const opts = {
-    timeout: 10000,
+    timeout: 30000,
     showToasts: true,
     ...options,
   };
@@ -316,4 +316,36 @@ export const handleSendOTP = async (
   }
 
   return result;
+};
+
+export const verifyOtp = async (
+  otp: (string | undefined)[],
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  phoneNumber: string,
+) => {
+  if (otp.join('').length !== 6) {
+    showToast('error', 'Please enter complete OTP');
+    return;
+  }
+
+  try {
+    setIsLoading(true);
+    const res = await apiClient.post('/buyer/verify-otp', {
+      mobile: phoneNumber,
+      otp: otp.join(''),
+    });
+
+    if (res.data.success) {
+      setBuyToken(res.data.buyerToken);
+      showToast('success', 'Success!', 'OTP Verified Successfully!');
+      // navigation.navigate('DrawerNavigator');
+      navigate('DrawerNavigator');
+    }
+  } catch (error: any) {
+    const errorMessage =
+      error.response?.data?.message || error.message || 'Verification failed';
+    showToast('error', errorMessage);
+  } finally {
+    setIsLoading(false);
+  }
 };

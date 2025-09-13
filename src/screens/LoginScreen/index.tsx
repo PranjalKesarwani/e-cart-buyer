@@ -21,9 +21,7 @@ import Title from '../../components/Title';
 import {handleSendOTP} from '../../services/apiService';
 import {navigate} from '../../navigation/navigationService';
 
-type OtpProps = NativeStackScreenProps<RootStackParamList, 'LoginScreen'>;
-
-const LoginScreen = ({navigation}: OtpProps) => {
+const LoginScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [inputFocused, setInputFocused] = useState(false);
