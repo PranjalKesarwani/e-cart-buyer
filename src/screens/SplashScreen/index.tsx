@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, Button} from 'react-native';
+import {View, Text, StyleSheet, Button, SafeAreaView} from 'react-native';
 import {NavigationProp} from '@react-navigation/native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../types';
@@ -12,6 +12,8 @@ import {
   setCartItemsCount,
 } from '../../redux/slices/buyerSlice';
 import {calculateCartItemsCount} from '../../utils/helper';
+import {Theme} from '../../theme/theme';
+import LinearGradient from 'react-native-linear-gradient';
 
 type SplashProps = NativeStackScreenProps<RootStackParamList, 'SplashScreen'>;
 
@@ -51,27 +53,43 @@ const SplashScreen = ({navigation}: SplashProps) => {
     fetchData();
   }, [dispatch]);
 
-  const [isAuth, setIsAuth] = useState<boolean>(false);
-
   return (
-    <View style={styles.container}>
-      <Title fontSize={36} fontWeight={'bold'} />
-      <Text style={styles.subtitle}>Authenticating User...</Text>
-    </View>
+    <LinearGradient
+      colors={[Theme.colors.orangeLight, Theme.colors.orangeDark]}
+      start={{x: 0, y: 0}}
+      end={{x: 1, y: 1}}
+      style={styles.gradient}>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.content}>
+          {/* Title should accept color/size props. If your Title doesn't, set color via container */}
+          <Title />
+          <Text style={styles.subtitle}>Authenticating User...</Text>
+        </View>
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 
 export default SplashScreen;
 
 const styles = StyleSheet.create({
-  container: {
+  gradient: {
+    flex: 1, // make gradient fill the whole screen
+  },
+  safeArea: {
     flex: 1,
+  },
+  content: {
+    flex: 1,
+    // center content vertically and horizontally
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f0f0f0', // Background color chosen for the screen
+    paddingHorizontal: 24,
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: 24,
     marginTop: 20,
+    color: Theme.colors.white, // use theme
+    opacity: 0.95,
   },
 });

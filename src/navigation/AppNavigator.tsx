@@ -4,7 +4,7 @@ import {View, Text} from 'react-native';
 import {RootStackParamList} from '../types';
 
 //Screens
-import SplashScreen from '../screens/SpalshScreen';
+import SplashScreen from '../screens/SplashScreen';
 import HomeScreen from '../screens/HomeScreen';
 
 import OTPScreen from '../screens/OtpScreen';

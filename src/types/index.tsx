@@ -37,6 +37,8 @@ export type RootDrawerParamList = {
   WishListScreen: undefined;
   ChatScreen: undefined;
   YourOrdersScreen: undefined;
+  LoginScreen: undefined;
+
   MainTabsNavigator: undefined;
 };
 export type MainTabsParamList = {

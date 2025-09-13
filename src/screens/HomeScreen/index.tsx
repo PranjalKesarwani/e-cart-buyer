@@ -24,7 +24,7 @@ import {Theme} from '../../theme/theme';
 import axios from 'axios';
 import {useAppSelector} from '../../redux/hooks';
 import {cleanAddress, isLocationEnabled} from '../../utils/helper';
-import {giveLocationPermission} from '../../services/apiService';
+import {giveLocationPermission, handleLogout} from '../../services/apiService';
 import {getAddressFromCoordinates} from '../../services/locationService';
 
 type HomeProps = NativeStackScreenProps<RootDrawerParamList, 'HomeScreen'>;
@@ -170,7 +170,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
   return (
     <View style={styles.container}>
       {/* Header Section */}
-      <View style={styles.header}>
+      <View style={[styles.header, Theme.showBorder]}>
         <TouchableOpacity
           onPress={() => {
             handleHomeScreenLocation();
@@ -192,6 +192,20 @@ const HomeScreen = ({navigation}: HomeProps) => {
             </View>
             <Icons name="down" size={16} color={Theme.colors.bharatPurple} />
           </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={async () => {
+            const res = await handleLogout(navigation);
+            // console.log('xxxxxxxx', res?.status);
+            // if (res?.status) {
+            //   navigation.navigate('LoginScreen');
+            // }
+          }}
+          style={{
+            backgroundColor: Theme.colors.baseYellow,
+            width: '20%',
+          }}>
+          <Text>Logout</Text>
         </TouchableOpacity>
       </View>
 

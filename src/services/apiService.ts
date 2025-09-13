@@ -5,6 +5,9 @@ import {apiClient} from './api';
 import {getCurrentLocation} from './locationService';
 import MapView from 'react-native-maps';
 import {IAddress, TProduct} from '../types';
+import {Alert} from 'react-native';
+import {showToast} from '../utils/toast';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const giveLocationPermission = async () => {
   try {
@@ -180,5 +183,50 @@ export const placeBuyNowOrder = async (
     const errorMessage =
       error?.message || error?.response?.message || 'Something went wrong!';
     return {status: false, data: null, message: errorMessage};
+  }
+};
+
+export const handleLogout = async (navigation: any) => {
+  try {
+    Alert.alert(
+      'Logout Confirmation',
+      'Are you sure you want to log out?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Logout',
+          onPress: async () => {
+            const response = await apiClient.get('/buyer/logout'); // or '/auth/logout'
+            if (response.status === 200) {
+              await AsyncStorage.removeItem('buyToken');
+              showToast(
+                'success',
+                response.data.message || 'Logged out successfully',
+              );
+              // if (navigationRef.isReady()) {
+              //   navigationRef.reset({
+              //     index: 0,
+              //     routes: [{name: 'LoginScreen'}],
+              //   });
+              // }
+              navigation.navigate('LoginScreen');
+
+              return {status: true, message: 'Logged out successfully!'};
+            }
+          },
+        },
+      ],
+      {cancelable: true},
+    );
+  } catch (error: any) {
+    const errorMessage =
+      error.response?.data?.message ||
+      error?.message ||
+      'Logout failed. Please try again.';
+    showToast('error', errorMessage);
+    return {status: false, message: 'Error!'};
   }
 };

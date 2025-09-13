@@ -34,6 +34,9 @@ const BASE_COLORS = {
   warningBorder: '#ffeeba',
   text: '#333333',
   red: 'red',
+  orangeDark: '#fa8b1c',
+  orangeLight: '#FF9933',
+  themeColor: '',
 };
 
 export const Theme = {

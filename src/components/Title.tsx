@@ -8,7 +8,7 @@ type TitleProps = {
   fontWeight: any;
 };
 
-const Title = ({fontSize, fontWeight}: TitleProps) => {
+const Title = () => {
   return (
     <Image
       source={require('../../src/assets/images/boltix.png')} // Replace with your actual image path
