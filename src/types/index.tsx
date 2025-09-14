@@ -122,11 +122,11 @@ export type TCart = {
 export type TCategory = {
   _id: string;
   name: string;
-  slug: string;
-  parentCatId: string;
+  slug?: string;
+  parentCatId?: string;
   image: string;
-  status: Boolean;
-  path: string;
+  status?: Boolean;
+  path?: string;
 };
 
 export interface TProductAttribute {
@@ -424,4 +424,12 @@ export type SendOTPOptions = {
   showToasts?: boolean;
   // Optional mounted ref to avoid setState after unmount: use `const mountedRef = useRef(true)` in component.
   isMountedRef?: React.MutableRefObject<boolean> | null;
+};
+
+// Parent category with children
+export type THomeCats = {
+  catId: string;
+  name: string;
+  image: string;
+  children: TCategory[];
 };

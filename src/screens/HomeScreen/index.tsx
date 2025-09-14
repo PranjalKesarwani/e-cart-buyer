@@ -16,7 +16,7 @@ import {
   ImageBackground,
 } from 'react-native';
 import LocationBottomSheet from '../../components/LocationBottomSheet';
-import {RootDrawerParamList} from '../../types';
+import {RootDrawerParamList, TCategory, THomeCats} from '../../types';
 import Icons from 'react-native-vector-icons/AntDesign';
 import MapView, {Marker} from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
@@ -27,7 +27,11 @@ import {Theme} from '../../theme/theme';
 import axios from 'axios';
 import {useAppSelector} from '../../redux/hooks';
 import {cleanAddress, isLocationEnabled} from '../../utils/helper';
-import {giveLocationPermission, handleLogout} from '../../services/apiService';
+import {
+  getHomeCats,
+  giveLocationPermission,
+  handleLogout,
+} from '../../services/apiService';
 import {getAddressFromCoordinates} from '../../services/locationService';
 import {getInitials} from '../../utils/util';
 
@@ -55,12 +59,21 @@ const HomeScreen = ({navigation}: HomeProps) => {
   } | null>(null);
 
   const [globalCats, setGlobalCats] = useState<any>([]);
+  const [homeCats, setHomeCats] = useState<THomeCats[]>([]);
+  const [homeSecondLevelCats, setHomeSecondLevelCats] = useState<TCategory[]>(
+    [],
+  );
 
   const getGlobalCategories = async () => {
     try {
       const res = await apiClient.get('/buyer/categories');
       if (!res?.data.success) throw new Error(res?.data.message);
       setGlobalCats(res.data.categories);
+
+      const {status, message, data} = await getHomeCats();
+
+      setHomeCats(data.results);
+      setHomeSecondLevelCats(data.level2Cats);
     } catch (error: any) {
       showToast('error', error.message);
     }
@@ -758,5 +771,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
     lineHeight: 36,
+    fontStyle: 'italic',
   },
 });
