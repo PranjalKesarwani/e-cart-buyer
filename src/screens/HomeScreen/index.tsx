@@ -265,8 +265,8 @@ const HomeScreen = ({navigation}: HomeProps) => {
         </View>
 
         {/* Search Row */}
-        <View style={[styles.headerSearchRow, Theme.showBorder]}>
-          <View style={[styles.headerSearchBox, Theme.showBorder]}>
+        <View style={[styles.headerSearchRow]}>
+          <View style={[styles.headerSearchBox]}>
             <Icons name="search1" size={16} color={Theme.colors.darkGray} />
             <TextInput
               placeholder="Search shops, products or categories"
@@ -282,9 +282,9 @@ const HomeScreen = ({navigation}: HomeProps) => {
         </View>
 
         {/* Tagline */}
-        <View style={[styles.headerTaglineWrap, Theme.showBorder]}>
+        <View style={[styles.headerTaglineWrap]}>
           <Text style={styles.headerTagline}>
-            Every shop. Every need. All in one place.
+            All your local shops, just a tap away.
           </Text>
         </View>
       </View>
@@ -638,7 +638,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: Platform.OS === 'ios' ? 22 : 16,
     paddingBottom: 18,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#f37423bd',
     // subtle rounded bottom to separate header from content
     borderBottomLeftRadius: 18,
     borderBottomRightRadius: 18,
@@ -753,16 +753,19 @@ const styles = StyleSheet.create({
 
   /* Tagline below search */
   headerTaglineWrap: {
-    marginTop: 14,
-    paddingHorizontal: 4,
+    flex: 1, // take all remaining space
+    justifyContent: 'center', // center vertically
+    alignItems: 'center', // center horizontally
+    paddingHorizontal: 12,
   },
 
   headerTagline: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: Theme.colors.darkGray ?? '#5F6B73',
-    textAlign: 'left',
-    lineHeight: 20,
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#fff',
+    textAlign: 'center',
+    lineHeight: 40,
+    fontStyle: 'italic',
   },
   profileIconButton: {
     width: 40,
