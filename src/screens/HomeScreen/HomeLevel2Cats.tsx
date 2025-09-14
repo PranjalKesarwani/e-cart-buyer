@@ -12,6 +12,8 @@ import {
   Platform,
   Pressable,
 } from 'react-native';
+import Icons from 'react-native-vector-icons/AntDesign';
+import {Theme} from '../../theme/theme';
 
 export type TCategory = {
   _id: string; // server returns _id, we'll use it as key
@@ -19,7 +21,14 @@ export type TCategory = {
   image: string;
 };
 
-const {height: SCREEN_HEIGHT} = Dimensions.get('window');
+const {height: SCREEN_HEIGHT, width: SCREEN_WIDTH} = Dimensions.get('window');
+
+// tweak these sizes to taste
+const IMAGE_SIZE_PREVIEW = 54; // smaller preview avatar
+const IMAGE_SIZE_GRID = 48; // smaller grid avatars
+
+// color used for the "See all" tile accent — change to Theme.colors.primary if you have a Theme import
+const SEE_ALL_COLOR = '#ff6b6b';
 
 type Props = {
   level2Cats: TCategory[];
@@ -53,45 +62,69 @@ export const HomeLevel2Cats: React.FC<Props> = ({
     }).start(() => setSheetVisible(false));
   }, [animatedY]);
 
-  const previewItems = useMemo(
-    () => level2Cats.slice(0, previewCount),
-    [level2Cats, previewCount],
+  // preview items + SEE_ALL sentinel appended so See All scrolls as last item
+  const previewItems = useMemo(() => {
+    const slice = level2Cats.slice(0, previewCount);
+    // append a sentinel object for see-all
+    return [...slice, {_id: 'SEE_ALL', name: 'See all', image: ''} as any];
+  }, [level2Cats, previewCount]);
+
+  const handlePress = useCallback(
+    (item: TCategory) => {
+      if (item._id === 'SEE_ALL') {
+        openSheet();
+        return;
+      }
+      onCategoryPress?.(item);
+    },
+    [onCategoryPress, openSheet],
   );
 
   const renderPreviewItem = useCallback(
-    ({item}: {item: TCategory}) => (
-      <TouchableOpacity
-        style={styles.previewItem}
-        activeOpacity={0.8}
-        onPress={() => onCategoryPress?.(item)}
-        accessibilityRole="button"
-        accessibilityLabel={`Open ${item.name} category`}>
-        <Image source={{uri: item.image}} style={styles.previewImage} />
-        <Text numberOfLines={1} style={styles.previewText}>
-          {item.name}
-        </Text>
-      </TouchableOpacity>
-    ),
-    [onCategoryPress],
-  );
+    ({item}: {item: TCategory}) => {
+      if (item._id === 'SEE_ALL') {
+        return (
+          <TouchableOpacity
+            style={styles.previewItem}
+            activeOpacity={0.85}
+            onPress={() => handlePress(item)}
+            accessibilityRole="button"
+            accessibilityLabel="See all categories">
+            <View
+              style={[
+                styles.seeAllCircle,
+                {borderColor: `${SEE_ALL_COLOR}22`},
+              ]}>
+              {/* tile-style icon — replace with your icon component if you prefer */}
+              <Icons
+                name="plus"
+                size={20}
+                color={'#fff'}
+                style={{fontWeight: 'bold'}}
+              />
+            </View>
+            <Text numberOfLines={1} style={styles.previewText}>
+              See all
+            </Text>
+          </TouchableOpacity>
+        );
+      }
 
-  const renderSeeAll = useCallback(
-    () => (
-      <TouchableOpacity
-        style={[styles.previewItem, styles.seeAllItem]}
-        activeOpacity={0.85}
-        onPress={openSheet}
-        accessibilityRole="button"
-        accessibilityLabel="See all categories">
-        <View style={styles.seeAllCircle}>
-          <Text style={styles.seeAllPlus}>+</Text>
-        </View>
-        <Text numberOfLines={1} style={styles.previewText}>
-          See all
-        </Text>
-      </TouchableOpacity>
-    ),
-    [openSheet],
+      return (
+        <TouchableOpacity
+          style={styles.previewItem}
+          activeOpacity={0.8}
+          onPress={() => handlePress(item)}
+          accessibilityRole="button"
+          accessibilityLabel={`Open ${item.name} category`}>
+          <Image source={{uri: item.image}} style={styles.previewImage} />
+          <Text numberOfLines={1} style={styles.previewText}>
+            {item.name}
+          </Text>
+        </TouchableOpacity>
+      );
+    },
+    [handlePress],
   );
 
   const keyExtractor = useCallback((item: TCategory) => item._id, []);
@@ -118,7 +151,7 @@ export const HomeLevel2Cats: React.FC<Props> = ({
 
   return (
     <View style={styles.container}>
-      {/* Horizontal preview list */}
+      {/* Horizontal preview list (See all is part of data so it scrolls to the end) */}
       <View style={styles.horizontalWrap}>
         <FlatList
           data={previewItems}
@@ -128,10 +161,11 @@ export const HomeLevel2Cats: React.FC<Props> = ({
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.horizontalListContent}
           ItemSeparatorComponent={() => <View style={{width: 8}} />}
+          // small optimization
+          initialNumToRender={Math.min(previewItems.length, 6)}
+          maxToRenderPerBatch={8}
+          windowSize={5}
         />
-
-        {/* See all button pinned to the right of the preview */}
-        <View style={styles.seeAllWrap}>{renderSeeAll()}</View>
       </View>
 
       {/* Bottom sheet Modal */}
@@ -172,8 +206,6 @@ export const HomeLevel2Cats: React.FC<Props> = ({
   );
 };
 
-const IMAGE_SIZE_PREVIEW = 64;
-const IMAGE_SIZE_GRID = 60;
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 12,
@@ -185,10 +217,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   horizontalListContent: {
-    paddingRight: 8,
+    paddingRight: 16,
   },
   previewItem: {
-    width: 86,
+    width: 84,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -206,26 +238,21 @@ const styles = StyleSheet.create({
     maxWidth: 78,
     color: '#222',
   },
-  seeAllWrap: {
-    marginLeft: 8,
-  },
-  seeAllItem: {
-    // visually similar to preview, but different circle
-  },
   seeAllCircle: {
     width: IMAGE_SIZE_PREVIEW,
     height: IMAGE_SIZE_PREVIEW,
     borderRadius: IMAGE_SIZE_PREVIEW / 2,
     borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.08)',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff',
+    marginBottom: 6,
+    backgroundColor: Theme.colors.primary,
   },
-  seeAllPlus: {
-    fontSize: 32,
-    lineHeight: 32,
-    color: '#333',
+  seeAllInner: {
+    width: IMAGE_SIZE_PREVIEW * 0.56,
+    height: IMAGE_SIZE_PREVIEW * 0.38,
+    borderRadius: 6,
+    // the colored tile inside the circle
   },
 
   /* Bottom sheet */
@@ -273,7 +300,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   gridCell: {
-    width: (Dimensions.get('window').width - 12 * 2 - 12) / 4, // 4 columns + spacing
+    width: (SCREEN_WIDTH - 12 * 2 - 12) / 4, // 4 columns + spacing
     alignItems: 'center',
   },
   gridImage: {
