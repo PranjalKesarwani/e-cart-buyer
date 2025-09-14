@@ -35,6 +35,7 @@ import {
 import {getAddressFromCoordinates} from '../../services/locationService';
 import {getInitials} from '../../utils/util';
 import {HomeLevel2Cats} from './HomeLevel2Cats';
+import {BannerCarousel} from './BannerCarousel';
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window');
 const HEADER_HEIGHT = Math.round(SCREEN_HEIGHT * 0.37);
@@ -43,7 +44,14 @@ type HomeProps = NativeStackScreenProps<RootDrawerParamList, 'Home'>;
 
 const HomeScreen = ({navigation}: HomeProps) => {
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [bannerUrls, setBannerUrls] = useState<string[]>([
+    'https://i.pinimg.com/736x/37/84/08/37840842216139312fe81b7f6a87879a.jpg',
+    'https://i.pinimg.com/736x/51/d3/88/51d38806d50482762c700eca5717a32f.jpg',
+    'https://i.pinimg.com/736x/fe/94/49/fe9449d9194c643e988e8ec1e4457019.jpg',
+    'https://i.pinimg.com/736x/49/e7/2c/49e72c660a2e109ffb1771c33a9443c1.jpg',
+    'https://i.pinimg.com/736x/b9/73/2f/b9732fba22bbae9098fe50e6574f9b1f.jpg',
+    'https://i.pinimg.com/1200x/93/84/83/93848363ee8d0fc903d296885349e6ac.jpg',
+  ]);
   const [showLocationSheet, setShowLocationSheet] = useState(false);
   const {lastSavedformattedAddress, hasSetLocation, name} = useAppSelector(
     state => state.buyer,
@@ -285,6 +293,15 @@ const HomeScreen = ({navigation}: HomeProps) => {
         level2Cats={homeSecondLevelCats}
         previewCount={12}
         onCategoryPress={handleLevel2CategoryPress}
+      />
+
+      <BannerCarousel
+        banners={bannerUrls} // string[] of image URLs
+        height={150} // optional, defaults to 140
+        autoplayInterval={4000} // ms, optional default 4000
+        onBannerPress={(url: string, index: number) => {
+          console.log('Pressed banner:', url);
+        }}
       />
 
       {/* Main Content */}
