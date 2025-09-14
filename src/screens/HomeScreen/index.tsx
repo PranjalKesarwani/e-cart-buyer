@@ -177,111 +177,6 @@ const HomeScreen = ({navigation}: HomeProps) => {
   return (
     <View style={styles.container}>
       {/* Header Section */}
-      {/* <View style={[styles.header]}>
-        <TouchableOpacity
-          onPress={() => {
-            handleHomeScreenLocation();
-          }}
-          style={styles.locationSelector}>
-          <View style={styles.locationContent}>
-            <Icons name="enviromento" size={20} color={Theme.colors.primary} />
-            <View style={[styles.locationTextContainer]}>
-              <Text
-                style={[styles.locationTitle, {color: Theme.colors.primary}]}>
-                {name}
-              </Text>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={[styles.locationAddress]}>
-                {addressToShow}
-              </Text>
-            </View>
-            <Icons name="down" size={16} color={Theme.colors.bharatPurple} />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={async () => {
-            const res = await handleLogout();
-            // console.log('xxxxxxxx', res?.status);
-            // if (res?.status) {
-            //   navigation.navigate('LoginScreen');
-            // }
-          }}
-          style={{
-            backgroundColor: Theme.colors.baseYellow,
-            width: '20%',
-          }}>
-          <Text>Logout</Text>
-        </TouchableOpacity>
-      </View> */}
-
-      {/* <View style={[styles.headerContainer]}>
-        <View style={[styles.headerTop]}>
-          <TouchableOpacity
-            style={styles.locationCard}
-            activeOpacity={0.86}
-            onPress={handleHomeScreenLocation}
-            accessibilityRole="button"
-            accessibilityLabel="Open location selector">
-            <Icons name="enviromento" size={20} color={Theme.colors.primary} />
-
-            <View style={styles.locationTextWrap}>
-              <View style={styles.nameRow}>
-                <Text style={styles.locationName}>
-                  {name || 'Set location'}
-                </Text>
-                <Icons
-                  name="down"
-                  size={16}
-                  color={Theme.colors.bharatPurple}
-                />
-              </View>
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={styles.locationAddressText}>
-                {addressToShow || 'Tap to set delivery location'}
-              </Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.profileIconButton}
-            // onPress={onLogoutPress} // hook your logic here
-            activeOpacity={0.85}
-            accessibilityRole="button"
-            accessibilityLabel="Profile">
-            {name && name.length > 0 ? (
-              <Text style={styles.initialsText}>
-                {getInitials(name as string)}
-              </Text>
-            ) : (
-              <Icons name="user" size={20} color="#fff" />
-            )}
-          </TouchableOpacity>
-        </View>
-
-        <View style={[styles.headerSearchRow]}>
-          <View style={[styles.headerSearchBox]}>
-            <Icons name="search1" size={16} color={Theme.colors.darkGray} />
-            <TextInput
-              placeholder="Search shops, products or categories"
-              placeholderTextColor={Theme.colors.darkGray}
-              style={styles.headerSearchInput}
-              returnKeyType="search"
-              onSubmitEditing={() => {
-              }}
-            />
-          </View>
-        </View>
-
-        <View style={[styles.headerTaglineWrap]}>
-          <Text style={styles.headerTagline}>
-            All your local shops, just a tap away.
-          </Text>
-        </View>
-      </View> */}
 
       <ImageBackground
         source={require('../../assets/images/header.png')} // or local: require('../assets/header-hero.jpg')
@@ -352,9 +247,8 @@ const HomeScreen = ({navigation}: HomeProps) => {
 
           {/* Tagline centered in remaining space */}
           <View style={styles.headerTaglineWrap}>
-            <Text style={styles.headerTagline}>
-              All your local shops, just a tap away.
-            </Text>
+            <Text style={styles.headerTagline}>All your local shops</Text>
+            <Text style={styles.headerTagline}>just a tap away.</Text>
           </View>
         </View>
       </ImageBackground>
@@ -570,27 +464,7 @@ const styles = StyleSheet.create({
   closeButton: {
     padding: 8,
   },
-  // modalContent: {
-  //   flex: 1,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  // },
-  // modalText: {
-  //   fontSize: 16,
-  //   color: colors.darkGray,
-  //   marginBottom: 20,
-  // },
-  // currentLocationButton: {
-  //   position: 'absolute',
-  //   bottom: 20,
-  //   alignSelf: 'center',
-  //   backgroundColor: 'white',
-  //   padding: 15,
-  //   borderRadius: 30,
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   elevation: 5,
-  // },
+
   locationButtonText: {
     marginLeft: 10,
     color: '#003366',
@@ -703,68 +577,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
-  // headerContainer: {
-  //   height: HEADER_HEIGHT,
-  //   paddingHorizontal: 16,
-  //   paddingTop: Platform.OS === 'ios' ? 22 : 16,
-  //   paddingBottom: 18,
-  //   backgroundColor: '#f37423bd',
-  //   // subtle rounded bottom to separate header from content
-  //   borderBottomLeftRadius: 18,
-  //   borderBottomRightRadius: 18,
-  //   // elevated card-like look
-  //   // shadowColor: '#000',
-  //   // shadowOffset: {width: 0, height: 6},
-  //   // shadowOpacity: 0.08,
-  //   // shadowRadius: 18,
-  //   elevation: 10,
-  //   justifyContent: 'flex-start',
-  // },
-
-  // headerTop: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   justifyContent: 'space-between',
-  // },
-
-  // locationCard: {
-  //   flex: 1,
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   justifyContent: 'flex-start',
-  //   backgroundColor: '#FFF',
-  //   paddingVertical: 14,
-  //   paddingHorizontal: 12,
-  //   borderRadius: 12,
-  //   // border subtle using theme light gray if available
-  //   borderWidth: 1,
-  //   borderColor: 'transparent',
-  //   // shadow
-  //   // shadowColor: '#000',
-  //   // shadowOffset: {width: 0, height: 2},
-  //   // shadowOpacity: 0.04,
-  //   // shadowRadius: 8,
-  //   // elevation: 2,
-  // },
-
-  // locationTextWrap: {
-  //   flex: 1,
-  //   marginLeft: 12,
-  //   justifyContent: 'center',
-  // },
-
-  // locationName: {
-  //   fontSize: 18,
-  //   fontWeight: '700',
-  //   color: Theme.colors.primary,
-  // },
-
-  // locationAddressText: {
-  //   fontSize: 14,
-  //   color: '#57564F',
-  //   fontWeight: '500',
-  //   marginTop: 2,
-  // },
 
   logoutPill: {
     marginLeft: 12,
@@ -782,34 +594,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  /* Search row below top */
-  // headerSearchRow: {
-  //   marginTop: 14,
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  // },
-
-  // headerSearchBox: {
-  //   flex: 1,
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   backgroundColor: '#FAFAFB',
-  //   borderRadius: 12,
-  //   paddingHorizontal: 12,
-  //   paddingVertical: 12,
-  //   // subtle border to feel tactile
-  //   borderWidth: 1,
-  //   borderColor: '#F0F0F0',
-  // },
-
-  // headerSearchInput: {
-  //   marginLeft: 10,
-  //   flex: 1,
-  //   fontSize: 15,
-  //   color: '#222',
-  //   padding: 0,
-  // },
-
   headerMapButton: {
     marginLeft: 10,
     width: 44,
@@ -820,67 +604,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     elevation: 4,
   },
-
-  /* Tagline below search */
-  // headerTaglineWrap: {
-  //   flex: 1, // take all remaining space
-  //   justifyContent: 'center', // center vertically
-  //   alignItems: 'center', // center horizontally
-  //   paddingHorizontal: 12,
-  // },
-
-  // headerTagline: {
-  //   fontSize: 32,
-  //   fontWeight: '700',
-  //   color: '#fff',
-  //   textAlign: 'center',
-  //   lineHeight: 40,
-  //   fontStyle: 'italic',
-  // },
-  // profileIconButton: {
-  //   width: 40,
-  //   height: 40,
-  //   borderRadius: 20,
-  //   backgroundColor: Theme.colors.primary, // pick your theme color
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  //   marginLeft: 12,
-  //   // subtle iOS shadow
-  //   shadowColor: '#000',
-  //   shadowOffset: {width: 0, height: 2},
-  //   shadowOpacity: 0.1,
-  //   shadowRadius: 4,
-  //   elevation: 3,
-  // },
-  // initialsText: {
-  //   color: '#fff',
-  //   fontSize: 18,
-  //   fontWeight: 'bold',
-  // },
-  // locationTextWrap: {
-  //   flex: 1,
-  //   marginLeft: 12,
-  //   justifyContent: 'center',
-  // },
-
-  // nameRow: {
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  // },
-
-  // locationName: {
-  //   fontSize: 18,
-  //   fontWeight: '700',
-  //   color: Theme.colors.primary,
-  //   marginRight: 6, // space between name and arrow
-  // },
-
-  // locationAddressText: {
-  //   fontSize: 14,
-  //   color: '#333',
-  //   fontWeight: '500',
-  //   marginTop: 2,
-  // },
 
   headerContainer: {
     width: '100%',
@@ -895,7 +618,7 @@ const styles = StyleSheet.create({
   // overlay to darken image slightly -> improves legibility
   headerOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.28)', // tweak 0.2–0.36 to taste
+    backgroundColor: 'rgba(0,0,0,0.04)', // tweak 0.2–0.36 to taste
     borderBottomLeftRadius: 18,
     borderBottomRightRadius: 18,
   },
@@ -1014,8 +737,8 @@ const styles = StyleSheet.create({
   headerTaglineWrap: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 12,
+    alignItems: 'flex-start',
+    paddingHorizontal: 8,
   },
 
   headerTagline: {
