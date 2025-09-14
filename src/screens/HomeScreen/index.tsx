@@ -1103,10 +1103,11 @@ const HomeScreen = ({navigation}: HomeProps) => {
             {/* ... keep your headerTop, search box and tagline exactly as before */}
             <View style={styles.headerTop}>
               <TouchableOpacity
-                style={styles.locationCard}
+                style={[styles.locationCard]}
                 activeOpacity={0.86}
                 onPress={handleHomeScreenLocation}
                 accessibilityRole="button"
+                // hitSlop={{top: 12, bottom: 12, left: 10, right: 10}}
                 accessibilityLabel="Open location selector">
                 <Icons
                   name="enviromento"
@@ -1576,8 +1577,10 @@ const styles = StyleSheet.create({
   headerOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.04)', // tweak 0.2–0.36 to taste
+    // backgroundColor: 'rgba(255,0,0,0.12)',
     borderBottomLeftRadius: 18,
     borderBottomRightRadius: 18,
+    pointerEvents: 'none', // <--- IMPORTANT: allow touches through overlay
   },
 
   // wrapper to layer content on top of the overlay
@@ -1600,18 +1603,15 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    // backgroundColor: 'rgba(255,255,255,0.10)', // soft translucent white
     paddingVertical: 12,
     paddingHorizontal: 12,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: 'transparent',
-    // subtle inner shadow impression on iOS (android will ignore)
-    // shadowColor: '#000',
-    // shadowOffset: {width: 0, height: 1},
-    // shadowOpacity: 0.05,
-    // shadowRadius: 6,
     marginRight: 12,
+    // backgroundColor: 'rgba(0,255,0,0.08)',
+    zIndex: 50,
+    // elevation: 50,
   },
 
   locationTextWrap: {
