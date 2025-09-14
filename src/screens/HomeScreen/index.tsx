@@ -89,72 +89,72 @@
 //     }
 //   };
 
-//   const requestLocationPermission = async () => {
-//     try {
-//       const granted = await PermissionsAndroid.request(
-//         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+// const requestLocationPermission = async () => {
+//   try {
+//     const granted = await PermissionsAndroid.request(
+//       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+//       {
+//         title: 'Location Permission',
+//         message: 'We need your location for a better experience!',
+//         buttonNeutral: 'Ask Me Later',
+//         buttonNegative: 'Cancel',
+//         buttonPositive: 'OK',
+//       },
+//     );
+//     return granted === PermissionsAndroid.RESULTS.GRANTED;
+//   } catch (err) {
+//     console.warn(err);
+//     return false;
+//   }
+// };
+
+// const getCurrentLocation = async () => {
+//   try {
+//     const hasPermission = await requestLocationPermission();
+//     if (!hasPermission) return;
+
+//     const location = await new Promise<Geolocation.GeoPosition>(
+//       (resolve, reject) => {
+//         Geolocation.getCurrentPosition(resolve, reject, {
+//           enableHighAccuracy: true,
+//           timeout: 15000,
+//           maximumAge: 0,
+//         });
+//       },
+//     );
+
+//     const newCoords = {
+//       latitude: location.coords.latitude,
+//       longitude: location.coords.longitude,
+//     };
+//     console.log('Current location:', newCoords);
+//     setUserLocation(newCoords);
+
+//     if (mapRef.current) {
+//       mapRef.current.animateToRegion(
 //         {
-//           title: 'Location Permission',
-//           message: 'We need your location for a better experience!',
-//           buttonNeutral: 'Ask Me Later',
-//           buttonNegative: 'Cancel',
-//           buttonPositive: 'OK',
+//           ...newCoords,
+//           latitudeDelta: 0.01,
+//           longitudeDelta: 0.01,
 //         },
+//         1000,
 //       );
-//       return granted === PermissionsAndroid.RESULTS.GRANTED;
-//     } catch (err) {
-//       console.warn(err);
-//       return false;
 //     }
-//   };
-
-//   const getCurrentLocation = async () => {
-//     try {
-//       const hasPermission = await requestLocationPermission();
-//       if (!hasPermission) return;
-
-//       const location = await new Promise<Geolocation.GeoPosition>(
-//         (resolve, reject) => {
-//           Geolocation.getCurrentPosition(resolve, reject, {
-//             enableHighAccuracy: true,
-//             timeout: 15000,
-//             maximumAge: 0,
-//           });
-//         },
+//   } catch (error: any) {
+//     console.log('Location error:', error.code, error.message);
+//     showToast('error', `Location error: ${error.message}`);
+//     if (error.code === 2) {
+//       Alert.alert(
+//         'Location Required',
+//         'Please enable device location services',
+//         [
+//           {text: 'Cancel', style: 'cancel'},
+//           {text: 'Settings', onPress: () => Linking.openSettings()},
+//         ],
 //       );
-
-//       const newCoords = {
-//         latitude: location.coords.latitude,
-//         longitude: location.coords.longitude,
-//       };
-//       console.log('Current location:', newCoords);
-//       setUserLocation(newCoords);
-
-//       if (mapRef.current) {
-//         mapRef.current.animateToRegion(
-//           {
-//             ...newCoords,
-//             latitudeDelta: 0.01,
-//             longitudeDelta: 0.01,
-//           },
-//           1000,
-//         );
-//       }
-//     } catch (error: any) {
-//       console.log('Location error:', error.code, error.message);
-//       showToast('error', `Location error: ${error.message}`);
-//       if (error.code === 2) {
-//         Alert.alert(
-//           'Location Required',
-//           'Please enable device location services',
-//           [
-//             {text: 'Cancel', style: 'cancel'},
-//             {text: 'Settings', onPress: () => Linking.openSettings()},
-//           ],
-//         );
-//       }
 //     }
-//   };
+//   }
+// };
 
 //   const initializeLocation = async () => {
 //     const {status, message, data} = await giveLocationPermission();
@@ -346,87 +346,89 @@
 //       </View>
 
 //       {/* Location Modal */}
-//       <Modal
-//         animationType="slide"
-//         transparent={true}
-//         visible={modalVisible}
-//         onRequestClose={() => setModalVisible(false)}>
-//         <View style={styles.modalContainer}>
-//           <View style={styles.modalHeader}>
-//             <Text style={styles.modalTitle}>Select Location</Text>
-//             <TouchableOpacity
-//               onPress={() => setModalVisible(false)}
-//               style={styles.closeButton}>
-//               <Icons name="close" size={24} color={Theme.colors.baseYellow} />
-//             </TouchableOpacity>
-//           </View>
+{
+  /* <Modal
+  animationType="slide"
+  transparent={true}
+  visible={modalVisible}
+  onRequestClose={() => setModalVisible(false)}>
+  <View style={styles.modalContainer}>
+    <View style={styles.modalHeader}>
+      <Text style={styles.modalTitle}>Select Location</Text>
+      <TouchableOpacity
+        onPress={() => setModalVisible(false)}
+        style={styles.closeButton}>
+        <Icons name="close" size={24} color={Theme.colors.baseYellow} />
+      </TouchableOpacity>
+    </View>
 
-//           <MapView
-//             style={styles.map}
-//             ref={mapRef}
-//             provider="google"
-//             region={
-//               userLocation
-//                 ? {
-//                     latitude: userLocation.latitude,
-//                     longitude: userLocation.longitude,
-//                     latitudeDelta: 0.01,
-//                     longitudeDelta: 0.01,
-//                   }
-//                 : undefined
-//             }
-//             onRegionChangeComplete={region => {
-//               setUserLocation({
-//                 latitude: region.latitude,
-//                 longitude: region.longitude,
-//               });
-//             }}
-//             showsUserLocation={true}
-//             followsUserLocation={false}>
-//             {userLocation && (
-//               <Marker coordinate={userLocation}>
-//                 <View style={styles.customMarker}>
-//                   <Icons name="enviromento" size={30} color="#003366" />
-//                   <View style={styles.markerPulse} />
-//                 </View>
-//               </Marker>
-//             )}
-//           </MapView>
+    <MapView
+      style={styles.map}
+      ref={mapRef}
+      provider="google"
+      region={
+        userLocation
+          ? {
+              latitude: userLocation.latitude,
+              longitude: userLocation.longitude,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
+            }
+          : undefined
+      }
+      onRegionChangeComplete={region => {
+        setUserLocation({
+          latitude: region.latitude,
+          longitude: region.longitude,
+        });
+      }}
+      showsUserLocation={true}
+      followsUserLocation={false}>
+      {userLocation && (
+        <Marker coordinate={userLocation}>
+          <View style={styles.customMarker}>
+            <Icons name="enviromento" size={30} color="#003366" />
+            <View style={styles.markerPulse} />
+          </View>
+        </Marker>
+      )}
+    </MapView>
 
-//           <View style={styles.centerMarker}>
-//             <Icons name="enviromento" size={30} color="#003366" />
-//             <View style={styles.markerPulse} />
-//           </View>
-//           <TouchableOpacity
-//             style={styles.confirmButton}
-//             onPress={async () => {
-//               if (userLocation) {
-//                 // setConfirmedLocation(userLocation);
-//                 const address = await getAddressFromCoordinates(
-//                   userLocation.latitude,
-//                   userLocation.longitude,
-//                 );
-//                 setModalVisible(false);
-//               }
-//             }}>
-//             <Text style={styles.confirmButtonText}>Confirm Location</Text>
-//           </TouchableOpacity>
+    <View style={styles.centerMarker}>
+      <Icons name="enviromento" size={30} color="#003366" />
+      <View style={styles.markerPulse} />
+    </View>
+    <TouchableOpacity
+      style={styles.confirmButton}
+      onPress={async () => {
+        if (userLocation) {
+          // setConfirmedLocation(userLocation);
+          const address = await getAddressFromCoordinates(
+            userLocation.latitude,
+            userLocation.longitude,
+          );
+          setModalVisible(false);
+        }
+      }}>
+      <Text style={styles.confirmButtonText}>Confirm Location</Text>
+    </TouchableOpacity>
 
-//           <TouchableOpacity
-//             onPress={getCurrentLocation}
-//             style={styles.currentLocationButton}>
-//             <Icons name="enviromento" size={30} color="#FFF" />
-//             <Text style={styles.locationButtonText}>Use Current Location</Text>
-//           </TouchableOpacity>
-//         </View>
-//       </Modal>
-//       <LocationBottomSheet
-//         isVisible={showLocationSheet}
-//         onClose={() => setShowLocationSheet(false)}
-//         savedAddresses={savedAddresses}
-//         onEnableLocation={getCurrentLocation}
-//         onAddressSelect={handleAddressSelect}
-//       />
+    <TouchableOpacity
+      onPress={getCurrentLocation}
+      style={styles.currentLocationButton}>
+      <Icons name="enviromento" size={30} color="#FFF" />
+      <Text style={styles.locationButtonText}>Use Current Location</Text>
+    </TouchableOpacity>
+  </View>
+</Modal> */
+}
+// <LocationBottomSheet
+//   isVisible={showLocationSheet}
+//   onClose={() => setShowLocationSheet(false)}
+//   savedAddresses={savedAddresses}
+//   onEnableLocation={getCurrentLocation}
+//   onAddressSelect={handleAddressSelect}
+// />
 //     </View>
 //   );
 // };
@@ -852,6 +854,7 @@ import {getInitials} from '../../utils/util';
 import {HomeLevel2Cats} from './HomeLevel2Cats';
 import {BannerCarousel} from './BannerCarousel';
 import CategoryGroupsList, {TParentCat, TChildCat} from './CategoryGroupsList';
+import {navigate} from '../../navigation/navigationService';
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window');
 const HEADER_HEIGHT = Math.round(SCREEN_HEIGHT * 0.37);
@@ -1025,8 +1028,9 @@ const HomeScreen = ({navigation}: HomeProps) => {
   const handleHomeScreenLocation = () => {
     try {
       // setModalVisible(true);
-
-      navigation.navigate('LocationConfirmationScreen');
+      console.log('----->>>>>');
+      // navigation.navigate('LocationConfirmationScreen');
+      navigate('LocationConfirmationScreen');
     } catch (error) {
       console.log(error);
     }
@@ -1239,6 +1243,87 @@ const HomeScreen = ({navigation}: HomeProps) => {
 
       {/* Location modal and bottom sheet components remain unchanged */}
       {/* ... keep the Modal and LocationBottomSheet as in your original file */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>Select Location</Text>
+            <TouchableOpacity
+              onPress={() => setModalVisible(false)}
+              style={styles.closeButton}>
+              <Icons name="close" size={24} color={Theme.colors.baseYellow} />
+            </TouchableOpacity>
+          </View>
+
+          <MapView
+            style={styles.map}
+            ref={mapRef}
+            provider="google"
+            region={
+              userLocation
+                ? {
+                    latitude: userLocation.latitude,
+                    longitude: userLocation.longitude,
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01,
+                  }
+                : undefined
+            }
+            onRegionChangeComplete={region => {
+              setUserLocation({
+                latitude: region.latitude,
+                longitude: region.longitude,
+              });
+            }}
+            showsUserLocation={true}
+            followsUserLocation={false}>
+            {userLocation && (
+              <Marker coordinate={userLocation}>
+                <View style={styles.customMarker}>
+                  <Icons name="enviromento" size={30} color="#003366" />
+                  <View style={styles.markerPulse} />
+                </View>
+              </Marker>
+            )}
+          </MapView>
+
+          <View style={styles.centerMarker}>
+            <Icons name="enviromento" size={30} color="#003366" />
+            <View style={styles.markerPulse} />
+          </View>
+          <TouchableOpacity
+            style={styles.confirmButton}
+            onPress={async () => {
+              if (userLocation) {
+                // setConfirmedLocation(userLocation);
+                const address = await getAddressFromCoordinates(
+                  userLocation.latitude,
+                  userLocation.longitude,
+                );
+                setModalVisible(false);
+              }
+            }}>
+            <Text style={styles.confirmButtonText}>Confirm Location</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={getCurrentLocation}
+            style={styles.currentLocationButton}>
+            <Icons name="enviromento" size={30} color="#FFF" />
+            <Text style={styles.locationButtonText}>Use Current Location</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+      <LocationBottomSheet
+        isVisible={showLocationSheet}
+        onClose={() => setShowLocationSheet(false)}
+        savedAddresses={savedAddresses}
+        onEnableLocation={getCurrentLocation}
+        onAddressSelect={handleAddressSelect}
+      />
     </View>
   );
 };
