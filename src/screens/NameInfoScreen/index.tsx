@@ -18,6 +18,7 @@ import {showToast} from '../../utils/toast';
 import {apiClient} from '../../services/api';
 import {Theme} from '../../theme/theme';
 import Title from '../../components/Title';
+import {navigate} from '../../navigation/navigationService';
 
 type NameInfoProps = NativeStackScreenProps<
   RootStackParamList,
@@ -67,7 +68,8 @@ const NameInfoScreen = ({navigation}: NameInfoProps) => {
 
       if (response.data.success) {
         showToast('success', 'Profile updated successfully!');
-        navigation.replace('DrawerNavigator');
+        // navigation.replace('DrawerNavigator');
+        navigate('MainTabsNavigator');
       } else {
         showToast(response.data.message || 'Update failed', 'error');
       }
@@ -89,7 +91,7 @@ const NameInfoScreen = ({navigation}: NameInfoProps) => {
       <Animated.View
         style={[styles.content, {transform: [{translateY: translateYValue}]}]}>
         <View style={styles.header}>
-          <Title fontSize={42} fontWeight="800" />
+          <Title />
           <Text style={styles.subtitle}>Let's get to know you</Text>
         </View>
 

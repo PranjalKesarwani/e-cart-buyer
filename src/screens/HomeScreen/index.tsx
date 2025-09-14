@@ -170,7 +170,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
   return (
     <View style={styles.container}>
       {/* Header Section */}
-      <View style={[styles.header, Theme.showBorder]}>
+      <View style={[styles.header]}>
         <TouchableOpacity
           onPress={() => {
             handleHomeScreenLocation();
@@ -220,7 +220,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
           data={globalCats}
           renderItem={({item}) => (
             <TouchableOpacity
-              style={[styles.categoryCard, Theme.showBorder]}
+              style={[styles.categoryCard]}
               activeOpacity={0.9}
               onPress={() => handleCardPress(item)}>
               <View style={[styles.categoryContent]}>

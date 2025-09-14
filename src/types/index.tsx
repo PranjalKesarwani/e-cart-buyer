@@ -25,6 +25,7 @@ export type RootStackParamList = {
   LocationSetupScreen: undefined;
   AddressInputScreen: {formattedAddress: string; markerPosition: any};
   LocationConfirmationScreen: undefined;
+  MainTabsNavigator: undefined;
 };
 
 export type RootDrawerParamList = {
@@ -38,13 +39,14 @@ export type RootDrawerParamList = {
   ChatScreen: undefined;
   YourOrdersScreen: undefined;
   LoginScreen: undefined;
-
   MainTabsNavigator: undefined;
 };
 export type MainTabsParamList = {
   AllChatScreen: undefined;
   StatusScreen: undefined;
-  Bid: undefined;
+  CartScreen: undefined;
+  HomeScreen: undefined;
+  AccountScreen: undefined;
 };
 export interface AuthState {
   user: any | null;

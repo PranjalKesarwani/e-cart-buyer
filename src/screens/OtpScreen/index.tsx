@@ -95,7 +95,6 @@ const OTPScreen = ({route}: OtpProps) => {
       const data: any = await dispatch(fetchBuyer()).unwrap();
       if (data.success) {
         if (!data.buyerInfo.name) {
-          // navigation.replace('NameInfoScreen');
           navigate('NameInfoScreen');
           return;
         }
@@ -108,7 +107,7 @@ const OTPScreen = ({route}: OtpProps) => {
         const cartItemsCount = calculateCartItemsCount(cartInfo.cart);
         dispatch(setCartItemsCount(cartItemsCount));
         setTimeout(() => {
-          navigation.replace('DrawerNavigator');
+          navigate('MainTabsNavigator');
         }, 1500);
       } else {
         navigation.replace('LoginScreen');

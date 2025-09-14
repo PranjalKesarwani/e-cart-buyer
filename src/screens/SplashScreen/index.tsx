@@ -41,14 +41,14 @@ const SplashScreen = ({navigation}: SplashProps) => {
           const cartItemsCount = calculateCartItemsCount(cartInfo.cart);
           dispatch(setCartItemsCount(cartItemsCount));
           setTimeout(() => {
-            navigation.replace('DrawerNavigator');
+            navigate('MainTabsNavigator');
           }, 1500);
         } else {
-          navigation.replace('LoginScreen');
+          navigate('LoginScreen');
         }
       } catch (error) {
         console.log(error);
-        navigation.replace('LoginScreen');
+        navigate('LoginScreen');
       }
     };
 

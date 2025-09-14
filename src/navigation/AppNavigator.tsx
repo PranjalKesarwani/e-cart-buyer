@@ -25,6 +25,7 @@ import StatusViewer from '../screens/StatusViewer/StatusViewer';
 import LocationSetupScreen from '../screens/LocationSetupScreen';
 import AddressInputScreen from '../screens/AddressInputScreen';
 import LocationConfirmationScreen from '../screens/LocationConfirmationScreen';
+import MainTabsNavigator from './MainTabsNavigator';
 // import StatusViewer from '../screens/StatusViewer/StatusViewer';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -92,7 +93,7 @@ const AppNavigator = () => {
         }}
       />
 
-      <Stack.Screen name="DrawerNavigator" component={DrawerNavigator} />
+      <Stack.Screen name="MainTabsNavigator" component={MainTabsNavigator} />
       <Stack.Screen name="ShopListScreen" component={ShopListScreen} />
       <Stack.Screen name="ShopScreen" component={ShopScreen} />
 
