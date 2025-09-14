@@ -195,7 +195,12 @@ const HomeScreen = ({navigation}: HomeProps) => {
               onPress={handleHomeScreenLocation}
               accessibilityRole="button"
               accessibilityLabel="Open location selector">
-              <Icons name="enviromento" size={20} color="#fff" />
+              <Icons
+                name="enviromento"
+                size={20}
+                color="#fff"
+                style={{fontWeight: 'bold'}}
+              />
 
               <View style={styles.locationTextWrap}>
                 <View style={styles.nameRow}>
@@ -234,7 +239,12 @@ const HomeScreen = ({navigation}: HomeProps) => {
           {/* Search Row */}
           <View style={styles.headerSearchRow}>
             <View style={styles.headerSearchBox}>
-              <Icons name="search1" size={16} color="rgba(255,255,255,0.95)" />
+              <Icons
+                name="search1"
+                size={16}
+                color="rgba(255,255,255,0.95)"
+                style={{fontWeight: 'bold'}}
+              />
               <TextInput
                 placeholder="Search shops, products or categories"
                 placeholderTextColor="rgba(255,255,255,0.85)"
@@ -643,17 +653,17 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.10)', // soft translucent white
+    // backgroundColor: 'rgba(255,255,255,0.10)', // soft translucent white
     paddingVertical: 12,
     paddingHorizontal: 12,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.12)',
+    borderColor: 'transparent',
     // subtle inner shadow impression on iOS (android will ignore)
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
+    // shadowColor: '#000',
+    // shadowOffset: {width: 0, height: 1},
+    // shadowOpacity: 0.05,
+    // shadowRadius: 6,
     marginRight: 12,
   },
 
@@ -669,14 +679,14 @@ const styles = StyleSheet.create({
   },
 
   locationName: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '700',
     color: '#fff',
     marginRight: 6,
   },
 
   locationAddressText: {
-    fontSize: 13,
+    fontSize: 14,
     color: 'rgba(255,255,255,0.9)',
     marginTop: 2,
   },
@@ -717,20 +727,21 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.12)', // translucent
+    backgroundColor: 'rgba(255,255,255,0.3)', // translucent
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.12)',
+    borderColor: 'rgb(255, 216, 139)',
   },
 
   headerSearchInput: {
     marginLeft: 10,
     flex: 1,
-    fontSize: 15,
+    fontSize: 17,
     color: '#fff', // input text white
     padding: 0,
+    fontWeight: '500',
   },
 
   /* Tagline centered and big, white */
