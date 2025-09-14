@@ -34,6 +34,7 @@ import {
 } from '../../services/apiService';
 import {getAddressFromCoordinates} from '../../services/locationService';
 import {getInitials} from '../../utils/util';
+import {HomeLevel2Cats} from './HomeLevel2Cats';
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window');
 const HEADER_HEIGHT = Math.round(SCREEN_HEIGHT * 0.37);
@@ -187,6 +188,10 @@ const HomeScreen = ({navigation}: HomeProps) => {
     }
   };
 
+  const handleLevel2CategoryPress = async (cat: TCategory) => {
+    console.log('Pressed this category:::', cat);
+  };
+
   return (
     <View style={styles.container}>
       {/* Header Section */}
@@ -275,6 +280,12 @@ const HomeScreen = ({navigation}: HomeProps) => {
           </View>
         </View>
       </ImageBackground>
+
+      <HomeLevel2Cats
+        level2Cats={homeSecondLevelCats}
+        previewCount={12}
+        onCategoryPress={handleLevel2CategoryPress}
+      />
 
       {/* Main Content */}
       <View style={styles.contentContainer}>

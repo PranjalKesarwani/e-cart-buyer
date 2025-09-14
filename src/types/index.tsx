@@ -428,7 +428,7 @@ export type SendOTPOptions = {
 
 // Parent category with children
 export type THomeCats = {
-  catId: string;
+  _id: string;
   name: string;
   image: string;
   children: TCategory[];
