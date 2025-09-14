@@ -431,5 +431,6 @@ export type THomeCats = {
   _id: string;
   name: string;
   image: string;
+  slug?: string;
   children: TCategory[];
 };

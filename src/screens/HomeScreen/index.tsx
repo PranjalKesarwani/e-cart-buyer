@@ -1017,7 +1017,9 @@ const HomeScreen = ({navigation}: HomeProps) => {
   }, []);
 
   const handleCardPress = (item: any) => {
-    navigation.navigate('ShopListScreen', {category: item});
+    console.log('Pressed---->>>>xxxx', item);
+    // navigation.navigate('ShopListScreen', {category: item});
+    navigate('ShopListScreen', {category: item});
   };
 
   const handleAddressSelect = (address: string) => {
@@ -1062,9 +1064,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
             <TouchableOpacity
               style={styles.childWrap}
               activeOpacity={0.85}
-              onPress={() =>
-                console.log('Child tapped', item._id, 'under', parent._id)
-              }>
+              onPress={() => handleCardPress(item)}>
               <Image
                 source={
                   item.image
