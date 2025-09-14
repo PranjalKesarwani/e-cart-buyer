@@ -101,23 +101,24 @@ export const BannerCarousel: React.FC<Props> = ({
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={() => handleBannerPress(item, index)}
-        style={[
-          {
-            width: SCREEN_WIDTH,
-            height,
-            paddingHorizontal: 10,
-            // borderRadius: 14,
-          },
-          //   Theme.showBorder,
-        ]}>
+        style={{
+          width: SCREEN_WIDTH,
+          height,
+          alignItems: 'center', // center horizontally
+          justifyContent: 'center',
+        }}>
         <Image
           source={{uri: item}}
-          style={{width: '100%', height, resizeMode: 'cover', borderRadius: 10}}
+          style={{
+            width: SCREEN_WIDTH - 30, // gives ~15px margin left/right
+            height,
+            resizeMode: 'cover',
+            borderRadius: 12,
+          }}
         />
       </TouchableOpacity>
     ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [handleBannerPress, height],
   );
 
   // For performance, provide getItemLayout
@@ -131,7 +132,7 @@ export const BannerCarousel: React.FC<Props> = ({
   );
 
   return (
-    <View style={[styles.container, {height, paddingHorizontal: 5}]}>
+    <View style={[styles.container, {height}]}>
       <FlatList
         ref={flatListRef}
         data={banners}
