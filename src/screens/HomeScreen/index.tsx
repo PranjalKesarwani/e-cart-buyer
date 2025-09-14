@@ -36,6 +36,7 @@ import {getAddressFromCoordinates} from '../../services/locationService';
 import {getInitials} from '../../utils/util';
 import {HomeLevel2Cats} from './HomeLevel2Cats';
 import {BannerCarousel} from './BannerCarousel';
+import CategoryGroupsList, {TParentCat, TChildCat} from './CategoryGroupsList';
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window');
 const HEADER_HEIGHT = Math.round(SCREEN_HEIGHT * 0.37);
@@ -302,6 +303,14 @@ const HomeScreen = ({navigation}: HomeProps) => {
         onBannerPress={(url: string, index: number) => {
           console.log('Pressed banner:', url);
         }}
+      />
+
+      <CategoryGroupsList
+        results={homeCats}
+        onParentPress={p => console.log('Parent tapped', p._id)}
+        onChildPress={(child, parent) =>
+          console.log('Child tapped', child._id, 'under', parent._id)
+        }
       />
 
       {/* Main Content */}
