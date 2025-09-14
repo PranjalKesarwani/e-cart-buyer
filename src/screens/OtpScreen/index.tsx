@@ -17,11 +17,18 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import Title from '../../components/Title';
 import {apiClient} from '../../services/api';
 import {showToast} from '../../utils/toast';
-import {setBuyToken} from '../../utils/helper';
+import {calculateCartItemsCount, setBuyToken} from '../../utils/helper';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import {Theme} from '../../theme/theme';
 import {navigate} from '../../navigation/navigationService';
 import {verifyOtp} from '../../services/apiService';
+import {useAppDispatch} from '../../redux/hooks';
+import {
+  fetchBuyer,
+  getCarts,
+  getWishlists,
+  setCartItemsCount,
+} from '../../redux/slices/buyerSlice';
 
 type OtpProps = NativeStackScreenProps<RootStackParamList, 'OtpScreen'>;
 
@@ -36,6 +43,7 @@ const OTPScreen = ({route}: OtpProps) => {
   const refs = useRef<Array<TextInput | null>>(Array(6).fill(null));
   const scaleValue = new Animated.Value(1);
   const translateYValue = new Animated.Value(0);
+  const dispatch = useAppDispatch();
 
   const animateButton = () => {
     Animated.sequence([
@@ -76,32 +84,37 @@ const OTPScreen = ({route}: OtpProps) => {
     }
   };
 
-  // const verifyOtp = async () => {
-  //   if (otp.join('').length !== 6) {
-  //     showToast('error', 'Please enter complete OTP');
-  //     return;
-  //   }
-
-  //   try {
-  //     setIsLoading(true);
-  //     const res = await apiClient.post('/buyer/verify-otp', {
-  //       mobile: phoneNumber,
-  //       otp: otp.join(''),
-  //     });
-
-  //     if (res.data.success) {
-  //       setBuyToken(res.data.buyerToken);
-  //       showToast('success', 'Success!', 'OTP Verified Successfully!');
-  //       navigation.navigate('DrawerNavigator');
-  //     }
-  //   } catch (error: any) {
-  //     const errorMessage =
-  //       error.response?.data?.message || error.message || 'Verification failed';
-  //     showToast('error', errorMessage);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  const handleVerifyOtp = async () => {
+    const {status, message, data} = await verifyOtp(
+      otp,
+      setIsLoading,
+      phoneNumber,
+    );
+    console.log({status, message, data});
+    if (status) {
+      const data: any = await dispatch(fetchBuyer()).unwrap();
+      if (data.success) {
+        if (!data.buyerInfo.name) {
+          // navigation.replace('NameInfoScreen');
+          navigate('NameInfoScreen');
+          return;
+        }
+        if (!data.buyerInfo.hasSetLocation) {
+          navigation.replace('LocationSetupScreen');
+          return;
+        }
+        await dispatch(getWishlists());
+        const cartInfo: any = await dispatch(getCarts()).unwrap();
+        const cartItemsCount = calculateCartItemsCount(cartInfo.cart);
+        dispatch(setCartItemsCount(cartItemsCount));
+        setTimeout(() => {
+          navigation.replace('DrawerNavigator');
+        }, 1500);
+      } else {
+        navigation.replace('LoginScreen');
+      }
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -165,7 +178,7 @@ const OTPScreen = ({route}: OtpProps) => {
               (otp.join('').length !== 6 || isLoading) && styles.buttonDisabled,
             ]}
             onPressIn={animateButton}
-            onPress={() => verifyOtp(otp, setIsLoading, phoneNumber)}
+            onPress={handleVerifyOtp}
             disabled={otp.join('').length !== 6 || isLoading}
             activeOpacity={0.9}>
             {isLoading ? (

@@ -14,6 +14,7 @@ import {
 import {calculateCartItemsCount} from '../../utils/helper';
 import {Theme} from '../../theme/theme';
 import LinearGradient from 'react-native-linear-gradient';
+import {navigate} from '../../navigation/navigationService';
 
 type SplashProps = NativeStackScreenProps<RootStackParamList, 'SplashScreen'>;
 
@@ -27,7 +28,8 @@ const SplashScreen = ({navigation}: SplashProps) => {
 
         if (data.success) {
           if (!data.buyerInfo.name) {
-            navigation.replace('NameInfoScreen');
+            // navigation.replace('NameInfoScreen');
+            navigate('NameInfoScreen');
             return;
           }
           if (!data.buyerInfo.hasSetLocation) {

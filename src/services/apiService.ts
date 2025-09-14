@@ -318,34 +318,117 @@ export const handleSendOTP = async (
   return result;
 };
 
+// export const verifyOtp = async (
+//   otp: (string | undefined)[],
+//   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
+//   phoneNumber: string,
+// ) => {
+//   if (otp.join('').length !== 6) {
+//     showToast('error', 'Please enter complete OTP');
+//     return;
+//   }
+
+//   try {
+//     setIsLoading(true);
+//     const res = await apiClient.post('/buyer/verify-otp', {
+//       mobile: phoneNumber,
+//       otp: otp.join(''),
+//     });
+
+//     if (res.data.success) {
+//       setBuyToken(res.data.buyerToken);
+//       showToast('success', 'Success!', 'OTP Verified Successfully!');
+//       navigate('DrawerNavigator');
+//     }
+//   } catch (error: any) {
+//     const errorMessage =
+//       error.response?.data?.message || error.message || 'Verification failed';
+//     showToast('error', errorMessage);
+//   } finally {
+//     setIsLoading(false);
+//   }
+// };
 export const verifyOtp = async (
   otp: (string | undefined)[],
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
   phoneNumber: string,
-) => {
-  if (otp.join('').length !== 6) {
-    showToast('error', 'Please enter complete OTP');
-    return;
+  options?: SendOTPOptions,
+): Promise<OTPResult> => {
+  const opts = {timeout: 10000, showToasts: true, ...options};
+
+  // Normalize & validate OTP
+  const otpCode = (otp ?? []).map(c => (c ?? '').trim()).join('');
+  const invalidResult: OTPResult = {
+    status: false,
+    message: 'Please enter complete OTP',
+    data: null,
+  };
+
+  if (otpCode.length !== 6) {
+    if (opts.showToasts) showToast('error', invalidResult.message);
+    return invalidResult;
   }
 
-  try {
-    setIsLoading(true);
-    const res = await apiClient.post('/buyer/verify-otp', {
-      mobile: phoneNumber,
-      otp: otp.join(''),
-    });
+  let result: OTPResult = {status: false, message: 'Unknown error', data: null};
 
-    if (res.data.success) {
-      setBuyToken(res.data.buyerToken);
-      showToast('success', 'Success!', 'OTP Verified Successfully!');
-      // navigation.navigate('DrawerNavigator');
-      navigate('DrawerNavigator');
+  // set loading only if component still mounted or no ref provided
+  if (!opts.isMountedRef || opts.isMountedRef.current) setIsLoading(true);
+
+  try {
+    const res = await apiClient.post(
+      '/buyer/verify-otp',
+      {mobile: phoneNumber, otp: otpCode},
+      {timeout: opts.timeout, signal: opts.signal},
+    );
+
+    if (res?.data?.success) {
+      // persist token (keeps existing behavior)
+      if (res.data.buyerToken) {
+        setBuyToken(res.data.buyerToken);
+      }
+
+      result = {
+        status: true,
+        message: res.data.message || 'OTP verified',
+        data: res.data,
+      };
+      if (opts.showToasts) {
+        showToast('success', 'Success!', 'OTP Verified Successfully!');
+      }
+
+      // Optionally let caller do navigation via returned result
+      return result;
+    } else {
+      result = {
+        status: false,
+        message: res?.data?.message || 'OTP verification failed',
+        data: res?.data ?? null,
+      };
+      if (opts.showToasts) showToast('error', result.message);
+      return result;
     }
   } catch (error: any) {
-    const errorMessage =
-      error.response?.data?.message || error.message || 'Verification failed';
-    showToast('error', errorMessage);
+    const isCanceled =
+      axios.isCancel?.(error) ||
+      error?.name === 'CanceledError' ||
+      error?.message === 'canceled' ||
+      opts.signal?.aborted;
+
+    if (isCanceled) {
+      result = {status: false, message: 'Request cancelled', data: null};
+      // usually don't toast cancellations
+    } else {
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.response?.message ||
+        error?.message ||
+        'Verification failed';
+      result = {status: false, message: errorMessage, data: null};
+      if (opts.showToasts) showToast('error', errorMessage);
+    }
+
+    return result;
   } finally {
-    setIsLoading(false);
+    if (!opts.isMountedRef || opts.isMountedRef.current) setIsLoading(false);
   }
 };

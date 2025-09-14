@@ -108,6 +108,7 @@ const LoginScreen = () => {
               );
               if (status) {
                 showToast('success', message);
+                setPhoneNumber('');
                 navigate('OtpScreen', {phoneNumber});
               }
             }}
