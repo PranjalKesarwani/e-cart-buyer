@@ -89,7 +89,7 @@ const LocationSetupScreen = ({navigation}: LocationSetupProps) => {
             color={Theme.colors.primary}
             style={styles.locationIcon}
           />
-          <Title fontSize={32} fontWeight="800" />
+          <Title />
           <Text style={styles.subtitle}>
             Help us serve you better by setting your location
           </Text>
