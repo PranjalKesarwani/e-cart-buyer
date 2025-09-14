@@ -11,6 +11,8 @@ import {
   Dimensions,
   Image,
   Linking,
+  TextInput,
+  Platform,
 } from 'react-native';
 import LocationBottomSheet from '../../components/LocationBottomSheet';
 import {RootDrawerParamList} from '../../types';
@@ -26,6 +28,10 @@ import {useAppSelector} from '../../redux/hooks';
 import {cleanAddress, isLocationEnabled} from '../../utils/helper';
 import {giveLocationPermission, handleLogout} from '../../services/apiService';
 import {getAddressFromCoordinates} from '../../services/locationService';
+import {getInitials} from '../../utils/util';
+
+const {height: SCREEN_HEIGHT} = Dimensions.get('window');
+const HEADER_HEIGHT = Math.round(SCREEN_HEIGHT * 0.37);
 
 type HomeProps = NativeStackScreenProps<RootDrawerParamList, 'Home'>;
 
@@ -170,7 +176,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
   return (
     <View style={styles.container}>
       {/* Header Section */}
-      <View style={[styles.header]}>
+      {/* <View style={[styles.header]}>
         <TouchableOpacity
           onPress={() => {
             handleHomeScreenLocation();
@@ -207,6 +213,80 @@ const HomeScreen = ({navigation}: HomeProps) => {
           }}>
           <Text>Logout</Text>
         </TouchableOpacity>
+      </View> */}
+
+      <View style={[styles.headerContainer]}>
+        {/* Top row: location + small logout pill */}
+        <View style={[styles.headerTop]}>
+          <TouchableOpacity
+            style={styles.locationCard}
+            activeOpacity={0.86}
+            onPress={handleHomeScreenLocation}
+            accessibilityRole="button"
+            accessibilityLabel="Open location selector">
+            {/* Left: Location icon */}
+            <Icons name="enviromento" size={20} color={Theme.colors.primary} />
+
+            {/* Middle: Name + arrow in a row, then address below */}
+            <View style={styles.locationTextWrap}>
+              <View style={styles.nameRow}>
+                <Text style={styles.locationName}>
+                  {name || 'Set location'}
+                </Text>
+                <Icons
+                  name="down"
+                  size={16}
+                  color={Theme.colors.bharatPurple}
+                />
+              </View>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={styles.locationAddressText}>
+                {addressToShow || 'Tap to set delivery location'}
+              </Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.profileIconButton}
+            // onPress={onLogoutPress} // hook your logic here
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel="Profile">
+            {name && name.length > 0 ? (
+              <Text style={styles.initialsText}>
+                {getInitials(name as string)}
+              </Text>
+            ) : (
+              <Icons name="user" size={20} color="#fff" />
+            )}
+          </TouchableOpacity>
+        </View>
+
+        {/* Search Row */}
+        <View style={styles.headerSearchRow}>
+          <View style={styles.headerSearchBox}>
+            <Icons name="search1" size={16} color={Theme.colors.darkGray} />
+            <TextInput
+              placeholder="Search shops, products or categories"
+              placeholderTextColor={Theme.colors.darkGray}
+              style={styles.headerSearchInput}
+              returnKeyType="search"
+              // keep existing handlers if you want to hook search
+              onSubmitEditing={() => {
+                /* optional search action */
+              }}
+            />
+          </View>
+        </View>
+
+        {/* Tagline */}
+        <View style={styles.headerTaglineWrap}>
+          <Text style={styles.headerTagline}>
+            Curated picks — quick deliveries. Shop smart, eat happy.
+          </Text>
+        </View>
       </View>
 
       {/* Main Content */}
@@ -552,5 +632,180 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 4,
+  },
+  headerContainer: {
+    height: HEADER_HEIGHT,
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'ios' ? 22 : 16,
+    paddingBottom: 18,
+    backgroundColor: '#FFFFFF',
+    // subtle rounded bottom to separate header from content
+    borderBottomLeftRadius: 18,
+    borderBottomRightRadius: 18,
+    // elevated card-like look
+    // shadowColor: '#000',
+    // shadowOffset: {width: 0, height: 6},
+    // shadowOpacity: 0.08,
+    // shadowRadius: 18,
+    elevation: 10,
+    justifyContent: 'flex-start',
+  },
+
+  headerTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+
+  locationCard: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    backgroundColor: '#FFF',
+    paddingVertical: 14,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    // border subtle using theme light gray if available
+    borderWidth: 1,
+    borderColor: 'transparent',
+    // shadow
+    // shadowColor: '#000',
+    // shadowOffset: {width: 0, height: 2},
+    // shadowOpacity: 0.04,
+    // shadowRadius: 8,
+    // elevation: 2,
+  },
+
+  // locationTextWrap: {
+  //   flex: 1,
+  //   marginLeft: 12,
+  //   justifyContent: 'center',
+  // },
+
+  // locationName: {
+  //   fontSize: 18,
+  //   fontWeight: '700',
+  //   color: Theme.colors.primary,
+  // },
+
+  // locationAddressText: {
+  //   fontSize: 14,
+  //   color: '#57564F',
+  //   fontWeight: '500',
+  //   marginTop: 2,
+  // },
+
+  logoutPill: {
+    marginLeft: 12,
+    backgroundColor: Theme.colors.baseYellow,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    minWidth: 72,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  logoutPillText: {
+    color: '#111',
+    fontWeight: '600',
+  },
+
+  /* Search row below top */
+  headerSearchRow: {
+    marginTop: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  headerSearchBox: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FAFAFB',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    // subtle border to feel tactile
+    borderWidth: 1,
+    borderColor: '#F0F0F0',
+  },
+
+  headerSearchInput: {
+    marginLeft: 10,
+    flex: 1,
+    fontSize: 15,
+    color: '#222',
+    padding: 0,
+  },
+
+  headerMapButton: {
+    marginLeft: 10,
+    width: 44,
+    height: 44,
+    borderRadius: 10,
+    backgroundColor: Theme.colors.bharatPurple,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+  },
+
+  /* Tagline below search */
+  headerTaglineWrap: {
+    marginTop: 14,
+    paddingHorizontal: 4,
+  },
+
+  headerTagline: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: Theme.colors.darkGray ?? '#5F6B73',
+    textAlign: 'left',
+    lineHeight: 20,
+  },
+  profileIconButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Theme.colors.primary, // pick your theme color
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 12,
+    // subtle iOS shadow
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  initialsText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  locationTextWrap: {
+    flex: 1,
+    marginLeft: 12,
+    justifyContent: 'center',
+  },
+
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  locationName: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: Theme.colors.primary,
+    marginRight: 6, // space between name and arrow
+  },
+
+  locationAddressText: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '500',
+    marginTop: 2,
   },
 });
