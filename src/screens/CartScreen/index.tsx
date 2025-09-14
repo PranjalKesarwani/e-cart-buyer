@@ -16,7 +16,7 @@ import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {getCarts, setSelectedCart} from '../../redux/slices/buyerSlice';
 import {useFocusEffect} from '@react-navigation/native';
 
-type CartScreenProps = NativeStackScreenProps<RootStackParamList, 'CartScreen'>;
+type CartScreenProps = NativeStackScreenProps<RootStackParamList, 'Cart'>;
 
 const CartScreen = ({navigation}: CartScreenProps) => {
   const dispatch = useAppDispatch();

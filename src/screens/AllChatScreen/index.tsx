@@ -5,11 +5,9 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {IMessage, RootStackParamList, TChatContact, TShop} from '../../types';
 import {apiClient} from '../../services/api';
 import moment from 'moment';
+import {navigate} from '../../navigation/navigationService';
 
-type AllChatScreenProps = NativeStackScreenProps<
-  RootStackParamList,
-  'AllChatScreen'
->;
+type AllChatScreenProps = NativeStackScreenProps<RootStackParamList, 'Chats'>;
 type TChatContactAllScreen = {
   chatContactId: string;
   userType: 'Buyer' | 'Seller' | 'DeliveryPerson' | 'Admin';
@@ -73,6 +71,7 @@ const AllChatScreen = ({navigation}: AllChatScreenProps) => {
         const shopInfo = getShopData(item);
         const shop = shopInfo.shop as TShop;
         navigation.navigate('PersonalChatScreen', {shop});
+        // navigate("PersonalChatScreen",{shop})
       }}
       style={styles.chatItem}>
       <View style={styles.avatarContainer}>

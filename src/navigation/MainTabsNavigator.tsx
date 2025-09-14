@@ -25,7 +25,7 @@ const MainTabsNavigator = () => {
         headerShown: false,
       }}>
       <Tab.Screen
-        name="HomeScreen"
+        name="Home"
         component={HomeScreen}
         options={{
           tabBarIcon: ({color}) => (
@@ -35,7 +35,7 @@ const MainTabsNavigator = () => {
       />
 
       <Tab.Screen
-        name="CartScreen"
+        name="Cart"
         component={CartScreen}
         options={{
           tabBarIcon: ({color}) => (
@@ -45,7 +45,7 @@ const MainTabsNavigator = () => {
       />
 
       <Tab.Screen
-        name="AccountScreen"
+        name="Account"
         component={AccountScreen}
         options={{
           tabBarIcon: ({color}) => (
@@ -55,7 +55,7 @@ const MainTabsNavigator = () => {
       />
 
       <Tab.Screen
-        name="AllChatScreen"
+        name="Chats"
         component={AllChatScreen}
         options={{
           tabBarIcon: ({color}) => (
@@ -64,7 +64,7 @@ const MainTabsNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="StatusScreen"
+        name="Status"
         component={StatusScreen}
         options={{
           tabBarIcon: ({color}) => (

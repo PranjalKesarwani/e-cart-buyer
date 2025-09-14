@@ -10,8 +10,8 @@ export type RootStackParamList = {
   ShopListScreen: undefined;
   ShopScreen: {shop: any};
   ProductScreen: {product: any; category: any};
-  AllChatScreen: undefined;
-  CartScreen: undefined;
+  Chats: undefined;
+  Cart: undefined;
   WishListScreen: undefined;
   ChatScreen: undefined;
   OrderDetailsScreen: undefined;
@@ -30,11 +30,11 @@ export type RootStackParamList = {
 
 export type RootDrawerParamList = {
   LocationConfirmationScreen: undefined;
-  HomeScreen: undefined;
+  Home: undefined;
   ShopListScreen: {category: any};
   ShopScreen: {shop: any};
-  AllChatScreen: undefined;
-  CartScreen: undefined;
+  Chats: undefined;
+  Cart: undefined;
   WishListScreen: undefined;
   ChatScreen: undefined;
   YourOrdersScreen: undefined;
@@ -42,11 +42,11 @@ export type RootDrawerParamList = {
   MainTabsNavigator: undefined;
 };
 export type MainTabsParamList = {
-  AllChatScreen: undefined;
-  StatusScreen: undefined;
-  CartScreen: undefined;
-  HomeScreen: undefined;
-  AccountScreen: undefined;
+  Chats: undefined;
+  Status: undefined;
+  Cart: undefined;
+  Home: undefined;
+  Account: undefined;
 };
 export interface AuthState {
   user: any | null;

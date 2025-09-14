@@ -27,7 +27,7 @@ import {cleanAddress, isLocationEnabled} from '../../utils/helper';
 import {giveLocationPermission, handleLogout} from '../../services/apiService';
 import {getAddressFromCoordinates} from '../../services/locationService';
 
-type HomeProps = NativeStackScreenProps<RootDrawerParamList, 'HomeScreen'>;
+type HomeProps = NativeStackScreenProps<RootDrawerParamList, 'Home'>;
 
 const HomeScreen = ({navigation}: HomeProps) => {
   const [modalVisible, setModalVisible] = useState(false);
