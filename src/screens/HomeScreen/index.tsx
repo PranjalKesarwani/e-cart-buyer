@@ -13,6 +13,7 @@ import {
   Linking,
   TextInput,
   Platform,
+  ImageBackground,
 } from 'react-native';
 import LocationBottomSheet from '../../components/LocationBottomSheet';
 import {RootDrawerParamList} from '../../types';
@@ -215,8 +216,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
         </TouchableOpacity>
       </View> */}
 
-      <View style={[styles.headerContainer]}>
-        {/* Top row: location + small logout pill */}
+      {/* <View style={[styles.headerContainer]}>
         <View style={[styles.headerTop]}>
           <TouchableOpacity
             style={styles.locationCard}
@@ -224,10 +224,8 @@ const HomeScreen = ({navigation}: HomeProps) => {
             onPress={handleHomeScreenLocation}
             accessibilityRole="button"
             accessibilityLabel="Open location selector">
-            {/* Left: Location icon */}
             <Icons name="enviromento" size={20} color={Theme.colors.primary} />
 
-            {/* Middle: Name + arrow in a row, then address below */}
             <View style={styles.locationTextWrap}>
               <View style={styles.nameRow}>
                 <Text style={styles.locationName}>
@@ -264,7 +262,6 @@ const HomeScreen = ({navigation}: HomeProps) => {
           </TouchableOpacity>
         </View>
 
-        {/* Search Row */}
         <View style={[styles.headerSearchRow]}>
           <View style={[styles.headerSearchBox]}>
             <Icons name="search1" size={16} color={Theme.colors.darkGray} />
@@ -273,21 +270,94 @@ const HomeScreen = ({navigation}: HomeProps) => {
               placeholderTextColor={Theme.colors.darkGray}
               style={styles.headerSearchInput}
               returnKeyType="search"
-              // keep existing handlers if you want to hook search
               onSubmitEditing={() => {
-                /* optional search action */
               }}
             />
           </View>
         </View>
 
-        {/* Tagline */}
         <View style={[styles.headerTaglineWrap]}>
           <Text style={styles.headerTagline}>
             All your local shops, just a tap away.
           </Text>
         </View>
-      </View>
+      </View> */}
+
+      <ImageBackground
+        source={require('../../assets/images/header.png')} // or local: require('../assets/header-hero.jpg')
+        style={styles.headerContainer}
+        imageStyle={styles.headerImage}
+        resizeMode="cover">
+        {/* semi-transparent overlay to guarantee legibility */}
+        <View style={styles.headerOverlay} />
+
+        <View style={styles.headerContent}>
+          {/* Top row: location + profile */}
+          <View style={styles.headerTop}>
+            <TouchableOpacity
+              style={styles.locationCard}
+              activeOpacity={0.86}
+              onPress={handleHomeScreenLocation}
+              accessibilityRole="button"
+              accessibilityLabel="Open location selector">
+              <Icons name="enviromento" size={20} color="#fff" />
+
+              <View style={styles.locationTextWrap}>
+                <View style={styles.nameRow}>
+                  <Text style={styles.locationName}>
+                    {name || 'Set location'}
+                  </Text>
+                  <Icons name="down" size={16} color="rgba(255,255,255,0.9)" />
+                </View>
+                <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  style={styles.locationAddressText}>
+                  {addressToShow || 'Tap to set delivery location'}
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.profileIconButton}
+              onPress={() => {
+                /* open profile */
+              }}
+              activeOpacity={0.9}
+              accessibilityRole="button"
+              accessibilityLabel="Profile">
+              {name && name.length > 0 ? (
+                <Text style={styles.initialsText}>
+                  {getInitials(name as string)}
+                </Text>
+              ) : (
+                <Icons name="user" size={18} color={Theme.colors.primary} />
+              )}
+            </TouchableOpacity>
+          </View>
+
+          {/* Search Row */}
+          <View style={styles.headerSearchRow}>
+            <View style={styles.headerSearchBox}>
+              <Icons name="search1" size={16} color="rgba(255,255,255,0.95)" />
+              <TextInput
+                placeholder="Search shops, products or categories"
+                placeholderTextColor="rgba(255,255,255,0.85)"
+                style={styles.headerSearchInput}
+                returnKeyType="search"
+                onSubmitEditing={() => {}}
+              />
+            </View>
+          </View>
+
+          {/* Tagline centered in remaining space */}
+          <View style={styles.headerTaglineWrap}>
+            <Text style={styles.headerTagline}>
+              All your local shops, just a tap away.
+            </Text>
+          </View>
+        </View>
+      </ImageBackground>
 
       {/* Main Content */}
       <View style={styles.contentContainer}>
@@ -633,49 +703,49 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
-  headerContainer: {
-    height: HEADER_HEIGHT,
-    paddingHorizontal: 16,
-    paddingTop: Platform.OS === 'ios' ? 22 : 16,
-    paddingBottom: 18,
-    backgroundColor: '#f37423bd',
-    // subtle rounded bottom to separate header from content
-    borderBottomLeftRadius: 18,
-    borderBottomRightRadius: 18,
-    // elevated card-like look
-    // shadowColor: '#000',
-    // shadowOffset: {width: 0, height: 6},
-    // shadowOpacity: 0.08,
-    // shadowRadius: 18,
-    elevation: 10,
-    justifyContent: 'flex-start',
-  },
+  // headerContainer: {
+  //   height: HEADER_HEIGHT,
+  //   paddingHorizontal: 16,
+  //   paddingTop: Platform.OS === 'ios' ? 22 : 16,
+  //   paddingBottom: 18,
+  //   backgroundColor: '#f37423bd',
+  //   // subtle rounded bottom to separate header from content
+  //   borderBottomLeftRadius: 18,
+  //   borderBottomRightRadius: 18,
+  //   // elevated card-like look
+  //   // shadowColor: '#000',
+  //   // shadowOffset: {width: 0, height: 6},
+  //   // shadowOpacity: 0.08,
+  //   // shadowRadius: 18,
+  //   elevation: 10,
+  //   justifyContent: 'flex-start',
+  // },
 
-  headerTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
+  // headerTop: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   justifyContent: 'space-between',
+  // },
 
-  locationCard: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    backgroundColor: '#FFF',
-    paddingVertical: 14,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    // border subtle using theme light gray if available
-    borderWidth: 1,
-    borderColor: 'transparent',
-    // shadow
-    // shadowColor: '#000',
-    // shadowOffset: {width: 0, height: 2},
-    // shadowOpacity: 0.04,
-    // shadowRadius: 8,
-    // elevation: 2,
-  },
+  // locationCard: {
+  //   flex: 1,
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   justifyContent: 'flex-start',
+  //   backgroundColor: '#FFF',
+  //   paddingVertical: 14,
+  //   paddingHorizontal: 12,
+  //   borderRadius: 12,
+  //   // border subtle using theme light gray if available
+  //   borderWidth: 1,
+  //   borderColor: 'transparent',
+  //   // shadow
+  //   // shadowColor: '#000',
+  //   // shadowOffset: {width: 0, height: 2},
+  //   // shadowOpacity: 0.04,
+  //   // shadowRadius: 8,
+  //   // elevation: 2,
+  // },
 
   // locationTextWrap: {
   //   flex: 1,
@@ -713,32 +783,32 @@ const styles = StyleSheet.create({
   },
 
   /* Search row below top */
-  headerSearchRow: {
-    marginTop: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
+  // headerSearchRow: {
+  //   marginTop: 14,
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  // },
 
-  headerSearchBox: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FAFAFB',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    // subtle border to feel tactile
-    borderWidth: 1,
-    borderColor: '#F0F0F0',
-  },
+  // headerSearchBox: {
+  //   flex: 1,
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   backgroundColor: '#FAFAFB',
+  //   borderRadius: 12,
+  //   paddingHorizontal: 12,
+  //   paddingVertical: 12,
+  //   // subtle border to feel tactile
+  //   borderWidth: 1,
+  //   borderColor: '#F0F0F0',
+  // },
 
-  headerSearchInput: {
-    marginLeft: 10,
-    flex: 1,
-    fontSize: 15,
-    color: '#222',
-    padding: 0,
-  },
+  // headerSearchInput: {
+  //   marginLeft: 10,
+  //   flex: 1,
+  //   fontSize: 15,
+  //   color: '#222',
+  //   padding: 0,
+  // },
 
   headerMapButton: {
     marginLeft: 10,
@@ -752,41 +822,118 @@ const styles = StyleSheet.create({
   },
 
   /* Tagline below search */
-  headerTaglineWrap: {
-    flex: 1, // take all remaining space
-    justifyContent: 'center', // center vertically
-    alignItems: 'center', // center horizontally
-    paddingHorizontal: 12,
+  // headerTaglineWrap: {
+  //   flex: 1, // take all remaining space
+  //   justifyContent: 'center', // center vertically
+  //   alignItems: 'center', // center horizontally
+  //   paddingHorizontal: 12,
+  // },
+
+  // headerTagline: {
+  //   fontSize: 32,
+  //   fontWeight: '700',
+  //   color: '#fff',
+  //   textAlign: 'center',
+  //   lineHeight: 40,
+  //   fontStyle: 'italic',
+  // },
+  // profileIconButton: {
+  //   width: 40,
+  //   height: 40,
+  //   borderRadius: 20,
+  //   backgroundColor: Theme.colors.primary, // pick your theme color
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  //   marginLeft: 12,
+  //   // subtle iOS shadow
+  //   shadowColor: '#000',
+  //   shadowOffset: {width: 0, height: 2},
+  //   shadowOpacity: 0.1,
+  //   shadowRadius: 4,
+  //   elevation: 3,
+  // },
+  // initialsText: {
+  //   color: '#fff',
+  //   fontSize: 18,
+  //   fontWeight: 'bold',
+  // },
+  // locationTextWrap: {
+  //   flex: 1,
+  //   marginLeft: 12,
+  //   justifyContent: 'center',
+  // },
+
+  // nameRow: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  // },
+
+  // locationName: {
+  //   fontSize: 18,
+  //   fontWeight: '700',
+  //   color: Theme.colors.primary,
+  //   marginRight: 6, // space between name and arrow
+  // },
+
+  // locationAddressText: {
+  //   fontSize: 14,
+  //   color: '#333',
+  //   fontWeight: '500',
+  //   marginTop: 2,
+  // },
+
+  headerContainer: {
+    width: '100%',
+    height: HEADER_HEIGHT,
+  },
+  headerImage: {
+    borderBottomLeftRadius: 18,
+    borderBottomRightRadius: 18,
+    // optionally slightly desaturate or blur the image in edit tools, not necessary here
   },
 
-  headerTagline: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: '#fff',
-    textAlign: 'center',
-    lineHeight: 40,
-    fontStyle: 'italic',
+  // overlay to darken image slightly -> improves legibility
+  headerOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.28)', // tweak 0.2–0.36 to taste
+    borderBottomLeftRadius: 18,
+    borderBottomRightRadius: 18,
   },
-  profileIconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Theme.colors.primary, // pick your theme color
+
+  // wrapper to layer content on top of the overlay
+  headerContent: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'ios' ? 22 : 16,
+    paddingBottom: 18,
+    justifyContent: 'flex-start',
+  },
+
+  headerTop: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 12,
-    // subtle iOS shadow
+    justifyContent: 'space-between',
+  },
+
+  /* Location card: semi-transparent so it feels like a panel on top of the hero */
+  locationCard: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.10)', // soft translucent white
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.12)',
+    // subtle inner shadow impression on iOS (android will ignore)
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+    marginRight: 12,
   },
-  initialsText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
+
   locationTextWrap: {
     flex: 1,
     marginLeft: 12,
@@ -799,16 +946,83 @@ const styles = StyleSheet.create({
   },
 
   locationName: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '700',
-    color: Theme.colors.primary,
-    marginRight: 6, // space between name and arrow
+    color: '#fff',
+    marginRight: 6,
   },
 
   locationAddressText: {
-    fontSize: 14,
-    color: '#333',
-    fontWeight: '500',
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.9)',
     marginTop: 2,
+  },
+
+  /* Profile icon: white circular button so it stands out against amber background */
+  profileIconButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#fff', // white contrast
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.06)',
+    // subtle shadow
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+
+  initialsText: {
+    color: Theme.colors.primary,
+    fontSize: 16,
+    fontWeight: '700',
+  },
+
+  /* Search box: translucent, inverted text color to white */
+  headerSearchRow: {
+    marginTop: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  headerSearchBox: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.12)', // translucent
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.12)',
+  },
+
+  headerSearchInput: {
+    marginLeft: 10,
+    flex: 1,
+    fontSize: 15,
+    color: '#fff', // input text white
+    padding: 0,
+  },
+
+  /* Tagline centered and big, white */
+  headerTaglineWrap: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+  },
+
+  headerTagline: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#fff',
+    textAlign: 'center',
+    lineHeight: 36,
   },
 });
