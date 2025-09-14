@@ -195,7 +195,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={async () => {
-            const res = await handleLogout(navigation);
+            const res = await handleLogout();
             // console.log('xxxxxxxx', res?.status);
             // if (res?.status) {
             //   navigation.navigate('LoginScreen');

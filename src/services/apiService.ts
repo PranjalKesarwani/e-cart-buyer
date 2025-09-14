@@ -187,7 +187,7 @@ export const placeBuyNowOrder = async (
   }
 };
 
-export const handleLogout = async (navigation: any) => {
+export const handleLogout = async () => {
   try {
     Alert.alert(
       'Logout Confirmation',
@@ -213,7 +213,7 @@ export const handleLogout = async (navigation: any) => {
               //     routes: [{name: 'LoginScreen'}],
               //   });
               // }
-              navigation.navigate('LoginScreen');
+              navigate('LoginScreen');
 
               return {status: true, message: 'Logged out successfully!'};
             }
