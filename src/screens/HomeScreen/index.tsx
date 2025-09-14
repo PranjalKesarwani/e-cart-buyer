@@ -265,8 +265,8 @@ const HomeScreen = ({navigation}: HomeProps) => {
         </View>
 
         {/* Search Row */}
-        <View style={styles.headerSearchRow}>
-          <View style={styles.headerSearchBox}>
+        <View style={[styles.headerSearchRow, Theme.showBorder]}>
+          <View style={[styles.headerSearchBox, Theme.showBorder]}>
             <Icons name="search1" size={16} color={Theme.colors.darkGray} />
             <TextInput
               placeholder="Search shops, products or categories"
@@ -282,9 +282,9 @@ const HomeScreen = ({navigation}: HomeProps) => {
         </View>
 
         {/* Tagline */}
-        <View style={styles.headerTaglineWrap}>
+        <View style={[styles.headerTaglineWrap, Theme.showBorder]}>
           <Text style={styles.headerTagline}>
-            Curated picks — quick deliveries. Shop smart, eat happy.
+            Every shop. Every need. All in one place.
           </Text>
         </View>
       </View>
