@@ -15,6 +15,7 @@ import {MainTabsParamList} from '../types';
 import CartScreen from '../screens/CartScreen';
 import HomeScreen from '../screens/HomeScreen';
 import AccountScreen from '../features/account/AccountScreen';
+import {Theme} from '../theme/theme';
 
 const Tab = createBottomTabNavigator<MainTabsParamList>();
 
@@ -35,7 +36,7 @@ const FloatingCartButton = ({
     <TouchableOpacity
       activeOpacity={0.9}
       onPress={onPress}
-      style={styles.floatingButtonContainer}>
+      style={[styles.floatingButtonContainer, Theme.showBorder]}>
       <View style={styles.floatingButton}>{children}</View>
     </TouchableOpacity>
   );
@@ -53,6 +54,9 @@ const MainTabsNavigator = () => {
           fontSize: 11,
           marginBottom: 6,
           // fontFamily: 'Inter-Medium', // uncomment if you have a UI font
+        },
+        tabBarIconStyle: {
+          marginBottom: -4, // 👈 lifts icon closer to label
         },
         tabBarStyle: styles.tabBarStyle,
         // Dynamic icon selection using route.name and focused state
@@ -77,6 +81,17 @@ const MainTabsNavigator = () => {
         component={HomeScreen}
         options={{
           title: 'Home',
+          tabBarLabel: ({focused, color}) => (
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: focused ? '700' : '400', // bold when active
+                color,
+                paddingBottom: 5,
+              }}>
+              Home
+            </Text>
+          ),
         }}
       />
 
@@ -85,14 +100,16 @@ const MainTabsNavigator = () => {
         component={CartScreen}
         options={({navigation}) => ({
           title: 'Cart',
-          // use a custom tabBarButton to get floating elevated center button
-          tabBarButton: props => (
-            <FloatingCartButton
-              onPress={props.onPress}
-              // optional: open a modal or navigate conditionally
-            >
-              <Icon name="cart" size={26} color="#fff" />
-            </FloatingCartButton>
+          tabBarLabel: ({focused, color}) => (
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: focused ? '700' : '400', // bold when active
+                color,
+                paddingBottom: 5,
+              }}>
+              Cart
+            </Text>
           ),
         })}
       />
@@ -102,6 +119,17 @@ const MainTabsNavigator = () => {
         component={AccountScreen}
         options={{
           title: 'Account',
+          tabBarLabel: ({focused, color}) => (
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: focused ? '700' : '400', // bold when active
+                color,
+                paddingBottom: 5,
+              }}>
+              Account
+            </Text>
+          ),
         }}
       />
 
@@ -110,6 +138,28 @@ const MainTabsNavigator = () => {
         component={AllChatScreen}
         options={{
           title: 'Chats',
+          tabBarLabel: ({focused, color}) => (
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: focused ? '700' : '400', // bold when active
+                color,
+                paddingBottom: 5,
+              }}>
+              Chats
+            </Text>
+          ),
+          // tabBarBadge: 3, // <- hardcoded unread count for demo
+          // tabBarBadgeStyle: {
+          //   backgroundColor: Theme.colors.darkGray, // red badge
+          //   color: '#fff', // text color
+          //   fontSize: 10,
+          //   minWidth: 18,
+          //   height: 18,
+          //   borderRadius: 9,
+          //   alignItems: 'center',
+          //   justifyContent: 'center',
+          // },
           // Example badge — in real app set programmatically
           // tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
           // tabBarBadgeStyle: { backgroundColor: '#E53935' },
@@ -121,6 +171,17 @@ const MainTabsNavigator = () => {
         component={StatusScreen}
         options={{
           title: 'Status',
+          tabBarLabel: ({focused, color}) => (
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: focused ? '700' : '400', // bold when active
+                color,
+                paddingBottom: 5,
+              }}>
+              Status
+            </Text>
+          ),
         }}
       />
     </Tab.Navigator>
