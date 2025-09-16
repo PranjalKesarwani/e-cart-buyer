@@ -11,7 +11,7 @@ const ShopsFooter: React.FC = () => {
       {/* Divider with centered text */}
       <View style={styles.dividerRow} accessible accessibilityRole="header">
         <View style={styles.dividerLine} />
-        <Text style={styles.dividerText}>Essentials</Text>
+        <Text style={styles.dividerText}>Near by Shops</Text>
         <View style={styles.dividerLine} />
       </View>
 
@@ -20,7 +20,7 @@ const ShopsFooter: React.FC = () => {
 
       {/* Shop list (reusable component) */}
       <ShopList
-        endpoint={`/buyer/categories/cooking-essentials/shops`}
+        endpoint={`/buyer/categories/${undefined}/shops`}
         queryParams={{}}
         pageSize={12}
         // If you want a tiny header inside the ShopList (above shop cards),
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     marginHorizontal: 12,
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: '600',
     color: Theme?.colors?.darkGray ?? '#666',
   },
