@@ -51,6 +51,8 @@ export const Theme = {
   }, // Fixed missing comma here
   defaultImages: {
     shop: 'https://d27k8xmh3cuzik.cloudfront.net/wp-content/uploads/2018/03/street-shopping-in-india-cover.jpg',
+    product:
+      'https://i.pinimg.com/1200x/fd/3d/8e/fd3d8e2a1dd4f09b4170d31e26913bab.jpg',
   },
   showBorder: {
     borderWidth: 1,

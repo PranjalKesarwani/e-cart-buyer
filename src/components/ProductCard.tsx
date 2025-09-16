@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
   View,
   Image,
@@ -23,6 +23,7 @@ interface ProductCardProps {
   isFavorite?: boolean;
   toggleFavorite?: () => void;
   onChatPress?: () => void;
+  cardWidth?: number;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -30,11 +31,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
   selectedCat,
   goToProductScreen,
   isFavorite,
-  // toggleFavorite,
   onChatPress,
+  cardWidth,
 }) => {
   const dispatch = useAppDispatch();
 
+  // defensive guards
   const mrp = Number(product.productMrp ?? 0);
   const price = Number(product.price ?? 0);
 
@@ -45,8 +47,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   const formattedPrice = `₹${price.toLocaleString('en-IN')}`;
   const formattedMrp = `₹${mrp.toLocaleString('en-IN')}`;
+
+  const imageUri =
+    product?.media?.images && product.media.images.length > 0
+      ? product.media.images[0]
+      : undefined;
+
   return (
-    <View style={styles.productCard}>
+    <View style={[styles.productCard, {width: cardWidth ?? CARD_WIDTH}]}>
       {/* Heart icon at top right */}
       <TouchableOpacity
         style={styles.heartButton}
@@ -65,32 +73,38 @@ const ProductCard: React.FC<ProductCardProps> = ({
         onPress={() => goToProductScreen(product, selectedCat!)}
         activeOpacity={0.9}>
         <Image
-          source={{uri: product.media.images[0]}}
+          source={{uri: imageUri || Theme.defaultImages.product}}
           style={styles.productImage}
           resizeMode="cover"
         />
 
-        <View style={[styles.productDetails]}>
+        <View style={styles.productDetails}>
           <Text style={styles.productName} numberOfLines={2}>
             {product.productName}
           </Text>
           <Text style={styles.productDescription} numberOfLines={2}>
             {product.productShortDescription}
           </Text>
-          <View style={{flexDirection: 'column'}}>
-            <Text style={styles.productPrice}>
-              ₹{product.price.toLocaleString()}
-            </Text>
-            {product.price < product.productMrp && (
-              <>
-                <Text style={styles.originalPrice}> ₹{product.productMrp}</Text>
-                <Text style={styles.discount}>
-                  {' '}
-                  {product.discountPercentage}% off
-                </Text>
-              </>
-            )}
+
+          {/* PRICE ROW: Price (left) + optional slashed MRP (right) */}
+          <View style={[styles.priceRow]}>
+            <Text style={styles.productPrice}>{formattedPrice}</Text>
+
+            {showDiscount ? (
+              <Text style={styles.originalPrice} numberOfLines={1}>
+                {formattedMrp}
+              </Text>
+            ) : null}
           </View>
+
+          {/* DISCOUNT TAG BELOW (only when there's a discount) */}
+          {showDiscount ? (
+            <View style={styles.discountRow}>
+              <View style={styles.discountBadge}>
+                <Text style={styles.discountText}>{discountPercent}% OFF</Text>
+              </View>
+            </View>
+          ) : null}
         </View>
       </TouchableOpacity>
 
@@ -107,15 +121,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
 const styles = StyleSheet.create({
   productCard: {
-    width: CARD_WIDTH,
     backgroundColor: '#FFF',
     borderRadius: 12,
     marginBottom: 16,
     padding: 12,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
     elevation: 3,
   },
   productImage: {
@@ -123,61 +136,35 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 8,
     marginBottom: 12,
+    backgroundColor: Theme.colors.lightGray,
   },
   productDetails: {
-    paddingHorizontal: 4,
+    paddingHorizontal: 2,
   },
   productName: {
     fontSize: 14,
-    fontWeight: '500',
-    color: '#1A1A1A',
-    // marginBottom: 8,
-    // marginVertical: 4,
-    // height: 40,
+    fontWeight: '600',
+    color: Theme.colors.darkText,
   },
   productDescription: {
     fontSize: 12,
     fontWeight: '400',
     color: Theme.colors.gray,
-    marginVertical: 4,
+    marginVertical: 6,
+    lineHeight: 16,
+  },
+
+  /* PRICE ROW */
+  priceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    marginTop: 4,
   },
   productPrice: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#2A59FE',
-  },
-  heartButton: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    zIndex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: 20,
-    padding: 4,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  chatButton: {
-    position: 'absolute',
-    bottom: 8,
-    right: 8,
-    zIndex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: 20,
-    padding: 4,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  icon: {
-    textShadowColor: 'rgba(0, 0, 0, 0.1)',
-    textShadowOffset: {width: 0, height: 1},
-    textShadowRadius: 2,
+    fontWeight: '700',
+    color: Theme.colors.primary || '#2A59FE',
   },
   originalPrice: {
     fontSize: 12,
@@ -185,9 +172,58 @@ const styles = StyleSheet.create({
     textDecorationLine: 'line-through',
     marginLeft: 8,
   },
-  discount: {
-    fontSize: 18,
-    color: '#26a541',
+
+  /* DISCOUNT ROW (below price & mrp) */
+  discountRow: {
+    marginTop: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  discountBadge: {
+    backgroundColor: '#FF3B30',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 14,
+    alignSelf: 'flex-start',
+  },
+  discountText: {
+    fontSize: 11,
+    color: '#fff',
+    fontWeight: '700',
+  },
+
+  heartButton: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    zIndex: 2,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 20,
+    padding: 6,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.12,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  chatButton: {
+    position: 'absolute',
+    bottom: 8,
+    right: 8,
+    zIndex: 2,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 20,
+    padding: 6,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.12,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  icon: {
+    textShadowColor: 'rgba(0, 0, 0, 0.08)',
+    textShadowOffset: {width: 0, height: 1},
+    textShadowRadius: 2,
   },
 });
 
