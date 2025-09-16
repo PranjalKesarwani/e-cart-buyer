@@ -48,7 +48,7 @@ export const HomeLevel2Cats: React.FC<Props> = ({
   level2Cats,
   previewCount = 12,
   onCategoryPress,
-  activeCat = '6855925dee70eda45ca5a1d4',
+  activeCat = '685a1903166ab20753b96e59',
   showSeeAll = true,
   autoScrollToActive = true,
 }) => {
