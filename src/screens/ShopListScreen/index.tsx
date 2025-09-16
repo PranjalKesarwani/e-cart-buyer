@@ -52,14 +52,16 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
   const [homeSecondLevelCats, setHomeSecondLevelCats] = useState<TCategory[]>(
     [],
   );
+  const [activeCategory, setActiveCategory] = useState<TCategory>(category);
   const [search, setSearch] = useState<string>('');
 
   const getShops = async () => {
     try {
-      const res = await apiClient.get(
-        `/buyer/categories/${category.slug}/shops`,
-      );
-      setShops(res.data.shops || []);
+      // console.log('shop list screen call------x---x--x---x---x-');
+      // const res = await apiClient.get(
+      //   `/buyer/categories/${category.slug}/shops`,
+      // );
+      // setShops(res.data.shops || []);
     } catch (error: any) {
       showToast('error', error.message);
     }
@@ -82,7 +84,8 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
   };
 
   const handleCardPress = (item: any) => {
-    navigate('ShopListScreen', {category: item});
+    // navigate('ShopListScreen', {category: item});
+    setActiveCategory(item);
   };
 
   useEffect(() => {
@@ -113,11 +116,14 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
       {/* Main Content */}
 
       <ShopList
-        endpoint={`/buyer/categories/${category.slug}/shops`}
+        endpoint={`/buyer/categories/${activeCategory.slug}/shops`}
         queryParams={{}}
         pageSize={12}
         ListHeaderComponent={
-          <ShopListHeader title={category.name} subtitle="Top Picks for You" />
+          <ShopListHeader
+            title={activeCategory.name}
+            subtitle="Top Picks for You"
+          />
         }
         onShopPress={shop => navigate('ShopScreen', {shop})}
       />

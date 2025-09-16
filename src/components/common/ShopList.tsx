@@ -96,6 +96,7 @@ const ShopList: React.FC<ShopListProps> = ({
       setError(null);
       try {
         const url = buildUrl(p);
+        console.log('---url from shop list only----', url);
         const res = await apiClient.get(url);
         const newShops: TShop[] = res.data?.shops ?? [];
         setShops(prev => (append ? [...prev, ...newShops] : newShops));
