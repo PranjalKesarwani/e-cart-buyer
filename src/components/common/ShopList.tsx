@@ -222,6 +222,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     backgroundColor: 'transparent',
+    flex: 1,
   },
   emptyContainer: {
     alignItems: 'center',
