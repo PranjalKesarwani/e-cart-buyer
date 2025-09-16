@@ -1,8 +1,8 @@
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
   View,
   Text,
-  FlatList,
+  FlatList as RNFlatList,
   Image,
   TouchableOpacity,
   StyleSheet,
@@ -36,6 +36,12 @@ type Props = {
   previewCount?: number; // default 12
   onCategoryPress?: (cat: TCategory) => void;
   activeCat?: string;
+
+  /** whether to append the 'See all' tile in the preview list */
+  showSeeAll?: boolean;
+
+  /** whether to automatically scroll the preview list to the activeCat */
+  autoScrollToActive?: boolean;
 };
 
 export const HomeLevel2Cats: React.FC<Props> = ({
@@ -43,6 +49,8 @@ export const HomeLevel2Cats: React.FC<Props> = ({
   previewCount = 12,
   onCategoryPress,
   activeCat = '6855925dee70eda45ca5a1d4',
+  showSeeAll = true,
+  autoScrollToActive = true,
 }) => {
   const [sheetVisible, setSheetVisible] = useState(false);
   const animatedY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
@@ -64,12 +72,59 @@ export const HomeLevel2Cats: React.FC<Props> = ({
     }).start(() => setSheetVisible(false));
   }, [animatedY]);
 
+  // fixed item width + separator used for getItemLayout/offset math
+  const ITEM_WIDTH = 84; // previewItem width from styles
+  const ITEM_SEPARATOR = 8; // separator width used in FlatList
+  const H_LIST_PADDING_HORIZONTAL = 12; // horizontalWrap paddingHorizontal
+
   // preview items + SEE_ALL sentinel appended so See All scrolls as last item
   const previewItems = useMemo(() => {
     const slice = level2Cats.slice(0, previewCount);
     // append a sentinel object for see-all
     return [...slice, {_id: 'SEE_ALL', name: 'See all', image: ''} as any];
   }, [level2Cats, previewCount]);
+
+  const flatRef = useRef<RNFlatList<TCategory> | null>(null);
+
+  const scrollToIndexSafely = useCallback(
+    (index: number) => {
+      if (!flatRef.current) return;
+
+      // prefer scrollToIndex (centers item) but fall back to scrollToOffset if it fails
+      try {
+        flatRef.current.scrollToIndex({
+          index,
+          animated: true,
+          viewPosition: 0.5, // center the item
+        });
+      } catch (err) {
+        // fallback: compute offset and scroll
+        const offset =
+          H_LIST_PADDING_HORIZONTAL + index * (ITEM_WIDTH + ITEM_SEPARATOR);
+        flatRef.current.scrollToOffset({offset, animated: true});
+      }
+    },
+    [ITEM_SEPARATOR, ITEM_WIDTH],
+  );
+
+  useEffect(() => {
+    if (!autoScrollToActive) return;
+    if (!activeCat) return;
+    // find index in previewItems (only the preview list)
+    const idx = previewItems.findIndex(it => it._id === activeCat);
+    if (idx === -1) {
+      // activeCat not in preview; if showSeeAll is true we could scroll to end so user sees See all tile
+      // or optionally open sheet. For now, do nothing.
+      return;
+    }
+
+    // small timeout to ensure FlatList measured — avoids "scrollToIndex out of range" on some devices
+    const t = setTimeout(() => {
+      scrollToIndexSafely(idx);
+    }, 50);
+
+    return () => clearTimeout(t);
+  }, [activeCat, autoScrollToActive, previewItems, scrollToIndexSafely]);
 
   const handlePress = useCallback(
     (item: TCategory) => {
@@ -155,11 +210,23 @@ export const HomeLevel2Cats: React.FC<Props> = ({
     [closeSheet, onCategoryPress],
   );
 
+  const getItemLayout = useCallback(
+    (_: TCategory[] | null | undefined, index: number) => {
+      const length = ITEM_WIDTH + ITEM_SEPARATOR;
+      const offset = H_LIST_PADDING_HORIZONTAL + index * length;
+      return {length, offset, index};
+    },
+    [ITEM_SEPARATOR, ITEM_WIDTH],
+  );
+
   return (
     <View style={styles.container}>
       {/* Horizontal preview list (See all is part of data so it scrolls to the end) */}
       <View style={styles.horizontalWrap}>
-        <FlatList
+        <RNFlatList
+          ref={(r: any) => {
+            flatRef.current = r;
+          }}
           data={previewItems}
           keyExtractor={keyExtractor}
           renderItem={renderPreviewItem}
@@ -197,7 +264,7 @@ export const HomeLevel2Cats: React.FC<Props> = ({
             <Text style={styles.sheetTitle}>All categories</Text>
           </View>
 
-          <FlatList
+          <RNFlatList
             data={level2Cats}
             keyExtractor={keyExtractor}
             renderItem={renderGridItem}

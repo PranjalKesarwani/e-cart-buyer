@@ -102,6 +102,7 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
           level2Cats={homeSecondLevelCats}
           previewCount={12}
           onCategoryPress={handleCardPress}
+          showSeeAll={true}
         />
       </View>
 
