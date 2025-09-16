@@ -10,7 +10,7 @@ import {
 import Icons from 'react-native-vector-icons/AntDesign';
 import LinearGradient from 'react-native-linear-gradient';
 import {Theme} from '../../theme/theme';
-import {TShop} from '../../types';
+import {TSeller, TShop} from '../../types';
 import {useAppDispatch} from '../../redux/hooks';
 import {setSelectedShop} from '../../redux/slices/buyerSlice';
 import {navigate} from '../../navigation/navigationService';
@@ -57,9 +57,22 @@ const ShopCard = ({item}: {item: TShop}) => {
       {/* Info */}
       <View style={styles.shopInfoContainer}>
         <View style={{flex: 1}}>
-          <Text style={styles.shopName} numberOfLines={1}>
+          {/* <Text style={styles.shopName} numberOfLines={1}>
             {item.shopName}
-          </Text>
+          </Text> */}
+          <View style={styles.shopNameRow}>
+            <Image
+              source={{
+                uri:
+                  (item.sellerId as TSeller)?.profilePic ||
+                  'https://i.pinimg.com/736x/16/18/20/1618201e616f4a40928c403f222d7562.jpg',
+              }}
+              style={styles.sellerAvatar}
+            />
+            <Text style={styles.shopName} numberOfLines={1}>
+              {item.shopName}
+            </Text>
+          </View>
           <Text style={styles.shopDescription} numberOfLines={2}>
             {item.titleMsg || 'No description available'}
           </Text>
@@ -157,6 +170,17 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  shopNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  sellerAvatar: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    marginRight: 8,
   },
 });
 
