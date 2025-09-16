@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Icons from 'react-native-vector-icons/AntDesign';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParamList, TShop} from '../../types';
+import {RootStackParamList, TCategory, TShop} from '../../types';
 import {showToast} from '../../utils/toast';
 import {apiClient} from '../../services/api';
 import {Theme} from '../../theme/theme';
@@ -20,6 +20,8 @@ import ShopCard from './ShopCard';
 import ShopList from '../../components/common/ShopList';
 import {goBack, navigate} from '../../navigation/navigationService';
 import Header from '../../components/common/Header';
+import {HomeLevel2Cats} from '../HomeScreen/HomeLevel2Cats';
+import {getHomeCats} from '../../services/apiService';
 
 type ShopListProps = NativeStackScreenProps<
   RootStackParamList,
@@ -46,6 +48,9 @@ const CARD_WIDTH = width - 30 - CARD_MARGIN; // 15 padding on each side
 const ShopListScreen = ({route, navigation}: ShopListProps) => {
   const {category}: any = route.params;
   const [shops, setShops] = useState<TShop[]>([]);
+  const [homeSecondLevelCats, setHomeSecondLevelCats] = useState<TCategory[]>(
+    [],
+  );
   const dispatch = useDispatch();
 
   const getShops = async () => {
@@ -59,13 +64,33 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
     }
   };
 
+  const getGlobalCategories = async () => {
+    try {
+      const res = await apiClient.get('/buyer/categories');
+      if (!res?.data.success) throw new Error(res?.data.message);
+
+      const {status, message, data} = await getHomeCats();
+
+      setHomeSecondLevelCats(data.level2Cats);
+    } catch (error: any) {
+      showToast('error', error.message);
+    }
+  };
+
   const goToShopScreen = (shop: TShop) => {
     dispatch(setSelectedShop(shop));
     navigation.navigate('ShopScreen', {shop});
   };
 
+  const handleCardPress = (item: any) => {
+    console.log('Pressed---->>>>xxxx', item);
+    // navigation.navigate('ShopListScreen', {category: item});
+    navigate('ShopListScreen', {category: item});
+  };
+
   useEffect(() => {
     getShops();
+    getGlobalCategories();
   }, []);
 
   return (
@@ -73,6 +98,12 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
       {/* Navigation Header */}
 
       <Header title="Your Shops" onBack={() => goBack()} />
+
+      <HomeLevel2Cats
+        level2Cats={homeSecondLevelCats}
+        previewCount={12}
+        onCategoryPress={handleCardPress}
+      />
 
       {/* Main Content */}
 

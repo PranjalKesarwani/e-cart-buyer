@@ -224,10 +224,6 @@ const HomeScreen = ({navigation}: HomeProps) => {
     }
   };
 
-  const handleLevel2CategoryPress = async (cat: TCategory) => {
-    console.log('Pressed this category:::', cat);
-  };
-
   const renderParentRow = useCallback(({item: parent}: {item: TParentCat}) => {
     return (
       <View style={[styles.parentContainer]}>
