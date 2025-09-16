@@ -164,7 +164,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
         </Text>
         <TouchableOpacity
           style={styles.cartButton}
-          onPress={() => navigation.navigate('CartScreen')}>
+          onPress={() => console.log('go to cart screen')}>
           <View style={styles.cartBadge}>
             <Text style={styles.cartBadgeText}>{cartItemsCount}</Text>
           </View>
@@ -417,7 +417,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
             <TouchableOpacity
               style={[styles.addToCartButton]}
               onPress={() => {
-                navigation.navigate('CartScreen');
+                console.log('go to cart screen');
               }}>
               <Text style={styles.addToCartText}>Go to Cart</Text>
             </TouchableOpacity>

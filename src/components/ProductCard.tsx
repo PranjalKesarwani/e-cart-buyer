@@ -11,6 +11,7 @@ import Icons from 'react-native-vector-icons/AntDesign';
 import {TCategory, TProduct} from '../types';
 import {manageWishList} from '../utils/helper';
 import {useAppDispatch} from '../redux/hooks';
+import {Theme} from '../theme/theme';
 
 const {width} = Dimensions.get('window');
 const CARD_WIDTH = (width - 40) / 2 - 10;
@@ -33,6 +34,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
   onChatPress,
 }) => {
   const dispatch = useAppDispatch();
+
+  const mrp = Number(product.productMrp ?? 0);
+  const price = Number(product.price ?? 0);
+
+  const showDiscount = mrp > 0 && price < mrp;
+  const discountPercent = showDiscount
+    ? Math.round(((mrp - price) / mrp) * 100)
+    : 0;
+
+  const formattedPrice = `₹${price.toLocaleString('en-IN')}`;
+  const formattedMrp = `₹${mrp.toLocaleString('en-IN')}`;
   return (
     <View style={styles.productCard}>
       {/* Heart icon at top right */}
@@ -58,13 +70,27 @@ const ProductCard: React.FC<ProductCardProps> = ({
           resizeMode="cover"
         />
 
-        <View style={styles.productDetails}>
+        <View style={[styles.productDetails]}>
           <Text style={styles.productName} numberOfLines={2}>
             {product.productName}
           </Text>
-          <Text style={styles.productPrice}>
-            ₹{product.price.toLocaleString()}
+          <Text style={styles.productDescription} numberOfLines={2}>
+            {product.productShortDescription}
           </Text>
+          <View style={{flexDirection: 'column'}}>
+            <Text style={styles.productPrice}>
+              ₹{product.price.toLocaleString()}
+            </Text>
+            {product.price < product.productMrp && (
+              <>
+                <Text style={styles.originalPrice}> ₹{product.productMrp}</Text>
+                <Text style={styles.discount}>
+                  {' '}
+                  {product.discountPercentage}% off
+                </Text>
+              </>
+            )}
+          </View>
         </View>
       </TouchableOpacity>
 
@@ -105,8 +131,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: '#1A1A1A',
-    marginBottom: 8,
-    height: 40,
+    // marginBottom: 8,
+    // marginVertical: 4,
+    // height: 40,
+  },
+  productDescription: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: Theme.colors.gray,
+    marginVertical: 4,
   },
   productPrice: {
     fontSize: 16,
@@ -145,6 +178,16 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.1)',
     textShadowOffset: {width: 0, height: 1},
     textShadowRadius: 2,
+  },
+  originalPrice: {
+    fontSize: 12,
+    color: '#7e808c',
+    textDecorationLine: 'line-through',
+    marginLeft: 8,
+  },
+  discount: {
+    fontSize: 18,
+    color: '#26a541',
   },
 });
 
