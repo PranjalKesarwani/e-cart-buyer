@@ -78,11 +78,20 @@ export const HomeLevel2Cats: React.FC<Props> = ({
   const H_LIST_PADDING_HORIZONTAL = 12; // horizontalWrap paddingHorizontal
 
   // preview items + SEE_ALL sentinel appended so See All scrolls as last item
+  // const previewItems = useMemo(() => {
+  //   const slice = level2Cats.slice(0, previewCount);
+  //   // append a sentinel object for see-all
+  //   return [...slice, {_id: 'SEE_ALL', name: 'See all', image: ''} as any];
+  // }, [level2Cats, previewCount]);
+
   const previewItems = useMemo(() => {
     const slice = level2Cats.slice(0, previewCount);
-    // append a sentinel object for see-all
-    return [...slice, {_id: 'SEE_ALL', name: 'See all', image: ''} as any];
-  }, [level2Cats, previewCount]);
+    if (showSeeAll) {
+      return [...slice, {_id: 'SEE_ALL', name: 'See all', image: ''} as any];
+    } else {
+      return level2Cats;
+    }
+  }, [level2Cats, previewCount, showSeeAll]);
 
   const flatRef = useRef<RNFlatList<TCategory> | null>(null);
 
