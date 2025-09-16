@@ -22,6 +22,7 @@ import {goBack, navigate} from '../../navigation/navigationService';
 import Header from '../../components/common/Header';
 import {HomeLevel2Cats} from '../HomeScreen/HomeLevel2Cats';
 import {getHomeCats} from '../../services/apiService';
+import SearchBar from '../../components/common/SearchBar';
 
 type ShopListProps = NativeStackScreenProps<
   RootStackParamList,
@@ -51,7 +52,7 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
   const [homeSecondLevelCats, setHomeSecondLevelCats] = useState<TCategory[]>(
     [],
   );
-  const dispatch = useDispatch();
+  const [search, setSearch] = useState<string>('');
 
   const getShops = async () => {
     try {
@@ -77,14 +78,7 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
     }
   };
 
-  const goToShopScreen = (shop: TShop) => {
-    dispatch(setSelectedShop(shop));
-    navigation.navigate('ShopScreen', {shop});
-  };
-
   const handleCardPress = (item: any) => {
-    console.log('Pressed---->>>>xxxx', item);
-    // navigation.navigate('ShopListScreen', {category: item});
     navigate('ShopListScreen', {category: item});
   };
 
@@ -97,13 +91,19 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
     <View style={styles.screenContainer}>
       {/* Navigation Header */}
 
-      <Header title="Your Shops" onBack={() => goBack()} />
-
-      <HomeLevel2Cats
-        level2Cats={homeSecondLevelCats}
-        previewCount={12}
-        onCategoryPress={handleCardPress}
+      <Header
+        title="Your Shops"
+        onBack={() => goBack()}
+        centerComponent={<SearchBar containerStyle={{width: '100%'}} />}
       />
+
+      <View style={{width: '100%', backgroundColor: '#fff'}}>
+        <HomeLevel2Cats
+          level2Cats={homeSecondLevelCats}
+          previewCount={12}
+          onCategoryPress={handleCardPress}
+        />
+      </View>
 
       {/* Main Content */}
 

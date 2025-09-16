@@ -203,8 +203,6 @@ const HomeScreen = ({navigation}: HomeProps) => {
   }, []);
 
   const handleCardPress = (item: any) => {
-    console.log('Pressed---->>>>xxxx', item);
-    // navigation.navigate('ShopListScreen', {category: item});
     navigate('ShopListScreen', {category: item});
   };
 
