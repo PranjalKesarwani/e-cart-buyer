@@ -230,7 +230,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
 
   const renderParentRow = useCallback(({item: parent}: {item: TParentCat}) => {
     return (
-      <View style={styles.parentContainer}>
+      <View style={[styles.parentContainer]}>
         <TouchableOpacity
           activeOpacity={0.85}
           onPress={() => console.log('Parent tapped', parent._id)}
@@ -361,7 +361,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
         <HomeLevel2Cats
           level2Cats={homeSecondLevelCats}
           previewCount={12}
-          onCategoryPress={handleLevel2CategoryPress}
+          onCategoryPress={handleCardPress}
         />
 
         {/* Banner carousel */}
