@@ -35,12 +35,14 @@ type Props = {
   // number to show in the horizontal list before 'See all' button
   previewCount?: number; // default 12
   onCategoryPress?: (cat: TCategory) => void;
+  activeCat?: string;
 };
 
 export const HomeLevel2Cats: React.FC<Props> = ({
   level2Cats,
   previewCount = 12,
   onCategoryPress,
+  activeCat = '6855925dee70eda45ca5a1d4',
 }) => {
   const [sheetVisible, setSheetVisible] = useState(false);
   const animatedY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
@@ -109,6 +111,7 @@ export const HomeLevel2Cats: React.FC<Props> = ({
           </TouchableOpacity>
         );
       }
+      const isActive = !!activeCat && item._id === activeCat;
 
       return (
         <TouchableOpacity
@@ -118,9 +121,12 @@ export const HomeLevel2Cats: React.FC<Props> = ({
           accessibilityRole="button"
           accessibilityLabel={`Open ${item.name} category`}>
           <Image source={{uri: item.image}} style={styles.previewImage} />
-          <Text numberOfLines={1} style={styles.previewText}>
+          <Text
+            numberOfLines={1}
+            style={[styles.previewText, isActive && styles.previewTextActive]}>
             {item.name}
           </Text>
+          {isActive ? <View style={styles.activeIndicator} /> : null}
         </TouchableOpacity>
       );
     },
@@ -314,5 +320,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
     color: '#222',
+  },
+  previewTextActive: {
+    color: Theme.colors.primary,
+    fontWeight: '600',
+  },
+
+  // small underline indicator (Zomato-like)
+  activeIndicator: {
+    marginTop: 6,
+    width: '100%',
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: Theme.colors.primary,
   },
 });
