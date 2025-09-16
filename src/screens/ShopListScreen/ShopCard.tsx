@@ -1,14 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
   Image,
-  FlatList,
   Dimensions,
 } from 'react-native';
 import Icons from 'react-native-vector-icons/AntDesign';
+import LinearGradient from 'react-native-linear-gradient';
 import {Theme} from '../../theme/theme';
 import {TShop} from '../../types';
 import {useAppDispatch} from '../../redux/hooks';
@@ -16,29 +16,33 @@ import {setSelectedShop} from '../../redux/slices/buyerSlice';
 import {navigate} from '../../navigation/navigationService';
 
 const {width} = Dimensions.get('window');
-const CARD_MARGIN = 10;
-const CARD_WIDTH = width - 30 - CARD_MARGIN; // 15 padding on each side
+const CARD_MARGIN = 14;
+const CARD_WIDTH = width - 32; // consistent padding from screen edges
 
 const ShopCard = ({item}: {item: TShop}) => {
   const dispatch = useAppDispatch();
+
+  const goToShopScreen = () => {
+    dispatch(setSelectedShop(item));
+    navigate('ShopScreen', {shop: item});
+  };
+
   return (
     <TouchableOpacity
-      style={[styles.shopCard, {width: CARD_WIDTH}, Theme.showBorder]}
-      onPress={() => {
-        // goToShopScreen(item);
-        dispatch(setSelectedShop(item));
-        navigate('ShopScreen', {shop: item});
-      }}
-      activeOpacity={0.9}>
-      {/* Image Container */}
+      style={[styles.shopCard]}
+      activeOpacity={0.92}
+      onPress={() => goToShopScreen()}>
+      {/* Image */}
       <View style={styles.shopImageContainer}>
-        <Image
-          resizeMode="cover"
-          source={{uri: item.shopPic}}
-          style={styles.shopImage}
+        <Image source={{uri: item.shopPic}} style={styles.shopImage} />
+
+        {/* Gradient overlay for readability */}
+        <LinearGradient
+          colors={['rgba(0,0,0,0.0)', 'rgba(0,0,0,0.55)']}
+          style={styles.imageOverlay}
         />
 
-        {/* Top Badges */}
+        {/* Distance + Favorite */}
         <View style={styles.topBadgeContainer}>
           <View style={styles.distanceBadge}>
             <Icons name="enviromento" size={14} color="#fff" />
@@ -50,22 +54,24 @@ const ShopCard = ({item}: {item: TShop}) => {
         </View>
       </View>
 
-      {/* Shop Info */}
+      {/* Info */}
       <View style={styles.shopInfoContainer}>
-        <View>
+        <View style={{flex: 1}}>
           <Text style={styles.shopName} numberOfLines={1}>
             {item.shopName}
           </Text>
-          <View style={styles.ratingContainer}>
-            <Icons name="star" size={14} color="#FFC107" />
-            <Text style={styles.ratingText}>4.8</Text>
-            <Text style={styles.ratingCount}>(238)</Text>
-          </View>
-          <Text style={styles.categoryTag}>Café • Bakery • ₪₪</Text>
+          <Text style={styles.shopDescription} numberOfLines={2}>
+            {item.titleMsg || 'No description available'}
+          </Text>
+          <Text style={styles.shopDescription} numberOfLines={2}>
+            {'Location details not found!'}
+          </Text>
         </View>
-        <View style={styles.actionButton}>
-          <Icons name="arrowright" size={20} color="#333" />
-        </View>
+        <TouchableOpacity
+          onPress={() => goToShopScreen()}
+          style={styles.actionButton}>
+          <Icons name="arrowright" size={20} color={Theme.colors.text} />
+        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
@@ -73,28 +79,29 @@ const ShopCard = ({item}: {item: TShop}) => {
 
 const styles = StyleSheet.create({
   shopCard: {
+    width: '100%',
     backgroundColor: '#fff',
-    marginBottom: CARD_MARGIN,
     borderRadius: 16,
+    marginBottom: CARD_MARGIN,
     overflow: 'hidden',
-    elevation: 4,
+    alignSelf: 'center',
+    elevation: 3,
     shadowColor: '#000',
     shadowOpacity: 0.08,
-    shadowOffset: {width: 0, height: 6},
-    shadowRadius: 16,
-    transform: [{scale: 1}],
+    shadowOffset: {width: 0, height: 4},
+    shadowRadius: 10,
   },
   shopImageContainer: {
     width: '100%',
     height: 180,
     position: 'relative',
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    overflow: 'hidden',
   },
   shopImage: {
     width: '100%',
     height: '100%',
+  },
+  imageOverlay: {
+    ...StyleSheet.absoluteFillObject,
   },
   topBadgeContainer: {
     position: 'absolute',
@@ -108,63 +115,48 @@ const styles = StyleSheet.create({
   distanceBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    backgroundColor: 'rgba(0,0,0,0.65)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: 20,
-    gap: 4,
   },
   distanceText: {
     color: '#fff',
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '600',
-    letterSpacing: 0.2,
+    marginLeft: 4,
   },
   favoriteButton: {
-    padding: 8,
-    backgroundColor: 'rgba(0,0,0,0.7)',
+    padding: 6,
+    backgroundColor: 'rgba(0,0,0,0.65)',
     borderRadius: 20,
   },
   shopInfoContainer: {
-    padding: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
   },
   shopName: {
     fontSize: 17,
-    fontWeight: '600',
-    color: '#1A1A1A',
+    fontWeight: '700',
+    color: Theme.colors.text,
     marginBottom: 4,
-    letterSpacing: -0.2,
+    letterSpacing: -0.3,
   },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginBottom: 8,
-  },
-  ratingText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#666',
-  },
-  ratingCount: {
+  shopDescription: {
     fontSize: 13,
-    color: '#999',
-    marginLeft: 4,
-  },
-  categoryTag: {
-    fontSize: 13,
-    color: '#666',
-    letterSpacing: -0.2,
+    color: Theme.colors.darkGray,
+    lineHeight: 18,
   },
   actionButton: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#F3F3F3',
     padding: 10,
     borderRadius: 20,
     marginLeft: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
