@@ -54,6 +54,7 @@ export const HomeLevel2Cats: React.FC<Props> = ({
 }) => {
   const [sheetVisible, setSheetVisible] = useState(false);
   const animatedY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
+  const [activeCategoryId, setActiveCategoryId] = useState<string>(activeCatId);
 
   const openSheet = useCallback(() => {
     setSheetVisible(true);
@@ -76,13 +77,6 @@ export const HomeLevel2Cats: React.FC<Props> = ({
   const ITEM_WIDTH = 84; // previewItem width from styles
   const ITEM_SEPARATOR = 8; // separator width used in FlatList
   const H_LIST_PADDING_HORIZONTAL = 12; // horizontalWrap paddingHorizontal
-
-  // preview items + SEE_ALL sentinel appended so See All scrolls as last item
-  // const previewItems = useMemo(() => {
-  //   const slice = level2Cats.slice(0, previewCount);
-  //   // append a sentinel object for see-all
-  //   return [...slice, {_id: 'SEE_ALL', name: 'See all', image: ''} as any];
-  // }, [level2Cats, previewCount]);
 
   const previewItems = useMemo(() => {
     const slice = level2Cats.slice(0, previewCount);
@@ -126,9 +120,9 @@ export const HomeLevel2Cats: React.FC<Props> = ({
 
   useEffect(() => {
     if (!autoScrollToActive) return;
-    if (!activeCatId) return;
+    if (!activeCategoryId) return;
     // find index in previewItems (only the preview list)
-    const idx = previewItems.findIndex(it => it._id === activeCatId);
+    const idx = previewItems.findIndex(it => it._id === activeCategoryId);
     if (idx === -1) {
       // activeCatId not in preview; if showSeeAll is true we could scroll to end so user sees See all tile
       // or optionally open sheet. For now, do nothing.
@@ -141,7 +135,7 @@ export const HomeLevel2Cats: React.FC<Props> = ({
     }, 50);
 
     return () => clearTimeout(t);
-  }, [activeCatId, autoScrollToActive, previewItems, scrollToIndexSafely]);
+  }, [activeCategoryId, autoScrollToActive, previewItems, scrollToIndexSafely]);
 
   const handlePress = useCallback(
     (item: TCategory) => {
@@ -149,6 +143,7 @@ export const HomeLevel2Cats: React.FC<Props> = ({
         openSheet();
         return;
       }
+      setActiveCategoryId(item._id);
       onCategoryPress?.(item);
     },
     [onCategoryPress, openSheet],
@@ -183,7 +178,7 @@ export const HomeLevel2Cats: React.FC<Props> = ({
           </TouchableOpacity>
         );
       }
-      const isActive = !!activeCatId && item._id === activeCatId;
+      const isActive = !!activeCategoryId && item._id === activeCategoryId;
 
       return (
         <TouchableOpacity
