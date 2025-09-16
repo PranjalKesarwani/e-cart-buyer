@@ -39,6 +39,8 @@ import {HomeLevel2Cats} from './HomeLevel2Cats';
 import {BannerCarousel} from './BannerCarousel';
 import CategoryGroupsList, {TParentCat, TChildCat} from './CategoryGroupsList';
 import {navigate} from '../../navigation/navigationService';
+import ShopList from '../../components/common/ShopList';
+import ShopsFooter from './ShopsFooter';
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window');
 const HEADER_HEIGHT = Math.round(SCREEN_HEIGHT * 0.37);
@@ -424,6 +426,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
         initialNumToRender={4}
         maxToRenderPerBatch={6}
         windowSize={9}
+        ListFooterComponent={<ShopsFooter />}
       />
 
       {/* Location modal and bottom sheet components remain unchanged */}
