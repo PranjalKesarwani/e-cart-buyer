@@ -37,6 +37,7 @@ const BASE_COLORS = {
   orangeDark: '#fa8b1c',
   orangeLight: '#FF9933',
   themeColor: '',
+  error: 'red',
 };
 
 export const Theme = {
