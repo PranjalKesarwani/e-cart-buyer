@@ -203,7 +203,7 @@ const HomeScreen = ({navigation}: HomeProps) => {
   }, []);
 
   const handleCardPress = (item: any) => {
-    navigate('ShopListScreen', {category: item});
+    navigate('ShopListScreen', {category: item, activeCatId: item._id});
   };
 
   const handleAddressSelect = (address: string) => {

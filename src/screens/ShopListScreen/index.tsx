@@ -47,7 +47,7 @@ const CARD_MARGIN = 10;
 const CARD_WIDTH = width - 30 - CARD_MARGIN; // 15 padding on each side
 
 const ShopListScreen = ({route, navigation}: ShopListProps) => {
-  const {category}: any = route.params;
+  const {category, activeCatId}: any = route.params;
   const [shops, setShops] = useState<TShop[]>([]);
   const [homeSecondLevelCats, setHomeSecondLevelCats] = useState<TCategory[]>(
     [],
@@ -103,6 +103,7 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
           previewCount={12}
           onCategoryPress={handleCardPress}
           showSeeAll={false}
+          activeCatId={activeCatId}
         />
       </View>
 

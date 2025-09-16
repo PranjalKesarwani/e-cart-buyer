@@ -35,12 +35,12 @@ type Props = {
   // number to show in the horizontal list before 'See all' button
   previewCount?: number; // default 12
   onCategoryPress?: (cat: TCategory) => void;
-  activeCat?: string;
+  activeCatId?: string;
 
   /** whether to append the 'See all' tile in the preview list */
   showSeeAll?: boolean;
 
-  /** whether to automatically scroll the preview list to the activeCat */
+  /** whether to automatically scroll the preview list to the activeCatId */
   autoScrollToActive?: boolean;
 };
 
@@ -48,7 +48,7 @@ export const HomeLevel2Cats: React.FC<Props> = ({
   level2Cats,
   previewCount = 12,
   onCategoryPress,
-  activeCat = '685a1903166ab20753b96e59',
+  activeCatId = 'ALL',
   showSeeAll = true,
   autoScrollToActive = true,
 }) => {
@@ -89,7 +89,15 @@ export const HomeLevel2Cats: React.FC<Props> = ({
     if (showSeeAll) {
       return [...slice, {_id: 'SEE_ALL', name: 'See all', image: ''} as any];
     } else {
-      return level2Cats;
+      return [
+        {
+          _id: 'ALL',
+          name: 'All',
+          image:
+            'https://i.pinimg.com/736x/ce/c7/ff/cec7ff2d0134d108d5e9ae1bf51e46f7.jpg',
+        } as any,
+        ...level2Cats,
+      ];
     }
   }, [level2Cats, previewCount, showSeeAll]);
 
@@ -118,11 +126,11 @@ export const HomeLevel2Cats: React.FC<Props> = ({
 
   useEffect(() => {
     if (!autoScrollToActive) return;
-    if (!activeCat) return;
+    if (!activeCatId) return;
     // find index in previewItems (only the preview list)
-    const idx = previewItems.findIndex(it => it._id === activeCat);
+    const idx = previewItems.findIndex(it => it._id === activeCatId);
     if (idx === -1) {
-      // activeCat not in preview; if showSeeAll is true we could scroll to end so user sees See all tile
+      // activeCatId not in preview; if showSeeAll is true we could scroll to end so user sees See all tile
       // or optionally open sheet. For now, do nothing.
       return;
     }
@@ -133,7 +141,7 @@ export const HomeLevel2Cats: React.FC<Props> = ({
     }, 50);
 
     return () => clearTimeout(t);
-  }, [activeCat, autoScrollToActive, previewItems, scrollToIndexSafely]);
+  }, [activeCatId, autoScrollToActive, previewItems, scrollToIndexSafely]);
 
   const handlePress = useCallback(
     (item: TCategory) => {
@@ -175,7 +183,7 @@ export const HomeLevel2Cats: React.FC<Props> = ({
           </TouchableOpacity>
         );
       }
-      const isActive = !!activeCat && item._id === activeCat;
+      const isActive = !!activeCatId && item._id === activeCatId;
 
       return (
         <TouchableOpacity
