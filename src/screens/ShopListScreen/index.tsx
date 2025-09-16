@@ -16,6 +16,7 @@ import {apiClient} from '../../services/api';
 import {Theme} from '../../theme/theme';
 import {setSelectedShop} from '../../redux/slices/buyerSlice';
 import {useDispatch} from 'react-redux';
+import ShopCard from './ShopCard';
 
 type ShopListProps = NativeStackScreenProps<
   RootStackParamList,
@@ -28,7 +29,7 @@ const CARD_WIDTH = width - 30 - CARD_MARGIN; // 15 padding on each side
 
 const ShopListScreen = ({route, navigation}: ShopListProps) => {
   const {category}: any = route.params;
-  const [shops, setShops] = useState<any>([]);
+  const [shops, setShops] = useState<TShop[]>([]);
   const dispatch = useDispatch();
 
   const getShops = async () => {
@@ -75,48 +76,49 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
         stickyHeaderIndices={[0]}
         data={shops}
         renderItem={({item}) => (
-          <TouchableOpacity
-            style={[styles.shopCard, {width: CARD_WIDTH}]}
-            onPress={() => goToShopScreen(item)}
-            activeOpacity={0.9}>
-            {/* Image Container */}
-            <View style={styles.shopImageContainer}>
-              <Image
-                resizeMode="cover"
-                source={{uri: item.shopPic}}
-                style={styles.shopImage}
-              />
+          // <TouchableOpacity
+          //   style={[styles.shopCard, {width: CARD_WIDTH}, Theme.showBorder]}
+          //   onPress={() => goToShopScreen(item)}
+          //   activeOpacity={0.9}>
+          //   {/* Image Container */}
+          //   <View style={styles.shopImageContainer}>
+          //     <Image
+          //       resizeMode="cover"
+          //       source={{uri: item.shopPic}}
+          //       style={styles.shopImage}
+          //     />
 
-              {/* Top Badges */}
-              <View style={styles.topBadgeContainer}>
-                <View style={styles.distanceBadge}>
-                  <Icons name="enviromento" size={14} color="#fff" />
-                  <Text style={styles.distanceText}>4 km</Text>
-                </View>
-                <TouchableOpacity style={styles.favoriteButton}>
-                  <Icons name="hearto" size={18} color="#fff" />
-                </TouchableOpacity>
-              </View>
-            </View>
+          //     {/* Top Badges */}
+          //     <View style={styles.topBadgeContainer}>
+          //       <View style={styles.distanceBadge}>
+          //         <Icons name="enviromento" size={14} color="#fff" />
+          //         <Text style={styles.distanceText}>4 km</Text>
+          //       </View>
+          //       <TouchableOpacity style={styles.favoriteButton}>
+          //         <Icons name="hearto" size={18} color="#fff" />
+          //       </TouchableOpacity>
+          //     </View>
+          //   </View>
 
-            {/* Shop Info */}
-            <View style={styles.shopInfoContainer}>
-              <View>
-                <Text style={styles.shopName} numberOfLines={1}>
-                  {item.shopName}
-                </Text>
-                <View style={styles.ratingContainer}>
-                  <Icons name="star" size={14} color="#FFC107" />
-                  <Text style={styles.ratingText}>4.8</Text>
-                  <Text style={styles.ratingCount}>(238)</Text>
-                </View>
-                <Text style={styles.categoryTag}>Café • Bakery • ₪₪</Text>
-              </View>
-              <View style={styles.actionButton}>
-                <Icons name="arrowright" size={20} color="#333" />
-              </View>
-            </View>
-          </TouchableOpacity>
+          //   {/* Shop Info */}
+          //   <View style={styles.shopInfoContainer}>
+          //     <View>
+          //       <Text style={styles.shopName} numberOfLines={1}>
+          //         {item.shopName}
+          //       </Text>
+          //       <View style={styles.ratingContainer}>
+          //         <Icons name="star" size={14} color="#FFC107" />
+          //         <Text style={styles.ratingText}>4.8</Text>
+          //         <Text style={styles.ratingCount}>(238)</Text>
+          //       </View>
+          //       <Text style={styles.categoryTag}>Café • Bakery • ₪₪</Text>
+          //     </View>
+          //     <View style={styles.actionButton}>
+          //       <Icons name="arrowright" size={20} color="#333" />
+          //     </View>
+          //   </View>
+          // </TouchableOpacity>
+          <ShopCard item={item} />
         )}
         keyExtractor={(item, index) => index.toString()}
         numColumns={2}
