@@ -21,7 +21,7 @@ import ShopList from '../../components/common/ShopList';
 import {goBack, navigate} from '../../navigation/navigationService';
 import Header from '../../components/common/Header';
 import {HomeLevel2Cats} from '../HomeScreen/HomeLevel2Cats';
-import {getHomeCats} from '../../services/apiService';
+import {getHomeCats, getSecondLevelCats} from '../../services/apiService';
 import SearchBar from '../../components/common/SearchBar';
 
 type ShopListProps = NativeStackScreenProps<
@@ -69,10 +69,10 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
 
   const getGlobalCategories = async () => {
     try {
-      const res = await apiClient.get('/buyer/categories');
-      if (!res?.data.success) throw new Error(res?.data.message);
+      // const res = await apiClient.get('/buyer/categories');
+      // if (!res?.data.success) throw new Error(res?.data.message);
 
-      const {status, message, data} = await getHomeCats();
+      const {status, message, data} = await getSecondLevelCats();
       if (status) {
         setHomeSecondLevelCats(data.level2Cats);
       } else {
