@@ -145,24 +145,29 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
       </View>
 
       {/* Shop hero */}
-      <View style={styles.shopHeroWrap}>
+      <View style={[styles.shopHeroWrap]}>
         <Image
           source={{uri: shop?.shopPic || Theme.defaultImages.shop}}
           style={styles.shopImage}
           resizeMode="cover"
         />
 
-        <View style={styles.shopHeroContent}>
+        <View style={[styles.shopHeroContent]}>
           <View style={styles.shopMetaRow}>
             <Text style={styles.shopName}>{shop.shopName}</Text>
             <View style={styles.metaRight}>
               <TouchableOpacity
                 style={styles.iconCircle}
                 onPress={() => onChatPress(shop)}>
-                <Icons name="message1" size={16} color={Theme.colors.white} />
+                <Icons name="message1" size={20} color={'#44444E'} />
               </TouchableOpacity>
               <TouchableOpacity style={[styles.iconCircle, {marginLeft: 8}]}>
-                <Icons name="hearto" size={16} color={Theme.colors.white} />
+                <Icons
+                  name="heart"
+                  size={20}
+                  color={'#94969f'}
+                  style={styles.icon}
+                />
               </TouchableOpacity>
             </View>
           </View>
@@ -297,6 +302,8 @@ const styles = StyleSheet.create({
     marginTop: Theme.spacing.sm,
     marginBottom: Theme.spacing.sm,
     overflow: Platform.OS === 'android' ? 'hidden' : 'visible',
+    // borderBottomEndRadius: 8,
+    // paddingHorizontal: 8,
   },
   shopImage: {
     width: '100%',
@@ -304,6 +311,9 @@ const styles = StyleSheet.create({
   },
   shopHeroContent: {
     padding: Theme.spacing.md,
+    borderBottomRightRadius: 30,
+    borderBottomLeftRadius: 30,
+    backgroundColor: Theme.colors.lightGray,
   },
   shopMetaRow: {
     flexDirection: 'row',
@@ -322,7 +332,7 @@ const styles = StyleSheet.create({
     marginLeft: Theme.spacing.sm,
   },
   iconCircle: {
-    backgroundColor: Theme.colors.primary,
+    backgroundColor: '#fff',
     padding: 8,
     borderRadius: 20,
   },
@@ -391,5 +401,10 @@ const styles = StyleSheet.create({
   emptyText: {
     ...Theme.typography.body2,
     color: Theme.colors.gray,
+  },
+  icon: {
+    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowOffset: {width: 0, height: 1},
+    textShadowRadius: 2,
   },
 });

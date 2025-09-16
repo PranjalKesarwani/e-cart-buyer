@@ -138,7 +138,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       accessible
       accessibilityRole="search"
       accessibilityLabel={accessibilityLabel}>
-      <Icons name="search1" size={16} />
+      <Icons name="search1" size={16} color={Theme.colors.primary} />
       <TextInput
         style={[styles.input, inputStyle]}
         placeholder={placeholder}
