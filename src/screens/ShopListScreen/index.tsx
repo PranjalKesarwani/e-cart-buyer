@@ -17,11 +17,27 @@ import {Theme} from '../../theme/theme';
 import {setSelectedShop} from '../../redux/slices/buyerSlice';
 import {useDispatch} from 'react-redux';
 import ShopCard from './ShopCard';
+import ShopList from '../../components/common/ShopList';
+import {goBack, navigate} from '../../navigation/navigationService';
+import Header from '../../components/common/Header';
 
 type ShopListProps = NativeStackScreenProps<
   RootStackParamList,
   'ShopListScreen'
 >;
+type ShopListHeaderProps = {
+  title: string;
+  subtitle?: string; // optional if you want to extend later
+};
+
+const ShopListHeader: React.FC<ShopListHeaderProps> = ({title, subtitle}) => {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>{title}</Text>
+      {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+    </View>
+  );
+};
 
 const {width} = Dimensions.get('window');
 const CARD_MARGIN = 10;
@@ -55,34 +71,19 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
   return (
     <View style={styles.screenContainer}>
       {/* Navigation Header */}
-      <View style={styles.navContainer}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}>
-          <Icons name="left" size={20} color="#333" />
-          <Text style={styles.backText}>Back</Text>
-        </TouchableOpacity>
-      </View>
+
+      <Header title="Your Shops" onBack={() => goBack()} />
 
       {/* Main Content */}
-      <FlatList
+
+      <ShopList
+        endpoint={`/buyer/categories/${category.slug}/shops`}
+        queryParams={{}}
+        pageSize={12}
         ListHeaderComponent={
-          <View style={[styles.headerContainer]}>
-            <Text style={[styles.headerTitle, {textAlign: 'center'}]}>
-              {category.name}
-            </Text>
-          </View>
+          <ShopListHeader title={category.name} subtitle="Top Picks for You" />
         }
-        stickyHeaderIndices={[0]}
-        data={shops}
-        renderItem={({item}) => <ShopCard item={item} />}
-        keyExtractor={(item, index) => index.toString()}
-        numColumns={1}
-        ListEmptyComponent={
-          <Text style={styles.noShopsText}>No shops found.</Text>
-        }
-        contentContainerStyle={[styles.shopListContainer]}
-        // columnWrapperStyle={{justifyContent: 'space-between'}}
+        onShopPress={shop => navigate('ShopScreen', {shop})}
       />
     </View>
   );
@@ -137,6 +138,21 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     flexGrow: 1,
     paddingBottom: 32,
+  },
+  container: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    // backgroundColor: '#fff',
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#222',
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
   },
 });
 
