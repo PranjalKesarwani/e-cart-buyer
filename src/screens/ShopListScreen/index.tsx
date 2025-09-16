@@ -71,8 +71,11 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
       if (!res?.data.success) throw new Error(res?.data.message);
 
       const {status, message, data} = await getHomeCats();
-
-      setHomeSecondLevelCats(data.level2Cats);
+      if (status) {
+        setHomeSecondLevelCats(data.level2Cats);
+      } else {
+        showToast('error', message);
+      }
     } catch (error: any) {
       showToast('error', error.message);
     }
