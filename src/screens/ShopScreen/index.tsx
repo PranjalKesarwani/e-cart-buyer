@@ -7,8 +7,9 @@ import {
   Image,
   Dimensions,
   FlatList,
-  ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
+  Platform,
 } from 'react-native';
 import Icons from 'react-native-vector-icons/AntDesign';
 import {apiClient} from '../../services/api';
@@ -21,20 +22,25 @@ import {
   TSeller,
 } from '../../types';
 import ProductCard from '../../components/ProductCard';
+import SearchBar from '../../components/common/SearchBar';
 import {Theme} from '../../theme/theme';
 import {useAppSelector} from '../../redux/hooks';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 type ShopScreenProps = NativeStackScreenProps<RootStackParamList, 'ShopScreen'>;
 
 const {width} = Dimensions.get('window');
-const CARD_WIDTH = (width - 40) / 2 - 10;
+const CARD_WIDTH = (width - Theme.spacing.md * 2 - Theme.spacing.sm) / 2; // responsive
 
 const ShopScreen = ({route, navigation}: ShopScreenProps) => {
-  const [shopCats, setShopCats] = useState<any>([]);
-  const [products, setProducts] = useState<any>([]);
-  const [selectedCat, setSelectedCat] = useState<any>(null);
+  const insets = useSafeAreaInsets();
+  const [shopCats, setShopCats] = useState<TCategory[]>([]);
+  const [products, setProducts] = useState<TProduct[]>([]);
+  const [selectedCat, setSelectedCat] = useState<TCategory | null>(null);
   const {shop}: {shop: TShop} = route.params;
-  const {cart = [], wishlist = []} = useAppSelector(state => state.buyer);
+  const {wishlist = []} = useAppSelector(state => state.buyer);
+  const [loadingCats, setLoadingCats] = useState(false);
+  const [loadingProducts, setLoadingProducts] = useState(false);
 
   const goToProductScreen = useCallback(
     (product: TProduct, category: TCategory) => {
@@ -44,23 +50,29 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   );
 
   const getShopCats = useCallback(async () => {
+    setLoadingCats(true);
     const abortController = new AbortController();
-
     try {
       const res = await apiClient.get(`/buyer/shops/${shop._id}/categories`, {
         signal: abortController.signal,
       });
 
       if (res.data.success) {
-        const categories = res.data.categories as TCategory[];
+        const categories = (res.data.categories ?? []) as TCategory[];
         setShopCats(categories);
-        setSelectedCat(categories[0] || null);
+        setSelectedCat(prev => prev ?? categories[0] ?? null);
       }
     } catch (error: any) {
       if (!abortController.signal.aborted) {
         console.error('Error fetching categories:', error);
-        showToast('error', 'Error', error.message);
+        showToast(
+          'error',
+          'Error',
+          error.message || 'Failed to load categories',
+        );
       }
+    } finally {
+      setLoadingCats(false);
     }
 
     return () => abortController.abort();
@@ -69,25 +81,27 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   const getShopProducts = useCallback(
     async (category: TCategory | null) => {
       if (!category) return;
-
+      setLoadingProducts(true);
       const abortController = new AbortController();
 
       try {
         const res = await apiClient.get(
           `/buyer/shops/${shop._id}/categories/${category._id}/products`,
-          {
-            signal: abortController.signal,
-          },
+          {signal: abortController.signal},
         );
 
         if (res.data.success) {
-          setProducts(res.data.products as TProduct[]);
+          setProducts(res.data.products ?? []);
+        } else {
+          setProducts([]);
         }
       } catch (error: any) {
         if (!abortController.signal.aborted) {
           console.error('Error fetching products:', error);
-          showToast('error', error.message);
+          showToast('error', error.message || 'Failed to load products');
         }
+      } finally {
+        setLoadingProducts(false);
       }
 
       return () => abortController.abort();
@@ -95,137 +109,161 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
     [shop._id],
   );
 
+  // initial load
   useEffect(() => {
-    const fetchData = async () => {
-      await getShopCats();
-      if (shopCats.length > 0) {
-        getShopProducts(shopCats[0]);
-      }
-    };
-    fetchData();
-  }, [getShopCats, getShopProducts, shopCats.length]);
+    getShopCats();
+  }, [getShopCats]);
 
-  const onChatPress = (shop: TShop) => {
-    // console.log('++++++++++++++++++++', shop);
-    navigation.navigate('PersonalChatScreen', {shop});
+  // whenever selected category changes, load its products
+  useEffect(() => {
+    getShopProducts(selectedCat);
+  }, [getShopProducts, selectedCat]);
+
+  const onChatPress = (s: TShop) => {
+    navigation.navigate('PersonalChatScreen', {shop: s});
+  };
+
+  const renderHeader = () => (
+    <>
+      {/* Top header row: back + search */}
+      <View style={[styles.topHeader, {paddingTop: insets.top || 12}]}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backWrap}>
+          <Icons name="arrowleft" size={22} color={Theme.colors.darkText} />
+        </TouchableOpacity>
+
+        <View style={styles.searchWrap}>
+          <SearchBar
+            placeholder={`Search by product names`}
+            onChangeText={() => {}}
+            value={''}
+            containerStyle={{height: 40}}
+            // inputContainerStyle={{ height: 36 }}
+          />
+        </View>
+      </View>
+
+      {/* Shop hero */}
+      <View style={styles.shopHeroWrap}>
+        <Image
+          source={{uri: shop?.shopPic || Theme.defaultImages.shop}}
+          style={styles.shopImage}
+          resizeMode="cover"
+        />
+
+        <View style={styles.shopHeroContent}>
+          <View style={styles.shopMetaRow}>
+            <Text style={styles.shopName}>{shop.shopName}</Text>
+            <View style={styles.metaRight}>
+              <TouchableOpacity
+                style={styles.iconCircle}
+                onPress={() => onChatPress(shop)}>
+                <Icons name="message1" size={16} color={Theme.colors.white} />
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.iconCircle, {marginLeft: 8}]}>
+                <Icons name="hearto" size={16} color={Theme.colors.white} />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.shopSubRow}>
+            <View style={styles.infoRowSmall}>
+              <Icons name="star" size={12} color={Theme.colors.success} />
+              <Text style={styles.infoSmall}> {'4.5'} • </Text>
+            </View>
+            <Text style={styles.infoSmall}>
+              {' '}
+              {shop.shopTiming?.open} - {shop.shopTiming?.close}
+            </Text>
+          </View>
+
+          <Text numberOfLines={2} style={styles.shopTagline}>
+            {shop.titleMsg}
+          </Text>
+        </View>
+      </View>
+
+      {/* Category pills */}
+      <View style={styles.categoriesWrap}>
+        {loadingCats ? (
+          <ActivityIndicator size="small" />
+        ) : (
+          <FlatList
+            horizontal
+            data={shopCats}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoriesContainer}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                style={[
+                  styles.categoryButton,
+                  selectedCat?._id === item._id && styles.selectedCategory,
+                ]}
+                onPress={() => setSelectedCat(item)}>
+                <Text
+                  style={[
+                    styles.categoryText,
+                    selectedCat?._id === item._id &&
+                      styles.selectedCategoryText,
+                  ]}>
+                  {item.name}
+                </Text>
+              </TouchableOpacity>
+            )}
+            keyExtractor={item => item._id}
+            nestedScrollEnabled
+          />
+        )}
+      </View>
+    </>
+  );
+
+  const renderProduct = ({item}: {item: TProduct}) => {
+    const isInWishList = !!wishlist?.find(w => w.productId?._id === item._id);
+    return (
+      <View style={styles.productColumn}>
+        <ProductCard
+          product={item}
+          selectedCat={selectedCat as TCategory}
+          goToProductScreen={goToProductScreen}
+          isFavorite={isInWishList}
+          onChatPress={() => onChatPress(shop)}
+          // cardWidth={CARD_WIDTH}
+        />
+      </View>
+    );
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}>
-          <Icons name="left" size={24} color={Theme.colors.darkText} />
-        </TouchableOpacity>
-        <Text style={styles.shopTitle}>{shop.shopName}</Text>
-      </View>
-
-      {/* Main Content */}
+    <View style={[styles.container, {paddingBottom: insets.bottom || 12}]}>
       <FlatList
         data={products}
         numColumns={2}
-        ListHeaderComponent={
-          <>
-            {/* Shop Info Section */}
-            <View style={styles.shopInfoContainer}>
-              <View style={styles.shopImageContainer}>
-                <Image
-                  source={{
-                    uri: shop?.shopPic || Theme.defaultImages.shop,
-                  }}
-                  style={styles.shopImage}
-                  resizeMode="cover"
-                />
-                <View style={styles.imageOverlayIcon}>
-                  <Icons name="hearto" size={20} color={Theme.colors.white} />
-                </View>
-                <TouchableOpacity
-                  onPress={() => onChatPress(shop)}
-                  style={styles.imageOverlayIcon}>
-                  <Icons name="message1" size={20} color={Theme.colors.white} />
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.infoContainer}>
-                <View style={styles.infoRow}>
-                  <Icons
-                    name="clockcircleo"
-                    size={16}
-                    color={Theme.colors.warning}
-                  />
-                  <Text style={styles.infoText}>
-                    {shop.shopTiming.open} - {shop.shopTiming.close}
-                  </Text>
-                </View>
-                <View style={styles.infoRow}>
-                  <Icons
-                    name="enviromento"
-                    size={16}
-                    color={Theme.colors.success}
-                  />
-                  <Text style={styles.infoText}>
-                    {(shop.sellerId as TSeller)?.address?.street ?? 'N/A'},{' '}
-                    {(shop.sellerId as TSeller)?.address?.city ?? 'N/A'}
-                  </Text>
-                </View>
-                <View style={styles.infoRow}>
-                  <Icons name="play" size={16} color={Theme.colors.primary} />
-                  <Text style={styles.infoText}>{shop.titleMsg}</Text>
-                </View>
-              </View>
-            </View>
-
-            {/* Categories */}
-            <FlatList
-              horizontal
-              data={shopCats}
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.categoriesContainer}
-              renderItem={({item}) => (
-                <TouchableOpacity
-                  style={[
-                    styles.categoryButton,
-                    selectedCat?._id === item._id && styles.selectedCategory,
-                  ]}
-                  onPress={() => {
-                    setSelectedCat(item);
-                    getShopProducts(item);
-                  }}>
-                  <Text
-                    style={[
-                      styles.categoryText,
-                      selectedCat?._id === item._id &&
-                        styles.selectedCategoryText,
-                    ]}>
-                    {item.name}
-                  </Text>
-                </TouchableOpacity>
-              )}
-              keyExtractor={item => item._id}
-              nestedScrollEnabled
-            />
-          </>
-        }
+        ListHeaderComponent={renderHeader}
         columnWrapperStyle={styles.productsWrapper}
-        renderItem={({item}) => {
-          const isInWishList = !!wishlist?.find(
-            listItem => listItem.productId?._id === item._id,
-          );
-
-          return (
-            <ProductCard
-              product={item}
-              selectedCat={selectedCat}
-              goToProductScreen={goToProductScreen}
-              isFavorite={isInWishList}
-              onChatPress={() => onChatPress(shop)}
-            />
-          );
-        }}
+        renderItem={renderProduct}
         keyExtractor={item => item._id}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[
+          styles.scrollContent,
+          {
+            paddingBottom:
+              (styles.scrollContent.paddingBottom || 24) +
+              (insets.bottom || 12),
+          },
+        ]}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyWrap}>
+            {loadingProducts ? (
+              <ActivityIndicator size="large" />
+            ) : (
+              <Text style={styles.emptyText}>No products found</Text>
+            )}
+          </View>
+        )}
+        ListFooterComponent={
+          <View style={{height: Math.max(insets.bottom, 24) + 48}} />
+        }
       />
     </View>
   );
@@ -238,62 +276,89 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Theme.colors.background,
   },
-  header: {
+  topHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: Theme.spacing.md,
+    paddingHorizontal: Theme.spacing.md,
+    paddingBottom: 8,
     backgroundColor: Theme.colors.white,
     borderBottomWidth: 1,
     borderBottomColor: Theme.colors.lightGray,
   },
-  backButton: {
+  backWrap: {
+    padding: 8,
     marginRight: Theme.spacing.sm,
   },
-  shopTitle: {
-    ...Theme.typography.h5,
-    color: Theme.colors.darkText,
+  searchWrap: {
     flex: 1,
-    paddingLeft: Theme.spacing.xs,
   },
-  shopInfoContainer: {
+  shopHeroWrap: {
     backgroundColor: Theme.colors.white,
-    marginBottom: Theme.spacing.lg,
-    paddingBottom: Theme.spacing.md,
-  },
-  shopImageContainer: {
-    position: 'relative',
+    marginTop: Theme.spacing.sm,
+    marginBottom: Theme.spacing.sm,
+    overflow: Platform.OS === 'android' ? 'hidden' : 'visible',
   },
   shopImage: {
     width: '100%',
-    height: 200,
-    borderBottomLeftRadius: Theme.borderRadius.lg,
-    borderBottomRightRadius: Theme.borderRadius.lg,
+    height: 160,
   },
-  imageOverlayIcon: {
-    position: 'absolute',
-    backgroundColor: Theme.colors.overlay,
-    padding: Theme.spacing.xs,
-    borderRadius: Theme.borderRadius.full,
-    zIndex: 1,
+  shopHeroContent: {
+    padding: Theme.spacing.md,
   },
-  infoContainer: {
-    paddingHorizontal: Theme.spacing.md,
-    marginTop: Theme.spacing.md,
-  },
-  infoRow: {
+  shopMetaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Theme.spacing.sm,
+    justifyContent: 'space-between',
+    marginBottom: Theme.spacing.xs,
   },
-  infoText: {
+  shopName: {
+    ...Theme.typography.h5,
+    color: Theme.colors.darkText,
+    flex: 1,
+  },
+  metaRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: Theme.spacing.sm,
+  },
+  iconCircle: {
+    backgroundColor: Theme.colors.primary,
+    padding: 8,
+    borderRadius: 20,
+  },
+  shopSubRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Theme.spacing.xs,
+  },
+  infoRowSmall: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: Theme.spacing.sm,
+  },
+  infoSmall: {
+    ...Theme.typography.caption,
+    color: Theme.colors.gray,
+    marginLeft: 6,
+  },
+  shopTagline: {
     ...Theme.typography.body2,
     color: Theme.colors.gray,
-    marginLeft: Theme.spacing.sm,
+    marginTop: Theme.spacing.xs,
+  },
+  categoriesWrap: {
+    backgroundColor: Theme.colors.white,
+    paddingVertical: Theme.spacing.sm,
+    paddingBottom: Theme.spacing.sm,
+  },
+  categoriesContainer: {
+    paddingLeft: Theme.spacing.md,
+    paddingRight: Theme.spacing.md,
   },
   categoryButton: {
     paddingHorizontal: Theme.spacing.lg,
     paddingVertical: Theme.spacing.sm,
-    borderRadius: Theme.borderRadius.md,
+    borderRadius: 20,
     backgroundColor: Theme.colors.lightPrimary,
     marginRight: Theme.spacing.sm,
   },
@@ -313,9 +378,18 @@ const styles = StyleSheet.create({
   productsWrapper: {
     justifyContent: 'space-between',
     paddingHorizontal: Theme.spacing.md,
+    marginTop: Theme.spacing.sm,
   },
-  categoriesContainer: {
-    paddingVertical: Theme.spacing.sm,
-    paddingLeft: Theme.spacing.sm,
+  productColumn: {
+    width: CARD_WIDTH,
+    marginBottom: Theme.spacing.lg,
+  },
+  emptyWrap: {
+    padding: 32,
+    alignItems: 'center',
+  },
+  emptyText: {
+    ...Theme.typography.body2,
+    color: Theme.colors.gray,
   },
 });
