@@ -220,10 +220,11 @@ export type TShop = {
   dailyShopStatus: 'open' | 'closed';
   chosenCategories: TChosenCategory[];
   deliveryService: TDeliveryService;
-  titleMsg: string;
+  description: string;
   shopVoiceDescription: string;
   featuredCategories: string[]; // Can be ObjectIds or populated Categories
   location: TShopLocation;
+  address: IAddress;
   shopPic: string;
   createdAt: string;
   updatedAt: string;

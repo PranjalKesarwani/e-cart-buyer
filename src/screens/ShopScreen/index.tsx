@@ -172,15 +172,14 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
             </View>
           </View>
 
-          <View style={styles.shopSubRow}>
+          <View style={[styles.shopSubRow]}>
             <Text style={styles.infoSmall}>
-              {' '}
               {shop.shopTiming?.open} - {shop.shopTiming?.close}
             </Text>
           </View>
 
           <Text numberOfLines={2} style={styles.shopTagline}>
-            {shop.titleMsg}
+            {shop.description}
           </Text>
         </View>
       </View>
@@ -351,12 +350,12 @@ const styles = StyleSheet.create({
   },
   infoSmall: {
     ...Theme.typography.caption,
-    color: Theme.colors.gray,
+    color: Theme.colors.harvestGreen,
     marginLeft: 6,
   },
   shopTagline: {
     ...Theme.typography.body2,
-    color: Theme.colors.gray,
+    color: Theme.colors.primary,
     marginTop: Theme.spacing.xs,
   },
   categoriesWrap: {
