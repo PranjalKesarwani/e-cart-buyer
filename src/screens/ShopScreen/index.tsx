@@ -10,6 +10,9 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Platform,
+  ScrollView,
+  Modal,
+  Linking,
 } from 'react-native';
 import Icons from 'react-native-vector-icons/AntDesign';
 import {apiClient} from '../../services/api';
@@ -41,6 +44,17 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   const {wishlist = []} = useAppSelector(state => state.buyer);
   const [loadingCats, setLoadingCats] = useState(false);
   const [loadingProducts, setLoadingProducts] = useState(false);
+  const [sellerModalVisible, setSellerModalVisible] = useState(false);
+
+  const formattedCompleteAddress = [
+    shop?.address?.completeAddress?.trim(),
+    shop?.address?.landmark?.trim(),
+  ]
+    .filter(Boolean)
+    .join(' • ');
+
+  const sellerPhone =
+    (shop.sellerId as TSeller)?.mobile || 'Contact not available';
 
   const goToProductScreen = useCallback(
     (product: TProduct, category: TCategory) => {
@@ -145,52 +159,61 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
       </View>
 
       {/* Shop hero */}
-      <View style={[styles.shopHeroWrap]}>
+      <View style={styles.shopHeroWrap}>
+        {/* Banner image */}
         <Image
           source={{uri: shop?.shopPic || Theme.defaultImages.shop}}
           style={styles.shopImage}
           resizeMode="cover"
         />
 
-        <View style={[styles.shopHeroContent]}>
-          <View style={styles.shopMetaRow}>
-            <Text style={styles.shopName}>{shop.shopName}</Text>
-            <View style={styles.metaRight}>
-              <TouchableOpacity
-                style={styles.iconCircle}
-                onPress={() => onChatPress(shop)}>
-                <Icons name="message1" size={20} color={'#44444E'} />
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.iconCircle, {marginLeft: 8}]}>
-                <Icons
-                  name="heart"
-                  size={20}
-                  color={'#94969f'}
-                  style={styles.icon}
-                />
-              </TouchableOpacity>
+        {/* compact content area below image */}
+        <View style={styles.shopHeroContent}>
+          {/* Row: Shop name + timing */}
+          <View style={styles.heroTitleRow}>
+            <Text style={styles.shopName} numberOfLines={1}>
+              {shop.shopName}
+            </Text>
+
+            <View style={styles.timingWrap}>
+              <Icons name="clockcircle" size={14} color={Theme.colors.gray} />
+              <Text style={styles.timingText}>
+                {shop.shopTiming?.open ?? '--'} -{' '}
+                {shop.shopTiming?.close ?? '--'}
+              </Text>
             </View>
           </View>
 
-          <View style={[styles.shopSubRow]}>
-            <Icons name="clockcircle" size={16} color={Theme.colors.primary} />
-
-            <Text style={styles.infoSmall}>
-              {shop.shopTiming?.open} - {shop.shopTiming?.close}
-            </Text>
+          {/* Full description (will expand to any length) */}
+          <View style={styles.descriptionWrap}>
+            <ScrollView
+              style={{maxHeight: 220}}
+              nestedScrollEnabled
+              showsVerticalScrollIndicator={false}>
+              <Text style={styles.shopDescription}>
+                {shop.description ??
+                  shop.description ??
+                  'No description available.'}
+              </Text>
+            </ScrollView>
           </View>
 
-          <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
-            <Icons name="infocirlce" size={16} color={Theme.colors.primary} />
-            <Text numberOfLines={2} style={styles.shopTagline}>
-              {shop.description}
-            </Text>
-          </View>
-          <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+          {/* Address row */}
+          <View style={styles.addressRow}>
             <Icons name="enviromento" size={16} color={Theme.colors.primary} />
-            <Text numberOfLines={2} style={styles.shopAddress}>
-              {shop.address.completeAddress}
+            <Text style={styles.shopAddress} numberOfLines={2}>
+              {formattedCompleteAddress || 'Address not available'}
             </Text>
+          </View>
+
+          {/* Seller details CTA (opens modal) */}
+          <View style={styles.sellerCtaRow}>
+            <TouchableOpacity
+              style={styles.sellerCta}
+              onPress={() => setSellerModalVisible(true)}
+              activeOpacity={0.8}>
+              <Text style={styles.sellerCtaText}>Show seller details</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -276,6 +299,59 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
           <View style={{height: Math.max(insets.bottom, 24) + 48}} />
         }
       />
+
+      {/* Seller Details Modal */}
+      <Modal
+        visible={sellerModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setSellerModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Seller details</Text>
+              <TouchableOpacity onPress={() => setSellerModalVisible(false)}>
+                <Icons name="close" size={20} color={Theme.colors.gray} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.modalBody}>
+              <Image
+                source={{uri: Theme.defaultImages.avatar}}
+                style={styles.modalAvatar}
+              />
+              <Text style={styles.modalSellerName}>
+                {(shop.sellerId as TSeller)?.sellerName}
+              </Text>
+
+              <Text style={styles.modalLabel}>Mobile</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  if (!sellerPhone) return;
+                  Linking.openURL(`tel:${sellerPhone}`).catch(() => {
+                    showToast('error', 'Unable to place call');
+                  });
+                }}
+                disabled={!sellerPhone}>
+                <Text
+                  style={[
+                    styles.modalPhone,
+                    !sellerPhone && {color: Theme.colors.gray},
+                  ]}>
+                  {sellerPhone || 'Not available'}
+                </Text>
+              </TouchableOpacity>
+
+              {/* optional: close button */}
+              <TouchableOpacity
+                style={styles.modalCloseBtn}
+                onPress={() => setSellerModalVisible(false)}>
+                <Text style={styles.modalCloseText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -369,11 +445,11 @@ const styles = StyleSheet.create({
     color: Theme.colors.darkText,
     marginTop: Theme.spacing.xs,
   },
-  shopAddress: {
-    ...Theme.typography.body2,
-    color: Theme.colors.darkText,
-    marginTop: Theme.spacing.xs,
-  },
+  // shopAddress: {
+  //   ...Theme.typography.body2,
+  //   color: Theme.colors.darkText,
+  //   marginTop: Theme.spacing.xs,
+  // },
   categoriesWrap: {
     backgroundColor: Theme.colors.white,
     paddingVertical: Theme.spacing.sm,
@@ -424,5 +500,129 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.1)',
     textShadowOffset: {width: 0, height: 1},
     textShadowRadius: 2,
+  },
+  heroTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  timingWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.04)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginLeft: 8,
+  },
+  timingText: {
+    ...Theme.typography.caption,
+    color: Theme.colors.gray,
+    marginLeft: 6,
+  },
+
+  descriptionWrap: {
+    marginTop: Theme.spacing.xs,
+    marginBottom: Theme.spacing.xs,
+  },
+
+  shopDescription: {
+    ...Theme.typography.body2,
+    color: Theme.colors.darkText,
+    lineHeight: 20,
+  },
+
+  addressRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginTop: Theme.spacing.xs,
+    gap: 8,
+  },
+  shopAddress: {
+    ...Theme.typography.body2,
+    color: Theme.colors.darkText,
+    marginLeft: 8,
+    flex: 1,
+  },
+
+  sellerCtaRow: {
+    marginTop: Theme.spacing.md,
+    alignItems: 'flex-start',
+  },
+  sellerCta: {
+    backgroundColor: Theme.colors.primary,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  sellerCtaText: {
+    color: '#fff',
+    fontWeight: '700',
+    ...Theme.typography.button,
+  },
+
+  /* Modal styles */
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalCard: {
+    backgroundColor: Theme.colors.white,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    padding: Theme.spacing.md,
+    maxHeight: '60%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Theme.spacing.sm,
+  },
+  modalTitle: {
+    ...Theme.typography.h5,
+    color: Theme.colors.darkText,
+  },
+  modalBody: {
+    alignItems: 'center',
+    paddingTop: Theme.spacing.sm,
+  },
+  modalAvatar: {
+    width: 84,
+    height: 84,
+    borderRadius: 42,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.06)',
+    marginBottom: Theme.spacing.sm,
+  },
+  modalSellerName: {
+    ...Theme.typography.h5,
+    fontWeight: '700',
+    color: Theme.colors.darkText,
+    marginBottom: Theme.spacing.xs,
+  },
+  modalLabel: {
+    ...Theme.typography.caption,
+    color: Theme.colors.gray,
+    marginTop: Theme.spacing.sm,
+  },
+  modalPhone: {
+    ...Theme.typography.body1,
+    color: Theme.colors.primary,
+    fontWeight: '700',
+    marginTop: 6,
+  },
+  modalCloseBtn: {
+    marginTop: Theme.spacing.md,
+    backgroundColor: Theme.colors.lightPrimary,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 12,
+  },
+  modalCloseText: {
+    ...Theme.typography.button,
+    color: Theme.colors.darkText,
+    fontWeight: '700',
   },
 });
