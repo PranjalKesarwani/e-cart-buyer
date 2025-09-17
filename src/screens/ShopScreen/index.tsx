@@ -173,14 +173,25 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
           </View>
 
           <View style={[styles.shopSubRow]}>
+            <Icons name="clockcircle" size={16} color={Theme.colors.primary} />
+
             <Text style={styles.infoSmall}>
               {shop.shopTiming?.open} - {shop.shopTiming?.close}
             </Text>
           </View>
 
-          <Text numberOfLines={2} style={styles.shopTagline}>
-            {shop.description}
-          </Text>
+          <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+            <Icons name="infocirlce" size={16} color={Theme.colors.primary} />
+            <Text numberOfLines={2} style={styles.shopTagline}>
+              {shop.description}
+            </Text>
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+            <Icons name="enviromento" size={16} color={Theme.colors.primary} />
+            <Text numberOfLines={2} style={styles.shopAddress}>
+              {shop.address.completeAddress}
+            </Text>
+          </View>
         </View>
       </View>
 
@@ -355,7 +366,12 @@ const styles = StyleSheet.create({
   },
   shopTagline: {
     ...Theme.typography.body2,
-    color: Theme.colors.primary,
+    color: Theme.colors.darkText,
+    marginTop: Theme.spacing.xs,
+  },
+  shopAddress: {
+    ...Theme.typography.body2,
+    color: Theme.colors.darkText,
     marginTop: Theme.spacing.xs,
   },
   categoriesWrap: {
