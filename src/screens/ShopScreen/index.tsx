@@ -173,10 +173,6 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
           </View>
 
           <View style={styles.shopSubRow}>
-            <View style={styles.infoRowSmall}>
-              <Icons name="star" size={12} color={Theme.colors.success} />
-              <Text style={styles.infoSmall}> {'4.5'} • </Text>
-            </View>
             <Text style={styles.infoSmall}>
               {' '}
               {shop.shopTiming?.open} - {shop.shopTiming?.close}
@@ -298,22 +294,29 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   shopHeroWrap: {
-    backgroundColor: Theme.colors.white,
+    // backgroundColor: Theme.colors.white,
     marginTop: Theme.spacing.sm,
-    marginBottom: Theme.spacing.sm,
+    marginBottom: 20,
     overflow: Platform.OS === 'android' ? 'hidden' : 'visible',
     // borderBottomEndRadius: 8,
     // paddingHorizontal: 8,
   },
   shopImage: {
     width: '100%',
-    height: 160,
+    height: 180,
   },
   shopHeroContent: {
-    padding: Theme.spacing.md,
-    borderBottomRightRadius: 30,
-    borderBottomLeftRadius: 30,
-    backgroundColor: Theme.colors.lightGray,
+    // padding: Theme.spacing.md,
+    paddingHorizontal: Theme.spacing.md,
+    paddingVertical: Theme.spacing.sm,
+    borderBottomRightRadius: 15,
+    borderBottomLeftRadius: 15,
+    backgroundColor: Theme.colors.white,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 2,
   },
   shopMetaRow: {
     flexDirection: 'row',
