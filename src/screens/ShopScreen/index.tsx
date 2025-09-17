@@ -166,6 +166,23 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
           style={styles.shopImage}
           resizeMode="cover"
         />
+        <View
+          style={[
+            styles.shopStatusCapsule,
+            shop.dailyShopStatus === 'closed'
+              ? styles.closedCapsule
+              : styles.openCapsule,
+          ]}>
+          <Text
+            style={[
+              styles.shopStatusText,
+              shop.dailyShopStatus === 'closed'
+                ? styles.closedText
+                : styles.openText,
+            ]}>
+            Currently {shop.dailyShopStatus === 'closed' ? 'Closed' : 'Open'}
+          </Text>
+        </View>
 
         {/* compact content area below image */}
         <View style={styles.shopHeroContent}>
@@ -386,6 +403,7 @@ const styles = StyleSheet.create({
     overflow: Platform.OS === 'android' ? 'hidden' : 'visible',
     // borderBottomEndRadius: 8,
     // paddingHorizontal: 8,
+    position: 'relative',
   },
   shopImage: {
     width: '100%',
@@ -624,5 +642,39 @@ const styles = StyleSheet.create({
     ...Theme.typography.button,
     color: Theme.colors.darkText,
     fontWeight: '700',
+  },
+  shopStatusCapsule: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 999, // ensures pill shape
+    borderWidth: 1.5,
+  },
+
+  // OPEN styles
+  openCapsule: {
+    backgroundColor: 'rgba(56, 147, 0, 0.5)', // light translucent green
+    borderColor: '#389300', // solid green border
+  },
+  openText: {
+    color: '#fff', // darker green for readability
+    fontWeight: '700',
+    fontSize: 12,
+  },
+
+  // CLOSED styles
+  closedCapsule: {
+    backgroundColor: 'rgba(200, 0, 0, 0.5)', // light translucent red
+    borderColor: '#b00020', // solid dark red border
+  },
+  closedText: {
+    color: '#fff', // dark red text
+    fontWeight: '700',
+    fontSize: 12,
+  },
+  shopStatusText: {
+    color: '#fff',
   },
 });
