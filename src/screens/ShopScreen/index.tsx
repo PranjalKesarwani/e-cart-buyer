@@ -167,24 +167,6 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
         />
 
         {/* Large status banner — prominent */}
-        <View
-          style={[
-            styles.statusBanner,
-            shop.dailyShopStatus === 'closed'
-              ? styles.closedBanner
-              : styles.openBanner,
-          ]}>
-          {/* optional badge: delivery / offer */}
-          <View style={styles.statusRight}>
-            <Text style={styles.statusLabel}>
-              {shop.dailyShopStatus === 'closed' ? 'Closed' : 'Open now'}
-            </Text>
-            {/* small supporting text: next open/close time if available */}
-            <Text style={styles.statusSubText}>
-              ({shop.shopTiming.open} - {shop.shopTiming.close})
-            </Text>
-          </View>
-        </View>
 
         {/* compact content area below image */}
         <View style={styles.shopHeroContent}>
@@ -271,23 +253,30 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.primaryActionBtn]}
-              onPress={() => {
-                // jump to products or open shop
-                setSelectedCat(null);
-              }}>
-              <Text style={styles.primaryActionText}>Browse Products</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Seller details CTA (secondary) */}
-          <View style={styles.sellerCtaRow}>
-            <TouchableOpacity
-              style={styles.sellerCta}
+              style={styles.sellerCtaDetails}
               onPress={() => setSellerModalVisible(true)}
               activeOpacity={0.8}>
               <Text style={styles.sellerCtaText}>Show seller details</Text>
             </TouchableOpacity>
+          </View>
+
+          {/* Seller details CTA (secondary) */}
+          <View style={[styles.sellerCtaRow]}>
+            <View
+              style={[
+                styles.sellerCta,
+                shop.dailyShopStatus === 'closed' && {
+                  backgroundColor: Theme.colors.red,
+                },
+              ]}>
+              <Text style={styles.statusLabel}>
+                {shop.dailyShopStatus === 'closed' ? 'Closed' : 'Open now'}
+              </Text>
+              {/* small supporting text: next open/close time if available */}
+              <Text style={styles.statusSubText}>
+                ({shop.shopTiming.open} - {shop.shopTiming.close})
+              </Text>
+            </View>
           </View>
         </View>
       </View>
@@ -622,13 +611,26 @@ const styles = StyleSheet.create({
 
   sellerCtaRow: {
     marginTop: Theme.spacing.md,
-    alignItems: 'flex-start',
+    // alignItems: 'flex-start',
+    width: '100%',
+    flex: 1,
   },
   sellerCta: {
     backgroundColor: Theme.colors.primary,
     paddingHorizontal: 14,
     paddingVertical: 8,
-    borderRadius: 20,
+    borderBottomEndRadius: 15,
+    borderBottomLeftRadius: 15,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  sellerCtaDetails: {
+    backgroundColor: Theme.colors.primary,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 12,
   },
   sellerCtaText: {
     color: '#fff',
@@ -765,7 +767,7 @@ const styles = StyleSheet.create({
   },
   statusSubText: {
     color: 'rgba(255,255,255,0.9)',
-    fontSize: 12,
+    fontSize: 13,
     marginTop: 2,
     marginLeft: 5,
     fontWeight: '500',
