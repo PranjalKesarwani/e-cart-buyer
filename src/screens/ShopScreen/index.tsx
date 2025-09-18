@@ -174,30 +174,16 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
               ? styles.closedBanner
               : styles.openBanner,
           ]}>
-          <View style={styles.statusLeft}>
+          {/* optional badge: delivery / offer */}
+          <View style={styles.statusRight}>
             <Text style={styles.statusLabel}>
               {shop.dailyShopStatus === 'closed' ? 'Closed' : 'Open now'}
             </Text>
             {/* small supporting text: next open/close time if available */}
-            {/* <Text style={styles.statusSubText}>
-              {shop.dailyShopStatus === 'closed'
-                ? shop.nextOpeningTime
-                  ? `Opens at ${shop.nextOpeningTime}`
-                  : 'Opens soon'
-                : shop.shopTiming?.close
-                ? `Closes at ${shop.shopTiming.close}`
-                : ''}
-            </Text> */}
+            <Text style={styles.statusSubText}>
+              ({shop.shopTiming.open} - {shop.shopTiming.close})
+            </Text>
           </View>
-
-          {/* optional badge: delivery / offer */}
-          {/* <View style={styles.statusRight}>
-            {shop.hasOffer && (
-              <View style={styles.offerBadge}>
-                <Text style={styles.offerText}>{shop.offerText || 'Offer'}</Text>
-              </View>
-            )}
-          </View> */}
         </View>
 
         {/* compact content area below image */}
@@ -781,6 +767,8 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.9)',
     fontSize: 12,
     marginTop: 2,
+    marginLeft: 5,
+    fontWeight: '500',
   },
   statusRight: {flexDirection: 'row', alignItems: 'center'},
   offerBadge: {
