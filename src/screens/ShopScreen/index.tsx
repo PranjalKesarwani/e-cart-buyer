@@ -143,79 +143,101 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
       <View style={[styles.topHeader, {paddingTop: insets.top || 12}]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          style={styles.backWrap}>
+          style={styles.backWrap}
+          accessibilityLabel="Go back">
           <Icons name="arrowleft" size={22} color={Theme.colors.darkText} />
         </TouchableOpacity>
 
         <View style={styles.searchWrap}>
           <SearchBar
-            placeholder={`Search by product names`}
+            placeholder="Search by product names"
             onChangeText={() => {}}
             value={''}
             containerStyle={{height: 40}}
-            // inputContainerStyle={{ height: 36 }}
           />
         </View>
       </View>
 
       {/* Shop hero */}
       <View style={styles.shopHeroWrap}>
-        {/* Banner image */}
         <Image
           source={{uri: shop?.shopPic || Theme.defaultImages.shop}}
           style={styles.shopImage}
           resizeMode="cover"
         />
+
+        {/* Large status banner — prominent */}
         <View
           style={[
-            styles.shopStatusCapsule,
+            styles.statusBanner,
             shop.dailyShopStatus === 'closed'
-              ? styles.closedCapsule
-              : styles.openCapsule,
+              ? styles.closedBanner
+              : styles.openBanner,
           ]}>
-          <Text
-            style={[
-              styles.shopStatusText,
-              shop.dailyShopStatus === 'closed'
-                ? styles.closedText
-                : styles.openText,
-            ]}>
-            Currently {shop.dailyShopStatus === 'closed' ? 'Closed' : 'Open'}
-          </Text>
+          <View style={styles.statusLeft}>
+            <Text style={styles.statusLabel}>
+              {shop.dailyShopStatus === 'closed' ? 'Closed' : 'Open now'}
+            </Text>
+            {/* small supporting text: next open/close time if available */}
+            {/* <Text style={styles.statusSubText}>
+              {shop.dailyShopStatus === 'closed'
+                ? shop.nextOpeningTime
+                  ? `Opens at ${shop.nextOpeningTime}`
+                  : 'Opens soon'
+                : shop.shopTiming?.close
+                ? `Closes at ${shop.shopTiming.close}`
+                : ''}
+            </Text> */}
+          </View>
+
+          {/* optional badge: delivery / offer */}
+          {/* <View style={styles.statusRight}>
+            {shop.hasOffer && (
+              <View style={styles.offerBadge}>
+                <Text style={styles.offerText}>{shop.offerText || 'Offer'}</Text>
+              </View>
+            )}
+          </View> */}
         </View>
 
         {/* compact content area below image */}
         <View style={styles.shopHeroContent}>
-          {/* Row: Shop name + timing */}
           <View style={styles.heroTitleRow}>
-            <Text style={styles.shopName} numberOfLines={1}>
-              {shop.shopName}
-            </Text>
-
-            <View style={styles.timingWrap}>
-              <Icons name="clockcircle" size={14} color={Theme.colors.gray} />
-              <Text style={styles.timingText}>
-                {shop.shopTiming?.open ?? '--'} -{' '}
-                {shop.shopTiming?.close ?? '--'}
+            <View style={{flex: 1}}>
+              <Text style={styles.shopName} numberOfLines={2}>
+                {shop.shopName}
               </Text>
+
+              <View style={styles.smallMetaRow}>
+                {shop.minPurchaseAmounts.length > 0 && (
+                  <View style={styles.metaItem}>
+                    <Icons name="wallet" size={12} color={Theme.colors.gray} />
+                    {shop.minPurchaseAmounts[0].deliveryType != 'self' ? (
+                      <Text
+                        style={
+                          styles.metaText
+                        }>{`Min Delivery ₹${shop.minPurchaseAmounts[0].amount}`}</Text>
+                    ) : (
+                      <Text style={styles.metaText}> No Delivery</Text>
+                    )}
+                  </View>
+                )}
+              </View>
             </View>
+
+            {/* compact profile/avatar */}
+            <Image
+              source={{uri: Theme.defaultImages.avatar}}
+              style={styles.sellerAvatar}
+            />
           </View>
 
-          {/* Full description (will expand to any length) */}
           <View style={styles.descriptionWrap}>
-            <ScrollView
-              style={{maxHeight: 220}}
-              nestedScrollEnabled
-              showsVerticalScrollIndicator={false}>
-              <Text style={styles.shopDescription}>
-                {shop.description ??
-                  shop.description ??
-                  'No description available.'}
-              </Text>
-            </ScrollView>
+            <Text style={styles.shopDescription} numberOfLines={4}>
+              {shop.description ?? 'No description available.'}
+            </Text>
           </View>
 
-          {/* Address row */}
           <View style={styles.addressRow}>
             <Icons name="enviromento" size={16} color={Theme.colors.primary} />
             <Text style={styles.shopAddress} numberOfLines={2}>
@@ -223,7 +245,56 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
             </Text>
           </View>
 
-          {/* Seller details CTA (opens modal) */}
+          {/* Action row (Call / Directions / Menu) */}
+          <View style={styles.actionRow}>
+            <TouchableOpacity
+              style={[styles.actionBtn, {borderColor: Theme.colors.primary}]}
+              onPress={() => Linking.openURL('tel:+919982520785')}
+              activeOpacity={0.8}>
+              <Icons name="phone" size={16} color={Theme.colors.primary} />
+              <Text style={[styles.actionText, {color: Theme.colors.primary}]}>
+                Call
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.actionBtn, {borderColor: Theme.colors.primary}]}
+              onPress={() => {
+                const lat = shop.address.location?.coordinates?.[1]; // assuming GeoJSON [lng, lat]
+                const lng = shop.address.location?.coordinates?.[0];
+
+                if (lat && lng) {
+                  const url =
+                    Platform.OS === 'ios'
+                      ? `http://maps.apple.com/?ll=${lat},${lng}`
+                      : `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+
+                  Linking.openURL(url);
+                } else {
+                  // fallback to address if coords missing
+                  Linking.openURL(
+                    `https://maps.google.com/?q=${encodeURIComponent(
+                      formattedCompleteAddress || '',
+                    )}`,
+                  );
+                }
+              }}
+              activeOpacity={0.8}>
+              <Icons name="retweet" size={16} color={Theme.colors.primary} />
+              <Text style={[styles.actionText, {color: Theme.colors.primary}]}>
+                Directions
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.primaryActionBtn]}
+              onPress={() => {
+                // jump to products or open shop
+                setSelectedCat(null);
+              }}>
+              <Text style={styles.primaryActionText}>Browse Products</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Seller details CTA (secondary) */}
           <View style={styles.sellerCtaRow}>
             <TouchableOpacity
               style={styles.sellerCta}
@@ -235,7 +306,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
         </View>
       </View>
 
-      {/* Category pills */}
+      {/* Category pills (unchanged but kept visually below hero) */}
       <View style={styles.categoriesWrap}>
         {loadingCats ? (
           <ActivityIndicator size="small" />
@@ -676,5 +747,97 @@ const styles = StyleSheet.create({
   },
   shopStatusText: {
     color: '#fff',
+  },
+  statusBanner: {
+    position: 'absolute',
+    left: 12,
+    right: 12,
+    top: 12,
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowOffset: {width: 0, height: 2},
+    shadowRadius: 6,
+  },
+  openBanner: {
+    backgroundColor: Theme.colors.primary,
+  },
+  closedBanner: {
+    backgroundColor: '#b00020', // keep your closed color
+  },
+  statusLeft: {flexDirection: 'column'},
+  statusLabel: {
+    color: '#fff',
+    fontWeight: '800',
+    fontSize: 14,
+  },
+  statusSubText: {
+    color: 'rgba(255,255,255,0.9)',
+    fontSize: 12,
+    marginTop: 2,
+  },
+  statusRight: {flexDirection: 'row', alignItems: 'center'},
+  offerBadge: {
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  offerText: {color: '#fff', fontWeight: '700', fontSize: 12},
+  sellerAvatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    marginLeft: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.06)',
+  },
+  smallMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 6,
+    gap: 10,
+  },
+  metaItem: {flexDirection: 'row', alignItems: 'center'},
+  metaText: {
+    ...Theme.typography.caption,
+    color: Theme.colors.gray,
+    marginLeft: 6,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: Theme.spacing.sm,
+    gap: 10,
+  },
+  actionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  actionText: {
+    marginLeft: 8,
+    ...Theme.typography.button,
+  },
+  primaryActionBtn: {
+    marginLeft: 'auto',
+    backgroundColor: Theme.colors.primary,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+  },
+  primaryActionText: {
+    color: '#fff',
+    fontWeight: '700',
+    ...Theme.typography.button,
   },
 });

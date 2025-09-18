@@ -226,6 +226,7 @@ export type TShop = {
   location: TShopLocation;
   address: IAddress;
   shopPic: string;
+  minPurchaseAmounts: {deliveryType: string; amount: number}[];
   createdAt: string;
   updatedAt: string;
 };
