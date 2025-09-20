@@ -244,7 +244,7 @@ const OrderDetailsScreen = ({navigation}: OrderDetailsScreenProps) => {
           You will save ₹{totalSavings} on this order
         </Text>
       </ScrollView>
-      <View style={[styles.addressDetail, Theme.showBorder]}>
+      <View style={[styles.addressDetail]}>
         <Text style={{padding: 16, color: '#2A2A2A'}}>
           <MaterialIcons name="info" size={16} color="black" />{' '}
           {[

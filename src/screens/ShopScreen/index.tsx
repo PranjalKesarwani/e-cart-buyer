@@ -319,7 +319,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   const renderProduct = ({item}: {item: TProduct}) => {
     const isInWishList = !!wishlist?.find(w => w.productId?._id === item._id);
     return (
-      <View style={styles.productColumn}>
+      <View style={[styles.productColumn]}>
         <ProductCard
           product={item}
           selectedCat={selectedCat as TCategory}
@@ -338,7 +338,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
         data={products}
         numColumns={2}
         ListHeaderComponent={renderHeader}
-        columnWrapperStyle={styles.productsWrapper}
+        columnWrapperStyle={[styles.productsWrapper]}
         renderItem={renderProduct}
         keyExtractor={item => item._id}
         contentContainerStyle={[
@@ -545,7 +545,7 @@ const styles = StyleSheet.create({
   },
   productsWrapper: {
     justifyContent: 'space-between',
-    paddingHorizontal: Theme.spacing.md,
+    paddingHorizontal: Theme.spacing.xs,
     marginTop: Theme.spacing.sm,
   },
   productColumn: {

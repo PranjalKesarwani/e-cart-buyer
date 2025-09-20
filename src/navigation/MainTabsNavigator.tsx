@@ -36,7 +36,7 @@ const FloatingCartButton = ({
     <TouchableOpacity
       activeOpacity={0.9}
       onPress={onPress}
-      style={[styles.floatingButtonContainer, Theme.showBorder]}>
+      style={[styles.floatingButtonContainer]}>
       <View style={styles.floatingButton}>{children}</View>
     </TouchableOpacity>
   );

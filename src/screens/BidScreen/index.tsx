@@ -51,7 +51,7 @@ const BidScreen = ({navigation}: BidScreenProps) => {
   const renderItem = ({item}: {item: (typeof shopData)[0]}) => (
     <View
       key={'321423'}
-      style={[styles.card, {width: cardWidth}, Theme.showBorder]}
+      style={[styles.card, {width: cardWidth}]}
       accessible
       accessibilityLabel={`Cart items from Om Prakash general store`}>
       <View style={styles.shopHeader}>

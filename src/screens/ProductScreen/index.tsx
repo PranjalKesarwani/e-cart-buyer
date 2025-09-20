@@ -284,7 +284,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
                 data={subCats}
                 keyExtractor={item => item._id}
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.subCatList}
+                contentContainerStyle={[styles.subCatList]}
                 renderItem={({item}) => (
                   <TouchableOpacity
                     onPress={() => setSelectedSubCat(item)}
@@ -303,9 +303,9 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
         }
         keyExtractor={item => item._id}
         numColumns={2}
-        columnWrapperStyle={styles.productsColumnWrapper}
+        columnWrapperStyle={[styles.productsColumnWrapper]}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.contentContainer}
+        contentContainerStyle={[styles.contentContainer]}
         renderItem={({item}) => (
           <ProductCard
             product={item}
