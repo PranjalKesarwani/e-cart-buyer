@@ -17,7 +17,7 @@ import {useAppDispatch} from '../redux/hooks';
 import {Theme} from '../theme/theme';
 
 const {width} = Dimensions.get('window');
-const CARD_WIDTH = (width - 40) / 2 - 10;
+const CARD_WIDTH = (width - 40) / 2;
 
 interface ProductCardProps {
   product: TProduct;

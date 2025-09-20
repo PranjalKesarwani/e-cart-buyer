@@ -33,7 +33,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 type ShopScreenProps = NativeStackScreenProps<RootStackParamList, 'ShopScreen'>;
 
 const {width} = Dimensions.get('window');
-const CARD_WIDTH = (width - Theme.spacing.md * 2 - Theme.spacing.sm) / 2; // responsive
+const CARD_WIDTH = (width - Theme.spacing.sm * 2.5) / 2; // responsive
 
 const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   const insets = useSafeAreaInsets();
@@ -544,13 +544,14 @@ const styles = StyleSheet.create({
     paddingBottom: Theme.spacing.xl,
   },
   productsWrapper: {
+    display: 'flex',
     justifyContent: 'space-between',
     paddingHorizontal: Theme.spacing.xs,
     marginTop: Theme.spacing.sm,
   },
   productColumn: {
     width: CARD_WIDTH,
-    marginBottom: Theme.spacing.lg,
+    marginBottom: Theme.spacing.xs,
   },
   emptyWrap: {
     padding: 32,
