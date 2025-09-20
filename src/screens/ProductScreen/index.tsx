@@ -35,10 +35,13 @@ type ProductScreenProps = NativeStackScreenProps<
   'ProductScreen'
 >;
 
+const dimension = Dimensions.get('window').width;
+// const {width} = Dimensions.get('window');
+const CARD_WIDTH = (dimension - Theme.spacing.sm * 2) / 2 - 6; // responsive
+
 const ProductScreen = ({route, navigation}: ProductScreenProps) => {
   const {product, category}: {product: TProduct; category: TCategory} =
     route.params;
-  const dimension = Dimensions.get('window').width;
   const [isFavorite, setIsFavorite] = useState(false);
   const [subCats, setSubCats] = useState<any[]>([]);
   const [selectedSubCat, setSelectedSubCat] = useState<null | TCategory>(null);
@@ -309,6 +312,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
         renderItem={({item}) => (
           <ProductCard
             product={item}
+            cardWidth={CARD_WIDTH}
             selectedCat={selectedSubCat as TCategory}
             goToProductScreen={goToProductNestedProductScreen}
             onChatPress={onChatPress}
