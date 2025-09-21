@@ -28,7 +28,11 @@ import {Theme} from '../../theme/theme';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {manageCart, manageWishList} from '../../utils/helper';
 import {Dispatch} from '@reduxjs/toolkit';
-import {getSubCatsForShop, placeBuyNowOrder} from '../../services/apiService';
+import {
+  getShopProductsByCat,
+  getSubCatsForShop,
+  placeBuyNowOrder,
+} from '../../services/apiService';
 
 type ProductScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -82,11 +86,15 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
   const getShopProducts = async (category: any) => {
     try {
-      const res = await apiClient.get(
-        `/buyer/shops/${product.shopId}/categories/${category._id}/products`,
+      const {status, message, data} = await getShopProductsByCat(
+        product.shopId,
+        category._id,
       );
-      if (!res?.data.success) throw new Error(res?.data.message);
-      setProducts(res.data.products);
+      if (!status) {
+        setProducts([]);
+        return;
+      }
+      setProducts(data.products ?? []);
     } catch (error: any) {
       console.log('error', error.message);
       showToast('error', error.message);

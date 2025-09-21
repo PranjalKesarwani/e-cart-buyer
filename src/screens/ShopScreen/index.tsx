@@ -33,7 +33,10 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {goBack, navigate} from '../../navigation/navigationService';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {getSubCatsForShop} from '../../services/apiService';
+import {
+  getShopProductsByCat,
+  getSubCatsForShop,
+} from '../../services/apiService';
 import {HomeLevel2Cats} from '../HomeScreen/HomeLevel2Cats';
 
 type ShopScreenRouteProp = RouteProp<RootDrawerParamList, 'ShopScreen'>;
@@ -118,13 +121,17 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
       const abortController = new AbortController();
 
       try {
-        const res = await apiClient.get(
-          `/buyer/shops/${shop._id}/categories/${category._id}/products`,
-          {signal: abortController.signal},
+        // const res = await apiClient.get(
+        //   `/buyer/shops/${shop._id}/categories/${category._id}/products`,
+        //   {signal: abortController.signal},
+        // );
+        const {status, message, data} = await getShopProductsByCat(
+          shop._id,
+          category._id,
         );
 
-        if (res.data.success) {
-          setProducts(res.data.products ?? []);
+        if (status) {
+          setProducts(data.products ?? []);
         } else {
           setProducts([]);
         }
