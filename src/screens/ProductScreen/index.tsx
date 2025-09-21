@@ -60,9 +60,6 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
   const getSubCats = async () => {
     try {
-      const res = await apiClient.get(
-        `/buyer/test/shops/${product.shopId}/categories/${category._id}`,
-      );
       const {status, message, data} = await getSubCatsForShop(
         product.shopId,
         category._id,

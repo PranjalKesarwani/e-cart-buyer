@@ -81,14 +81,6 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
     setLoadingCats(true);
     const abortController = new AbortController();
     try {
-      // const res = await apiClient.get(`/buyer/shops/${shop._id}/categories`, {
-      //   signal: abortController.signal,
-      // });
-      // const res2 = await apiClient.get(
-      //   `/buyer/test/shops/${shop._id}/categories/${catId}`,
-      //   {signal: abortController.signal},
-      // );
-
       const {status, message, data} = await getSubCatsForShop(shop._id, null);
 
       if (status) {
@@ -96,14 +88,9 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
         const subCategories = (data.subcategories ?? []) as TCategory[];
         setShopCats(subCategories);
         setSelectedCat(prev => prev ?? subCategories[0] ?? null);
+      } else {
+        showToast('error', 'Error', message || 'Failed to load categories');
       }
-
-      // if (res.data.success) {
-      // const categories = (res.data.categories ?? []) as TCategory[];
-      // const subCategories = (res2.data.subcategories ?? []) as TCategory[];
-      // setShopCats(subCategories);
-      // setSelectedCat(prev => prev ?? subCategories[0] ?? null);
-      // }
     } catch (error: any) {
       if (!abortController.signal.aborted) {
         console.error('Error fetching categories:', error);
