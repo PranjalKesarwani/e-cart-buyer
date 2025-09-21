@@ -470,7 +470,7 @@ export const getSubCatsForShop = async (
   try {
     const abortController = new AbortController();
     const res = await apiClient.get(
-      `/buyer/test/shops/${shopId}/categories/${catId}`,
+      `/buyer/shops/${shopId}/categories/${catId}`,
       {signal: abortController.signal},
     );
 
