@@ -33,6 +33,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {goBack, navigate} from '../../navigation/navigationService';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
+import {getSubCatsForShop} from '../../services/apiService';
 
 type ShopScreenRouteProp = RouteProp<RootDrawerParamList, 'ShopScreen'>;
 type ShopScreenNavProp = StackNavigationProp<RootDrawerParamList, 'ShopScreen'>;
@@ -80,22 +81,29 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
     setLoadingCats(true);
     const abortController = new AbortController();
     try {
-      const res = await apiClient.get(`/buyer/shops/${shop._id}/categories`, {
-        signal: abortController.signal,
-      });
-      const res2 = await apiClient.get(
-        `/buyer/test/shops/${shop._id}/categories/${catId}`,
-        {signal: abortController.signal},
-      );
+      // const res = await apiClient.get(`/buyer/shops/${shop._id}/categories`, {
+      //   signal: abortController.signal,
+      // });
+      // const res2 = await apiClient.get(
+      //   `/buyer/test/shops/${shop._id}/categories/${catId}`,
+      //   {signal: abortController.signal},
+      // );
 
-      console.log('---res2---', res2.data);
+      const {status, message, data} = await getSubCatsForShop(shop._id, null);
 
-      if (res.data.success) {
-        const categories = (res.data.categories ?? []) as TCategory[];
-        const subCategories = (res2.data.subcategories ?? []) as TCategory[];
+      if (status) {
+        // const categories = (res.data.categories ?? []) as TCategory[];
+        const subCategories = (data.subcategories ?? []) as TCategory[];
         setShopCats(subCategories);
         setSelectedCat(prev => prev ?? subCategories[0] ?? null);
       }
+
+      // if (res.data.success) {
+      // const categories = (res.data.categories ?? []) as TCategory[];
+      // const subCategories = (res2.data.subcategories ?? []) as TCategory[];
+      // setShopCats(subCategories);
+      // setSelectedCat(prev => prev ?? subCategories[0] ?? null);
+      // }
     } catch (error: any) {
       if (!abortController.signal.aborted) {
         console.error('Error fetching categories:', error);
