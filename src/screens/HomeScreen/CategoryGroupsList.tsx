@@ -14,6 +14,9 @@ export type TChildCat = {
   _id: string;
   name: string;
   image?: string;
+  path?: string;
+  slug?: string;
+  parentCatId?: string;
 };
 
 export type TParentCat = {

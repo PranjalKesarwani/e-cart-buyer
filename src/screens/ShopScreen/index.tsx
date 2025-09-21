@@ -50,12 +50,12 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   const insets = useSafeAreaInsets();
   const [shopCats, setShopCats] = useState<TCategory[]>([]);
   const [products, setProducts] = useState<TProduct[]>([]);
-  const [selectedCat, setSelectedCat] = useState<TCategory | null>(null);
   // const route  = useRoute();
-  const {shop, catId} = route.params ?? {
+  const {shop, activeCatItem} = route.params ?? {
     shop: /* fallback? */ null as any,
-    catId: null,
+    activeCatItem: null,
   };
+  const [selectedCat, setSelectedCat] = useState<TCategory | null>(null);
   const {wishlist = []} = useAppSelector(state => state.buyer);
   const [loadingCats, setLoadingCats] = useState(false);
   const [loadingProducts, setLoadingProducts] = useState(false);
@@ -78,35 +78,38 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
     [navigation],
   );
 
-  const getShopCats = useCallback(async () => {
-    setLoadingCats(true);
-    const abortController = new AbortController();
-    try {
-      const {status, message, data} = await getSubCatsForShop(shop._id, null);
+  const getShopCats = useCallback(
+    async (activeCat: TCategory) => {
+      setLoadingCats(true);
+      const abortController = new AbortController();
+      try {
+        const {status, message, data} = await getSubCatsForShop(shop._id, null);
 
-      if (status) {
-        // const categories = (res.data.categories ?? []) as TCategory[];
-        const subCategories = (data.subcategories ?? []) as TCategory[];
-        setShopCats(subCategories);
-        setSelectedCat(prev => prev ?? subCategories[0] ?? null);
-      } else {
-        showToast('error', 'Error', message || 'Failed to load categories');
+        if (status) {
+          // const categories = (res.data.categories ?? []) as TCategory[];
+          const subCategories = (data.subcategories ?? []) as TCategory[];
+          setShopCats(subCategories);
+          setSelectedCat(activeCat);
+        } else {
+          showToast('error', 'Error', message || 'Failed to load categories');
+        }
+      } catch (error: any) {
+        if (!abortController.signal.aborted) {
+          console.error('Error fetching categories:', error);
+          showToast(
+            'error',
+            'Error',
+            error.message || 'Failed to load categories',
+          );
+        }
+      } finally {
+        setLoadingCats(false);
       }
-    } catch (error: any) {
-      if (!abortController.signal.aborted) {
-        console.error('Error fetching categories:', error);
-        showToast(
-          'error',
-          'Error',
-          error.message || 'Failed to load categories',
-        );
-      }
-    } finally {
-      setLoadingCats(false);
-    }
 
-    return () => abortController.abort();
-  }, [shop._id]);
+      return () => abortController.abort();
+    },
+    [shop._id],
+  );
 
   const getShopProducts = useCallback(
     async (category: TCategory | null) => {
@@ -141,7 +144,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
 
   // initial load
   useEffect(() => {
-    getShopCats();
+    getShopCats(selectedCat || (activeCatItem as TCategory));
   }, [selectedCat]);
 
   // whenever selected category changes, load its products
@@ -337,7 +340,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
               previewCount={12}
               onCategoryPress={handleCardPress}
               showSeeAll={false}
-              activeCatId={selectedCat?._id ?? catId ?? 'ALL'}
+              activeCatId={selectedCat?._id ?? activeCatItem?._id ?? 'ALL'}
             />
           </>
         )}

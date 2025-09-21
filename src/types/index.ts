@@ -1,4 +1,5 @@
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {TChildCat} from '../screens/HomeScreen/CategoryGroupsList';
 
 export type RootStackParamList = {
   SplashScreen: undefined;
@@ -8,7 +9,7 @@ export type RootStackParamList = {
   SelectedProductScreen: undefined;
   DrawerNavigator: {screen: keyof RootDrawerParamList} | undefined;
   ShopListScreen: undefined;
-  ShopScreen: {shop: any; catId?: string | null};
+  ShopScreen: {shop: any; activeCatItem?: TChildCat | null};
   ProductScreen: {product: any; category: any};
   Chats: undefined;
   Cart: undefined;
@@ -32,7 +33,7 @@ export type RootDrawerParamList = {
   LocationConfirmationScreen: undefined;
   Home: undefined;
   ShopListScreen: {category: any};
-  ShopScreen: {shop: any; catId?: string | null};
+  ShopScreen: {shop: any; activeCatItem?: TChildCat | null};
   Chats: undefined;
   Cart: undefined;
   WishListScreen: undefined;
@@ -434,5 +435,7 @@ export type THomeCats = {
   name: string;
   image: string;
   slug?: string;
+  path?: string;
+  status?: boolean;
   children: TCategory[];
 };

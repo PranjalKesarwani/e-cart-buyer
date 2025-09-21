@@ -74,7 +74,6 @@ const HomeScreen = ({navigation}: HomeProps) => {
     longitude: number;
   } | null>(null);
 
-  const [globalCats, setGlobalCats] = useState<any>([]);
   const [homeCats, setHomeCats] = useState<THomeCats[]>([]);
   const [homeSecondLevelCats, setHomeSecondLevelCats] = useState<TCategory[]>(
     [],
@@ -100,11 +99,11 @@ const HomeScreen = ({navigation}: HomeProps) => {
   });
   const getGlobalCategories = async () => {
     try {
-      const res = await apiClient.get('/buyer/categories');
-      if (!res?.data.success) throw new Error(res?.data.message);
-      setGlobalCats(res.data.categories);
-
       const {status, message, data} = await getHomeCats();
+      if (!status) {
+        showToast('error', message);
+        return;
+      }
 
       setHomeCats(data.results);
       setHomeSecondLevelCats(data.level2Cats);
@@ -202,8 +201,8 @@ const HomeScreen = ({navigation}: HomeProps) => {
     getGlobalCategories();
   }, []);
 
-  const handleCardPress = (item: any) => {
-    navigate('ShopListScreen', {category: item, activeCatId: item._id});
+  const handleCardPress = (item: TChildCat) => {
+    navigate('ShopListScreen', {category: item, activeCatItem: item});
   };
 
   const handleAddressSelect = (address: string) => {

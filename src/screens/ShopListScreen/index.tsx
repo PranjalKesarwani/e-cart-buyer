@@ -23,6 +23,7 @@ import Header from '../../components/common/Header';
 import {HomeLevel2Cats} from '../HomeScreen/HomeLevel2Cats';
 import {getHomeCats, getSecondLevelCats} from '../../services/apiService';
 import SearchBar from '../../components/common/SearchBar';
+import {TChildCat} from '../HomeScreen/CategoryGroupsList';
 
 type ShopListProps = NativeStackScreenProps<
   RootStackParamList,
@@ -47,7 +48,8 @@ const CARD_MARGIN = 10;
 const CARD_WIDTH = width - 30 - CARD_MARGIN; // 15 padding on each side
 
 const ShopListScreen = ({route, navigation}: ShopListProps) => {
-  const {category, activeCatId}: any = route.params;
+  const {category, activeCatItem} =
+    route.params ?? ({category: undefined, activeCatItem: undefined} as any);
   const [shops, setShops] = useState<TShop[]>([]);
   const [homeSecondLevelCats, setHomeSecondLevelCats] = useState<TCategory[]>(
     [],
@@ -109,7 +111,7 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
           previewCount={12}
           onCategoryPress={handleCardPress}
           showSeeAll={false}
-          activeCatId={activeCatId}
+          activeCatId={activeCatItem._id}
         />
       </View>
 
@@ -119,7 +121,7 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
         endpoint={`/buyer/categories/${activeCategory.slug}/shops`}
         queryParams={{}}
         pageSize={12}
-        catIdToShow={activeCatId}
+        catIdToShow={activeCatItem}
         ListHeaderComponent={
           <ShopListHeader
             title={activeCategory.name}

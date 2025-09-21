@@ -13,6 +13,7 @@ import {TShop} from '../../types';
 import ShopCard from '../../screens/ShopListScreen/ShopCard';
 import {apiClient} from '../../services/api';
 import {Theme} from '../../theme/theme';
+import {TChildCat} from '../../screens/HomeScreen/CategoryGroupsList';
 
 type QueryParams = Record<string, any>;
 
@@ -35,7 +36,7 @@ export type ShopListProps = {
   numColumns?: number;
   // toggle automatic fetch on mount
   autoFetch?: boolean;
-  catIdToShow?: string | null; // Pass category ID to fetch shops from a specific category
+  catIdToShow?: TChildCat | null; // Pass category ID to fetch shops from a specific category
 };
 
 const DEFAULT_ENDPOINT = '/buyer/shops';

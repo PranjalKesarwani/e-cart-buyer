@@ -14,6 +14,7 @@ import {TSeller, TShop} from '../../types';
 import {useAppDispatch} from '../../redux/hooks';
 import {setSelectedShop} from '../../redux/slices/buyerSlice';
 import {navigate} from '../../navigation/navigationService';
+import {TChildCat} from '../HomeScreen/CategoryGroupsList';
 
 const {width} = Dimensions.get('window');
 const CARD_MARGIN = 14;
@@ -24,13 +25,13 @@ const ShopCard = ({
   catIdToShow,
 }: {
   item: TShop;
-  catIdToShow: string | null;
+  catIdToShow: TChildCat | null;
 }) => {
   const dispatch = useAppDispatch();
 
   const goToShopScreen = () => {
     dispatch(setSelectedShop(item));
-    navigate('ShopScreen', {shop: item, catId: catIdToShow});
+    navigate('ShopScreen', {shop: item, activeCatItem: catIdToShow});
   };
 
   return (
