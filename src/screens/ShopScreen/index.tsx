@@ -116,18 +116,13 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
 
   const getShopProducts = useCallback(
     async (category: TCategory | null) => {
-      if (!category) return;
       setLoadingProducts(true);
       const abortController = new AbortController();
 
       try {
-        // const res = await apiClient.get(
-        //   `/buyer/shops/${shop._id}/categories/${category._id}/products`,
-        //   {signal: abortController.signal},
-        // );
         const {status, message, data} = await getShopProductsByCat(
           shop._id,
-          category._id,
+          category?._id === 'ALL' ? null : category?._id || null,
         );
 
         if (status) {
@@ -157,7 +152,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   // whenever selected category changes, load its products
   useEffect(() => {
     getShopProducts(selectedCat);
-  }, [getShopProducts, selectedCat]);
+  }, [getShopProducts, selectedCat, shopCats]);
 
   const onChatPress = (s: TShop) => {
     navigate('PersonalChatScreen', {shop: s});
@@ -317,31 +312,6 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
           <ActivityIndicator size="small" />
         ) : (
           <>
-            {/* <FlatList
-              horizontal
-              data={shopCats}
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.categoriesContainer}
-              renderItem={({item}) => (
-                <TouchableOpacity
-                  style={[
-                    styles.categoryButton,
-                    selectedCat?._id === item._id && styles.selectedCategory,
-                  ]}
-                  onPress={() => setSelectedCat(item)}>
-                  <Text
-                    style={[
-                      styles.categoryText,
-                      selectedCat?._id === item._id &&
-                        styles.selectedCategoryText,
-                    ]}>
-                    {item.name}
-                  </Text>
-                </TouchableOpacity>
-              )}
-              keyExtractor={item => item._id}
-              nestedScrollEnabled
-            /> */}
             <HomeLevel2Cats
               level2Cats={shopCats}
               previewCount={12}
