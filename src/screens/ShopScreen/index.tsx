@@ -142,7 +142,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   // initial load
   useEffect(() => {
     getShopCats();
-  }, [getShopCats]);
+  }, [selectedCat]);
 
   // whenever selected category changes, load its products
   useEffect(() => {
@@ -154,7 +154,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   };
 
   const handleCardPress = (item: TCategory) => {
-    console.table([item]);
+    setSelectedCat(item);
   };
 
   const renderHeader = () => (
@@ -337,7 +337,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
               previewCount={12}
               onCategoryPress={handleCardPress}
               showSeeAll={false}
-              activeCatId={catId}
+              activeCatId={selectedCat?._id ?? catId ?? 'ALL'}
             />
           </>
         )}
