@@ -490,11 +490,12 @@ export const getShopProductsByCat = async (
   categoryId: string | null,
 ) => {
   try {
-    const catToSend = categoryId === 'ALL' ? null : categoryId;
+    const catToSend = categoryId;
     const abortController = new AbortController();
+    console.log('******************', catToSend);
     const res = await apiClient.get(
       `/buyer/shops/${shopId}/categories/${catToSend}/products`,
-      {signal: abortController.signal},
+      // {signal: abortController.signal},
     );
 
     if (res.data.success) {

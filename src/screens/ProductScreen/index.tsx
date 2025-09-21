@@ -48,7 +48,9 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
     route.params;
   const [isFavorite, setIsFavorite] = useState(false);
   const [subCats, setSubCats] = useState<any[]>([]);
-  const [selectedSubCat, setSelectedSubCat] = useState<null | TCategory>(null);
+  const [selectedSubCat, setSelectedSubCat] = useState<null | TCategory>(
+    category,
+  );
   const [isBuyModalVisible, setIsBuyModalVisible] = useState(false);
   const [orderQuantity, setOrderQuantity] = useState(1);
 
