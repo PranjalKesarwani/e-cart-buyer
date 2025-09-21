@@ -34,6 +34,7 @@ import {goBack, navigate} from '../../navigation/navigationService';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {getSubCatsForShop} from '../../services/apiService';
+import {HomeLevel2Cats} from '../HomeScreen/HomeLevel2Cats';
 
 type ShopScreenRouteProp = RouteProp<RootDrawerParamList, 'ShopScreen'>;
 type ShopScreenNavProp = StackNavigationProp<RootDrawerParamList, 'ShopScreen'>;
@@ -150,6 +151,10 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
 
   const onChatPress = (s: TShop) => {
     navigate('PersonalChatScreen', {shop: s});
+  };
+
+  const handleCardPress = (item: TCategory) => {
+    console.table([item]);
   };
 
   const renderHeader = () => (
@@ -297,35 +302,44 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
       </View>
 
       {/* Category pills (unchanged but kept visually below hero) */}
-      <View style={styles.categoriesWrap}>
+      <View style={[styles.categoriesWrap, Theme.showBorder]}>
         {loadingCats ? (
           <ActivityIndicator size="small" />
         ) : (
-          <FlatList
-            horizontal
-            data={shopCats}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.categoriesContainer}
-            renderItem={({item}) => (
-              <TouchableOpacity
-                style={[
-                  styles.categoryButton,
-                  selectedCat?._id === item._id && styles.selectedCategory,
-                ]}
-                onPress={() => setSelectedCat(item)}>
-                <Text
+          <>
+            <FlatList
+              horizontal
+              data={shopCats}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.categoriesContainer}
+              renderItem={({item}) => (
+                <TouchableOpacity
                   style={[
-                    styles.categoryText,
-                    selectedCat?._id === item._id &&
-                      styles.selectedCategoryText,
-                  ]}>
-                  {item.name}
-                </Text>
-              </TouchableOpacity>
-            )}
-            keyExtractor={item => item._id}
-            nestedScrollEnabled
-          />
+                    styles.categoryButton,
+                    selectedCat?._id === item._id && styles.selectedCategory,
+                  ]}
+                  onPress={() => setSelectedCat(item)}>
+                  <Text
+                    style={[
+                      styles.categoryText,
+                      selectedCat?._id === item._id &&
+                        styles.selectedCategoryText,
+                    ]}>
+                    {item.name}
+                  </Text>
+                </TouchableOpacity>
+              )}
+              keyExtractor={item => item._id}
+              nestedScrollEnabled
+            />
+            <HomeLevel2Cats
+              level2Cats={shopCats}
+              previewCount={12}
+              onCategoryPress={handleCardPress}
+              showSeeAll={false}
+              activeCatId={catId}
+            />
+          </>
         )}
       </View>
     </>

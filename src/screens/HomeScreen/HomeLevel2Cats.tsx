@@ -35,7 +35,7 @@ type Props = {
   // number to show in the horizontal list before 'See all' button
   previewCount?: number; // default 12
   onCategoryPress?: (cat: TCategory) => void;
-  activeCatId?: string;
+  activeCatId?: string | null;
 
   /** whether to append the 'See all' tile in the preview list */
   showSeeAll?: boolean;
@@ -54,7 +54,9 @@ export const HomeLevel2Cats: React.FC<Props> = ({
 }) => {
   const [sheetVisible, setSheetVisible] = useState(false);
   const animatedY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
-  const [activeCategoryId, setActiveCategoryId] = useState<string>(activeCatId);
+  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(
+    activeCatId,
+  );
 
   const openSheet = useCallback(() => {
     setSheetVisible(true);
