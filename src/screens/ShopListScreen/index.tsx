@@ -119,6 +119,7 @@ const ShopListScreen = ({route, navigation}: ShopListProps) => {
         endpoint={`/buyer/categories/${activeCategory.slug}/shops`}
         queryParams={{}}
         pageSize={12}
+        catIdToShow={activeCatId}
         ListHeaderComponent={
           <ShopListHeader
             title={activeCategory.name}

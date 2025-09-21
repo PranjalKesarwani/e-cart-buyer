@@ -8,7 +8,7 @@ export type RootStackParamList = {
   SelectedProductScreen: undefined;
   DrawerNavigator: {screen: keyof RootDrawerParamList} | undefined;
   ShopListScreen: undefined;
-  ShopScreen: {shop: any};
+  ShopScreen: {shop: any; catId?: string | null};
   ProductScreen: {product: any; category: any};
   Chats: undefined;
   Cart: undefined;
@@ -32,7 +32,7 @@ export type RootDrawerParamList = {
   LocationConfirmationScreen: undefined;
   Home: undefined;
   ShopListScreen: {category: any};
-  ShopScreen: {shop: any};
+  ShopScreen: {shop: any; catId?: string | null};
   Chats: undefined;
   Cart: undefined;
   WishListScreen: undefined;

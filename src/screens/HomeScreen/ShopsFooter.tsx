@@ -23,9 +23,10 @@ const ShopsFooter: React.FC = () => {
         endpoint={`/buyer/categories/${undefined}/shops`}
         queryParams={{}}
         pageSize={12}
+        catIdToShow={null} // No specific category, show all shops
         // If you want a tiny header inside the ShopList (above shop cards),
         // pass ListHeaderComponent={<Text style={{paddingVertical:8}}>Top Picks</Text>}
-        onShopPress={shop => navigate('ShopScreen', {shop})}
+        onShopPress={shop => navigate('ShopScreen', {shop, catId: null})}
       />
     </View>
   );

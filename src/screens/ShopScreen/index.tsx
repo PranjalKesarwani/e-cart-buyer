@@ -23,15 +23,24 @@ import {
   RootStackParamList,
   TShop,
   TSeller,
+  RootDrawerParamList,
 } from '../../types';
 import ProductCard from '../../components/ProductCard';
 import SearchBar from '../../components/common/SearchBar';
 import {Theme} from '../../theme/theme';
 import {useAppSelector} from '../../redux/hooks';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {goBack, navigate} from '../../navigation/navigationService';
+import {RouteProp, useRoute} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
 
-type ShopScreenProps = NativeStackScreenProps<RootStackParamList, 'ShopScreen'>;
+type ShopScreenRouteProp = RouteProp<RootDrawerParamList, 'ShopScreen'>;
+type ShopScreenNavProp = StackNavigationProp<RootDrawerParamList, 'ShopScreen'>;
 
+type ShopScreenProps = {
+  route: ShopScreenRouteProp;
+  navigation: ShopScreenNavProp;
+};
 const {width} = Dimensions.get('window');
 const CARD_WIDTH = (width - Theme.spacing.sm * 2) / 2 - 6; // responsive
 
@@ -40,7 +49,11 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   const [shopCats, setShopCats] = useState<TCategory[]>([]);
   const [products, setProducts] = useState<TProduct[]>([]);
   const [selectedCat, setSelectedCat] = useState<TCategory | null>(null);
-  const {shop}: {shop: TShop} = route.params;
+  // const route  = useRoute();
+  const {shop, catId} = route.params ?? {
+    shop: /* fallback? */ null as any,
+    catId: null,
+  };
   const {wishlist = []} = useAppSelector(state => state.buyer);
   const [loadingCats, setLoadingCats] = useState(false);
   const [loadingProducts, setLoadingProducts] = useState(false);
@@ -58,7 +71,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
 
   const goToProductScreen = useCallback(
     (product: TProduct, category: TCategory) => {
-      navigation.navigate('ProductScreen', {product, category});
+      navigate('ProductScreen', {product, category});
     },
     [navigation],
   );
@@ -70,11 +83,18 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
       const res = await apiClient.get(`/buyer/shops/${shop._id}/categories`, {
         signal: abortController.signal,
       });
+      const res2 = await apiClient.get(
+        `/buyer/test/shops/${shop._id}/categories/${catId}`,
+        {signal: abortController.signal},
+      );
+
+      console.log('---res2---', res2.data);
 
       if (res.data.success) {
         const categories = (res.data.categories ?? []) as TCategory[];
-        setShopCats(categories);
-        setSelectedCat(prev => prev ?? categories[0] ?? null);
+        const subCategories = (res2.data.subcategories ?? []) as TCategory[];
+        setShopCats(subCategories);
+        setSelectedCat(prev => prev ?? subCategories[0] ?? null);
       }
     } catch (error: any) {
       if (!abortController.signal.aborted) {
@@ -134,7 +154,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   }, [getShopProducts, selectedCat]);
 
   const onChatPress = (s: TShop) => {
-    navigation.navigate('PersonalChatScreen', {shop: s});
+    navigate('PersonalChatScreen', {shop: s});
   };
 
   const renderHeader = () => (
@@ -142,7 +162,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
       {/* Top header row: back + search */}
       <View style={[styles.topHeader, {paddingTop: insets.top || 12}]}>
         <TouchableOpacity
-          onPress={() => navigation.goBack()}
+          onPress={() => goBack()}
           style={styles.backWrap}
           accessibilityLabel="Go back">
           <Icons name="arrowleft" size={22} color={Theme.colors.darkText} />

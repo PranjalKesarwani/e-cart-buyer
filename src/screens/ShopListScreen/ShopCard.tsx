@@ -19,12 +19,18 @@ const {width} = Dimensions.get('window');
 const CARD_MARGIN = 14;
 const CARD_WIDTH = width - 32; // consistent padding from screen edges
 
-const ShopCard = ({item}: {item: TShop}) => {
+const ShopCard = ({
+  item,
+  catIdToShow,
+}: {
+  item: TShop;
+  catIdToShow: string | null;
+}) => {
   const dispatch = useAppDispatch();
 
   const goToShopScreen = () => {
     dispatch(setSelectedShop(item));
-    navigate('ShopScreen', {shop: item});
+    navigate('ShopScreen', {shop: item, catId: catIdToShow});
   };
 
   return (
@@ -74,7 +80,7 @@ const ShopCard = ({item}: {item: TShop}) => {
             </Text>
           </View>
           <Text style={styles.shopDescription} numberOfLines={2}>
-            {item.titleMsg || 'No description available'}
+            {item.description || 'No description available'}
           </Text>
           <Text style={styles.shopDescription} numberOfLines={2}>
             {'Location details not found!'}

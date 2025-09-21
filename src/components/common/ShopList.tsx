@@ -35,6 +35,7 @@ export type ShopListProps = {
   numColumns?: number;
   // toggle automatic fetch on mount
   autoFetch?: boolean;
+  catIdToShow?: string | null; // Pass category ID to fetch shops from a specific category
 };
 
 const DEFAULT_ENDPOINT = '/buyer/shops';
@@ -54,6 +55,7 @@ const ShopList: React.FC<ShopListProps> = ({
   showsVerticalScrollIndicator = false,
   numColumns = 1,
   autoFetch = true,
+  catIdToShow = null,
 }) => {
   const [shops, setShops] = useState<TShop[]>([]);
   const [page, setPage] = useState<number>(initialPage);
@@ -96,7 +98,6 @@ const ShopList: React.FC<ShopListProps> = ({
       setError(null);
       try {
         const url = buildUrl(p);
-        console.log('---url from shop list only----', url);
         const res = await apiClient.get(url);
         const newShops: TShop[] = res.data?.shops ?? [];
         setShops(prev => (append ? [...prev, ...newShops] : newShops));
@@ -141,6 +142,7 @@ const ShopList: React.FC<ShopListProps> = ({
   const renderItem = ({item}: ListRenderItemInfo<TShop>) => (
     <ShopCard
       item={item}
+      catIdToShow={catIdToShow}
       // ShopCard should optionally accept callbacks — if not, you can pass handlers via context or modify ShopCard
       // If your ShopCard doesn't accept onAvatarPress/onPress, it will continue using its internal navigation.
       // We'll check and call onShopPress here for consistency:

@@ -28,7 +28,7 @@ import {Theme} from '../../theme/theme';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {manageCart, manageWishList} from '../../utils/helper';
 import {Dispatch} from '@reduxjs/toolkit';
-import {placeBuyNowOrder} from '../../services/apiService';
+import {getSubCatsForShop, placeBuyNowOrder} from '../../services/apiService';
 
 type ProductScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -61,13 +61,21 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
   const getSubCats = async () => {
     try {
       const res = await apiClient.get(
-        `/buyer/shops/${product.shopId}/categories/${category.slug}`,
+        `/buyer/test/shops/${product.shopId}/categories/${category._id}`,
       );
-      setSubCats(res.data.subcategories);
-      if (res.data.subcategories.length === 0) {
+      const {status, message, data} = await getSubCatsForShop(
+        product.shopId,
+        category._id,
+      );
+      if (!status) {
+        showToast('error', 'Error', message);
+        return;
+      }
+      setSubCats(data.subcategories);
+      if (data.subcategories.length === 0) {
         setSelectedSubCat(null);
       } else {
-        setSelectedSubCat(res.data.subcategories[0]);
+        setSelectedSubCat(data.subcategories[0]);
       }
     } catch (error: any) {
       console.log(error);

@@ -462,3 +462,25 @@ export const getSecondLevelCats = async () => {
     return {status: false, message: errorMessage, data: null};
   }
 };
+
+export const getSubCatsForShop = async (
+  shopId: string,
+  catId: string | null,
+) => {
+  try {
+    const abortController = new AbortController();
+    const res = await apiClient.get(
+      `/buyer/test/shops/${shopId}/categories/${catId}`,
+      {signal: abortController.signal},
+    );
+
+    if (res.data.success) {
+      return {status: true, message: res.data.message, data: res.data};
+    }
+    return {status: false, message: res.data.message, data: null};
+  } catch (error: any) {
+    const errorMessage =
+      error.response?.data?.message || error?.message || 'Server Error!';
+    return {status: false, message: errorMessage, data: null};
+  }
+};
