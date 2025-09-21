@@ -145,7 +145,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
   // initial load
   useEffect(() => {
     getShopCats(selectedCat || (activeCatItem as TCategory));
-  }, [selectedCat]);
+  }, []);
 
   // whenever selected category changes, load its products
   useEffect(() => {
@@ -305,12 +305,12 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
       </View>
 
       {/* Category pills (unchanged but kept visually below hero) */}
-      <View style={[styles.categoriesWrap, Theme.showBorder]}>
+      <View style={[styles.categoriesWrap]}>
         {loadingCats ? (
           <ActivityIndicator size="small" />
         ) : (
           <>
-            <FlatList
+            {/* <FlatList
               horizontal
               data={shopCats}
               showsHorizontalScrollIndicator={false}
@@ -334,7 +334,7 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
               )}
               keyExtractor={item => item._id}
               nestedScrollEnabled
-            />
+            /> */}
             <HomeLevel2Cats
               level2Cats={shopCats}
               previewCount={12}
