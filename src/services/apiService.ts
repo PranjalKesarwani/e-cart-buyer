@@ -492,7 +492,6 @@ export const getShopProductsByCat = async (
   try {
     const catToSend = categoryId;
     const abortController = new AbortController();
-    console.log('******************', catToSend);
     const res = await apiClient.get(
       `/buyer/shops/${shopId}/categories/${catToSend}/products`,
       // {signal: abortController.signal},
