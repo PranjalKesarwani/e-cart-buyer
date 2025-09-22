@@ -466,11 +466,13 @@ export const getSecondLevelCats = async () => {
 export const getSubCatsForShop = async (
   shopId: string,
   catId: string | null,
+  productId?: string | null,
 ) => {
   try {
     const abortController = new AbortController();
-    const res = await apiClient.get(
+    const res = await apiClient.post(
       `/buyer/shops/${shopId}/categories/${catId}`,
+      {productId: productId || null},
       {signal: abortController.signal},
     );
 

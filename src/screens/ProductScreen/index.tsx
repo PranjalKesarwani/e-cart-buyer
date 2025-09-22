@@ -64,9 +64,11 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
   const getSubCats = async () => {
     try {
+      console.log('-------))))))))))*******', category.name);
       const {status, message, data} = await getSubCatsForShop(
         product.shopId,
         category._id,
+        product._id,
       );
       if (!status) {
         showToast('error', 'Error', message);
@@ -117,7 +119,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
   useEffect(() => {
     if (selectedSubCat) {
-      console.log('---------->>>>>', selectedSubCat.name);
+      // console.log('---------->>>>>', selectedSubCat.name);
       getShopProducts(selectedSubCat);
     }
   }, [selectedSubCat]);
