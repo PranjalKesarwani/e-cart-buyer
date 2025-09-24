@@ -65,6 +65,16 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
     manageWishList(product._id, !isFavorite, dispatch);
   };
 
+  const mrp = Number(product.productMrp ?? 0);
+  const price = Number(product.price ?? 0);
+
+  const showDiscount = mrp > 0 && price < mrp;
+  const discountPercent = showDiscount
+    ? Math.round(((mrp - price) / mrp) * 100)
+    : 0;
+  const formattedPrice = `₹${price.toLocaleString('en-IN')}`;
+  const formattedMrp = `₹${mrp.toLocaleString('en-IN')}`;
+
   const getSubCats = async () => {
     try {
       console.log('Product screen category testing', category);
@@ -253,16 +263,13 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
               {/* Pricing Information */}
               <View style={[styles.priceContainer]}>
                 <Text style={styles.priceText}>
-                  ₹{product.price}
+                  ₹{price}
                   {product.price < product.productMrp && (
                     <>
-                      <Text style={styles.originalPrice}>
-                        {' '}
-                        ₹{product.productMrp}
-                      </Text>
+                      <Text style={styles.originalPrice}> ₹{mrp}</Text>
                       <Text style={styles.discount}>
                         {' '}
-                        {product.discountPercentage}% off
+                        {discountPercent}% off
                       </Text>
                     </>
                   )}
