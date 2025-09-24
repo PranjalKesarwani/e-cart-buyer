@@ -33,6 +33,7 @@ import {
   getSubCatsForShop,
   placeBuyNowOrder,
 } from '../../services/apiService';
+import {HomeLevel2Cats} from '../HomeScreen/HomeLevel2Cats';
 
 type ProductScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -42,6 +43,8 @@ type ProductScreenProps = NativeStackScreenProps<
 const dimension = Dimensions.get('window').width;
 // const {width} = Dimensions.get('window');
 const CARD_WIDTH = (dimension - Theme.spacing.sm * 2) / 2 - 6; // responsive
+const IMAGE_SIZE_PREVIEW = 54; // smaller preview avatar
+const IMAGE_SIZE_GRID = 48; // smaller grid avatars
 
 const ProductScreen = ({route, navigation}: ProductScreenProps) => {
   const {product, category}: {product: TProduct; category: TCategory} =
@@ -157,6 +160,12 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
     }
     setIsBuyModalVisible(false);
     showToast('success', 'Success', 'Order placed successfully!');
+  };
+
+  const handleCardPress = async (category: TCategory) => {
+    setSelectedSubCat(category);
+    // Fetch products for the selected category
+    getShopProducts(category);
   };
 
   return (
@@ -304,18 +313,46 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
                 keyExtractor={item => item._id}
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={[styles.subCatList]}
-                renderItem={({item}) => (
-                  <TouchableOpacity
-                    onPress={() => setSelectedSubCat(item)}
-                    style={[
-                      Theme.buttons.primary,
-                      selectedSubCat?._id === item._id && {
-                        backgroundColor: Theme.colors.mainYellow,
-                      },
-                    ]}>
-                    <Text style={styles.variantText}>{item.name}</Text>
-                  </TouchableOpacity>
-                )}
+                renderItem={({item}) =>
+                  // <TouchableOpacity
+                  //   onPress={() => setSelectedSubCat(item)}
+                  //   style={[
+                  //     Theme.buttons.primary,
+                  //     selectedSubCat?._id === item._id && {
+                  //       backgroundColor: Theme.colors.mainYellow,
+                  //     },
+                  //     styles.previewItem,
+                  //   ]}>
+                  //   <Text style={styles.variantText}>{item.name}</Text>
+                  // </TouchableOpacity>
+                  {
+                    const isActive = selectedSubCat?._id === item._id;
+                    return (
+                      <TouchableOpacity
+                        style={styles.previewItem}
+                        activeOpacity={0.8}
+                        onPress={() => setSelectedSubCat(item)}
+                        accessibilityRole="button"
+                        accessibilityLabel={`Open ${item.name} category`}>
+                        <Image
+                          source={{uri: item.image}}
+                          style={styles.previewImage}
+                        />
+                        <Text
+                          numberOfLines={1}
+                          style={[
+                            styles.previewText,
+                            isActive && styles.previewTextActive,
+                          ]}>
+                          {item.name}
+                        </Text>
+                        {isActive ? (
+                          <View style={styles.activeIndicator} />
+                        ) : null}
+                      </TouchableOpacity>
+                    );
+                  }
+                }
               />
             </View>
           </>
@@ -336,6 +373,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
         )}
         ListFooterComponent={<View style={{height: 80}} />}
       />
+
       <Modal
         visible={isBuyModalVisible}
         animationType="slide"
@@ -888,5 +926,47 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     opacity: 0.5,
+  },
+  previewItem: {
+    width: 84,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  seeAllCircle: {
+    width: 54,
+    height: 54,
+    borderRadius: 54 / 2,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 6,
+    backgroundColor: Theme.colors.primary,
+  },
+  previewImage: {
+    width: IMAGE_SIZE_PREVIEW,
+    height: IMAGE_SIZE_PREVIEW,
+    borderRadius: IMAGE_SIZE_PREVIEW / 2,
+    resizeMode: 'cover',
+    marginBottom: 6,
+    backgroundColor: '#f0f0f0',
+  },
+  previewTextActive: {
+    color: Theme.colors.primary,
+    fontWeight: '600',
+  },
+  previewText: {
+    fontSize: 12,
+    textAlign: 'center',
+    maxWidth: 78,
+    color: '#222',
+  },
+
+  // small underline indicator (Zomato-like)
+  activeIndicator: {
+    marginTop: 6,
+    width: '100%',
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: Theme.colors.primary,
   },
 });
