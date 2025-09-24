@@ -76,7 +76,17 @@ const ShopScreen = ({route, navigation}: ShopScreenProps) => {
 
   const goToProductScreen = useCallback(
     (product: TProduct, category: TCategory) => {
-      navigate('ProductScreen', {product, category});
+      console.log('Navigating to ProductScreen with:', category);
+      const catToPass =
+        category == null
+          ? {
+              _id: 'ALL',
+              image:
+                'https://i.pinimg.com/736x/ce/c7/ff/cec7ff2d0134d108d5e9ae1bf51e46f7.jpg',
+              name: 'All',
+            }
+          : category;
+      navigate('ProductScreen', {product, category: catToPass});
     },
     [navigation],
   );

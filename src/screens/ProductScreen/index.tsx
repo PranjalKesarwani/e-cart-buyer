@@ -67,7 +67,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
   const getSubCats = async () => {
     try {
-      console.log('-------))))))))))*******', category.name);
+      console.log('Product screen category testing', category);
       const {status, message, data} = await getSubCatsForShop(
         product.shopId,
         category._id,
