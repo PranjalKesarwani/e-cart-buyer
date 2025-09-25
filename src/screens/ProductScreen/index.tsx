@@ -49,7 +49,6 @@ const IMAGE_SIZE_GRID = 48; // smaller grid avatars
 const ProductScreen = ({route, navigation}: ProductScreenProps) => {
   const {product, category}: {product: TProduct; category: TCategory} =
     route.params;
-  console.log('Product Screen params', product.attributes);
   const [isFavorite, setIsFavorite] = useState(false);
   const [subCats, setSubCats] = useState<any[]>([]);
   const [selectedSubCat, setSelectedSubCat] = useState<null | TCategory>(null);
@@ -218,6 +217,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
   // Render value intelligently
   function renderAttrValue(value: any): JSX.Element {
+    console.log('Rendering attr value:', value);
     // primitives
     if (value === null || value === undefined || value === '') {
       return <Text style={styles.specValue}>—</Text>;
@@ -410,35 +410,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
                       {product.productShortDescription}
                     </Text>
                   )}
-                {/* {Object.entries(product.attributes).length > 0 && (
-                  <View style={[styles.specsContainer]}>
-                    <Text style={styles.sectionTitle}>
-                      Product Specifications
-                    </Text>
 
-                    {Object.entries(product.attributes).map(
-                      ([key, value]: any, index) => {
-                        console.log('key, value', key, value);
-                        return (
-                          <View
-                            key={key}
-                            style={[
-                              styles.specRow,
-                              index % 2 !== 0 && {backgroundColor: '#f9f9f9'},
-                              index ===
-                                Object.entries(product.attributes).length -
-                                  1 && {
-                                borderBottomWidth: 0,
-                              },
-                            ]}>
-                            <Text style={styles.specKey}>{key}</Text>
-                            <Text style={styles.specValue}>{value}</Text>
-                          </View>
-                        );
-                      },
-                    )}
-                  </View>
-                )} */}
                 {hasAttributes(product.attributes) && (
                   <View style={styles.specsContainer}>
                     <Text style={styles.sectionTitle}>
