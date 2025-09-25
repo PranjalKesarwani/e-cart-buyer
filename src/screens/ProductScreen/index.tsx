@@ -49,6 +49,7 @@ const IMAGE_SIZE_GRID = 48; // smaller grid avatars
 const ProductScreen = ({route, navigation}: ProductScreenProps) => {
   const {product, category}: {product: TProduct; category: TCategory} =
     route.params;
+  console.log('Product Screen params', product.attributes);
   const [isFavorite, setIsFavorite] = useState(false);
   const [subCats, setSubCats] = useState<any[]>([]);
   const [selectedSubCat, setSelectedSubCat] = useState<null | TCategory>(null);
@@ -178,6 +179,135 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
     getShopProducts(category);
   };
 
+  function hasAttributes(attrs: any): boolean {
+    if (!attrs) return false;
+    if (attrs instanceof Map) return attrs.size > 0;
+    if (Array.isArray(attrs)) return attrs.length > 0;
+    if (typeof attrs === 'object') return Object.keys(attrs).length > 0;
+    return false;
+  }
+
+  // Return entries in predictable [key, value][] form
+  function getAttributeEntries(attrs: any): [string, any][] {
+    if (!attrs) return [];
+    if (attrs instanceof Map) {
+      return Array.from(attrs.entries()) as [string, any][];
+    }
+    if (Array.isArray(attrs)) {
+      // If someone stored attributes as array of {k,v}
+      return attrs
+        .filter(Boolean)
+        .map((a: any) =>
+          a && typeof a === 'object' && a.key ? [String(a.key), a.value] : null,
+        )
+        .filter(Boolean) as [string, any][];
+    }
+    if (typeof attrs === 'object') {
+      return Object.entries(attrs) as [string, any][];
+    }
+    return [];
+  }
+
+  // Friendly label formatter: "key_name" -> "Key name"
+  function formatAttrLabel(k: string) {
+    return k
+      .replace(/[_\-]/g, ' ')
+      .replace(/\b\w/g, s => s.toUpperCase())
+      .replace(/\s+/g, ' ');
+  }
+
+  // Render value intelligently
+  function renderAttrValue(value: any): JSX.Element {
+    // primitives
+    if (value === null || value === undefined || value === '') {
+      return <Text style={styles.specValue}>—</Text>;
+    }
+    if (typeof value === 'boolean') {
+      return <Text style={styles.specValue}>{value ? 'Yes' : 'No'}</Text>;
+    }
+    if (typeof value === 'number' || typeof value === 'string') {
+      return <Text style={styles.specValue}>{String(value)}</Text>;
+    }
+
+    // If value is a Map (from Mongo map or nested)
+    if (value instanceof Map) {
+      const entries = Array.from(value.entries());
+      return (
+        <View style={{alignItems: 'flex-end'}}>
+          {entries.map(([k, v]) => (
+            <Text key={String(k)} style={styles.specValueSmall}>
+              {formatAttrLabel(String(k))}: {String(v)}
+            </Text>
+          ))}
+        </View>
+      );
+    }
+
+    // If value is an array — render as comma-separated or bullets
+    if (Array.isArray(value)) {
+      // If array of primitives show inline
+      const primitives = value.every(v =>
+        ['string', 'number', 'boolean'].includes(typeof v),
+      );
+      if (primitives) {
+        return (
+          <Text style={styles.specValue}>
+            {value.map(v => String(v)).join(', ')}
+          </Text>
+        );
+      }
+      // Mixed/complex — show short JSON-ish list
+      return (
+        <View style={{alignItems: 'flex-end'}}>
+          {value.map((v, i) => (
+            <Text key={i} style={styles.specValueSmall}>
+              • {StringifyShort(v)}
+            </Text>
+          ))}
+        </View>
+      );
+    }
+
+    // If value is a plain object (nested attributes)
+    if (typeof value === 'object') {
+      // render up to N nested pairs to avoid UI explosion
+      const entries = Object.entries(value).slice(0, 6);
+      return (
+        <View style={{alignItems: 'flex-end'}}>
+          {entries.map(([k, v]) => (
+            <Text key={k} style={styles.specValueSmall}>
+              {formatAttrLabel(k)}: {StringifyShort(v)}
+            </Text>
+          ))}
+          {Object.keys(value).length > 6 && (
+            <Text style={styles.specValueSmall}>…</Text>
+          )}
+        </View>
+      );
+    }
+
+    // fallback
+    return <Text style={styles.specValue}>{String(value)}</Text>;
+  }
+
+  // Small helper to stringify nested values concisely
+  function StringifyShort(v: any) {
+    if (v === null || v === undefined) return '—';
+    if (
+      typeof v === 'string' ||
+      typeof v === 'number' ||
+      typeof v === 'boolean'
+    )
+      return String(v);
+    try {
+      const s = JSON.stringify(v);
+      if (s.length > 50) return s.slice(0, 47) + '…';
+      return s;
+    } catch (e) {
+      return String(v);
+    }
+  }
+
   return (
     <View style={styles.container}>
       {/* Header Navigation */}
@@ -280,7 +410,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
                       {product.productShortDescription}
                     </Text>
                   )}
-                {Object.entries(product.attributes).length > 0 && (
+                {/* {Object.entries(product.attributes).length > 0 && (
                   <View style={[styles.specsContainer]}>
                     <Text style={styles.sectionTitle}>
                       Product Specifications
@@ -288,6 +418,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
 
                     {Object.entries(product.attributes).map(
                       ([key, value]: any, index) => {
+                        console.log('key, value', key, value);
                         return (
                           <View
                             key={key}
@@ -302,6 +433,41 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
                             ]}>
                             <Text style={styles.specKey}>{key}</Text>
                             <Text style={styles.specValue}>{value}</Text>
+                          </View>
+                        );
+                      },
+                    )}
+                  </View>
+                )} */}
+                {hasAttributes(product.attributes) && (
+                  <View style={styles.specsContainer}>
+                    <Text style={styles.sectionTitle}>
+                      Product Specifications
+                    </Text>
+
+                    {getAttributeEntries(product.attributes).map(
+                      ([rawKey, rawValue]: [string, any], index: number) => {
+                        const key = String(rawKey);
+                        const value = rawValue;
+
+                        return (
+                          <View
+                            key={key + index}
+                            style={[
+                              styles.specRow,
+                              index % 2 !== 0 && styles.specRowAlt,
+                              index ===
+                                getAttributeEntries(product.attributes).length -
+                                  1 && {
+                                borderBottomWidth: 0,
+                              },
+                            ]}>
+                            <Text style={styles.specKey}>
+                              {formatAttrLabel(key)}
+                            </Text>
+                            <View style={{flex: 1, alignItems: 'flex-end'}}>
+                              {renderAttrValue(value)}
+                            </View>
                           </View>
                         );
                       },
@@ -975,5 +1141,15 @@ const styles = StyleSheet.create({
     height: 3,
     borderRadius: 2,
     backgroundColor: Theme.colors.primary,
+  },
+  specValueSmall: {
+    color: '#4a4a4a',
+    fontSize: 12,
+    fontWeight: '500',
+    marginBottom: 4,
+    textAlign: 'right',
+  },
+  specRowAlt: {
+    backgroundColor: '#fff',
   },
 });
