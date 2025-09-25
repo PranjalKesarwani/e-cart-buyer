@@ -83,8 +83,10 @@ const ShopCard = ({
           <Text style={styles.shopDescription} numberOfLines={2}>
             {item.description || 'No description available'}
           </Text>
-          <Text style={styles.shopDescription} numberOfLines={2}>
-            {'Location details not found!'}
+          <Text style={styles.locationDetals} numberOfLines={2}>
+            {item.address?.formattedAddress ||
+              item.address?.formattedAddress ||
+              'Address not available'}
           </Text>
         </View>
         <TouchableOpacity
@@ -169,6 +171,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: Theme.colors.darkGray,
     lineHeight: 18,
+  },
+  locationDetals: {
+    fontSize: 15,
+    color: Theme.colors.gray,
+    marginTop: 6,
+    lineHeight: 16,
   },
   actionButton: {
     backgroundColor: '#F3F3F3',

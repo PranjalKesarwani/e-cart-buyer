@@ -37,9 +37,11 @@ import {HomeLevel2Cats} from '../HomeScreen/HomeLevel2Cats';
 import {
   formatAttrLabel,
   getAttributeEntries,
+  getSellerName,
   hasAttributes,
   StringifyShort,
 } from '../../utils/util';
+import {navigate} from '../../navigation/navigationService';
 
 type ProductScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -265,7 +267,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}>
-          <Icons name="left" size={20} color={'black'} />
+          <Icons name="arrowleft" size={20} color={'black'} />
           <Text style={styles.backText}>Back</Text>
         </TouchableOpacity>
         <Text
@@ -278,11 +280,11 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
           }}
           numberOfLines={1}
           ellipsizeMode="tail">
-          Om Prakash General Store
+          {selectedShop?.shopName}
         </Text>
         <TouchableOpacity
           style={styles.cartButton}
-          onPress={() => console.log('go to cart screen')}>
+          onPress={() => navigate('Cart')}>
           <View style={styles.cartBadge}>
             <Text style={styles.cartBadgeText}>{cartItemsCount}</Text>
           </View>
@@ -336,7 +338,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
                 <TouchableOpacity
                   onPress={onChatPress}
                   style={styles.chatButton}>
-                  <Icons name="message1" size={24} color="#fff" />
+                  <Icons name="message1" size={22} color="#fff" />
                 </TouchableOpacity>
               </View>
 
@@ -360,6 +362,44 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
                       {product.productShortDescription}
                     </Text>
                   )}
+                {product.media.voiceDescriptions!?.length > 0 ? (
+                  <>
+                    <View
+                      style={[
+                        {
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: 5,
+                          width: '100%',
+                        },
+                      ]}>
+                      <View>
+                        <Text
+                          style={{
+                            fontStyle: 'italic',
+                            fontWeight: 'bold',
+                            fontSize: 15,
+                          }}>
+                          Listen to product description
+                        </Text>
+                      </View>
+                      <TouchableOpacity
+                        //  onPress={togglePlay}
+                        style={styles.playButton}
+                        hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}
+                        accessibilityLabel={true ? 'Pause audio' : 'Play audio'}
+                        accessibilityRole="button">
+                        <Icons
+                          name={false ? 'pausecircle' : 'play'}
+                          size={20}
+                          color={false ? '#fff' : Theme.colors.primary}
+                          style={{marginLeft: false ? 0 : 2}}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                ) : null}
 
                 {hasAttributes(product.attributes) && (
                   <View style={styles.specsContainer}>
@@ -653,7 +693,7 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   chatButton: {
-    backgroundColor: 'green',
+    backgroundColor: Theme.colors.mainYellow,
     width: 40,
     height: 40,
     borderRadius: 24,
@@ -1052,5 +1092,16 @@ const styles = StyleSheet.create({
   },
   specRowAlt: {
     backgroundColor: '#fff',
+  },
+  playButton: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.06)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 2,
   },
 });
