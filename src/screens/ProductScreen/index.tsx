@@ -178,6 +178,46 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
     getShopProducts(category);
   };
 
+  function isMapLike(obj: any) {
+    return (
+      obj instanceof Map ||
+      (obj &&
+        typeof obj === 'object' &&
+        !Array.isArray(obj) &&
+        Object.getPrototypeOf(obj) === Object.prototype &&
+        Object.keys(obj).length > 0 &&
+        Object.values(obj).every(v => v !== undefined))
+    );
+  }
+
+  // Prefer value when attribute stored as { value: ... , type:..., ... }
+  function unwrapAttributeRaw(raw: any) {
+    if (raw === null || raw === undefined) return raw;
+    // If it's a Map (client could get Map() too)
+    if (raw instanceof Map) {
+      // try value key inside
+      if (raw.has('value')) return raw.get('value');
+      // fallback to plain object representation
+      const obj: any = {};
+      raw.forEach((v: any, k: any) => (obj[k] = v));
+      if ('value' in obj) return obj.value;
+      return obj;
+    }
+
+    // plain object with metadata e.g. { type, value, searchable, ... }
+    if (typeof raw === 'object' && !Array.isArray(raw)) {
+      // Common pattern: { value: ... }
+      if ('value' in raw) return raw.value;
+      // Sometimes enums are { values: [...] }
+      if ('values' in raw && Array.isArray(raw.values)) return raw.values;
+      // if object looks like nested map/attrs, return as object to be handled later
+      return raw;
+    }
+
+    // primitives and arrays
+    return raw;
+  }
+
   function hasAttributes(attrs: any): boolean {
     if (!attrs) return false;
     if (attrs instanceof Map) return attrs.size > 0;
@@ -186,77 +226,106 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
     return false;
   }
 
-  // Return entries in predictable [key, value][] form
-  function getAttributeEntries(attrs: any): [string, any][] {
+  // Return sanitized entries [key, { raw, value }] to preserve metadata for later
+  function getAttributeEntries(attrs: any): [string, {raw: any; value: any}][] {
     if (!attrs) return [];
+
+    // If Map
     if (attrs instanceof Map) {
-      return Array.from(attrs.entries()) as [string, any][];
+      return Array.from(attrs.entries()).map(([k, raw]) => [
+        String(k),
+        {raw, value: unwrapAttributeRaw(raw)},
+      ]);
     }
+
+    // If plain object (typical from JSON over REST)
+    if (typeof attrs === 'object' && !Array.isArray(attrs)) {
+      return Object.entries(attrs)
+        .filter(([k, v]) => v !== undefined && v !== null)
+        .map(([k, raw]) => [String(k), {raw, value: unwrapAttributeRaw(raw)}]);
+    }
+
+    // If someone passed array of pairs [{ key, value }] or [{k,v}]
     if (Array.isArray(attrs)) {
-      // If someone stored attributes as array of {k,v}
       return attrs
-        .filter(Boolean)
-        .map((a: any) =>
-          a && typeof a === 'object' && a.key ? [String(a.key), a.value] : null,
-        )
-        .filter(Boolean) as [string, any][];
+        .map((a: any) => {
+          if (!a) return null;
+          if ('key' in a && 'value' in a)
+            return [
+              String(a.key),
+              {raw: a, value: unwrapAttributeRaw(a.value)},
+            ];
+          if (Array.isArray(a) && a.length >= 2)
+            return [String(a[0]), {raw: a[1], value: unwrapAttributeRaw(a[1])}];
+          return null;
+        })
+        .filter(Boolean) as [string, {raw: any; value: any}][];
     }
-    if (typeof attrs === 'object') {
-      return Object.entries(attrs) as [string, any][];
-    }
+
     return [];
   }
 
-  // Friendly label formatter: "key_name" -> "Key name"
   function formatAttrLabel(k: string) {
     return k
       .replace(/[_\-]/g, ' ')
       .replace(/\b\w/g, s => s.toUpperCase())
-      .replace(/\s+/g, ' ');
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
-  // Render value intelligently
-  function renderAttrValue(value: any): JSX.Element {
-    console.log('Rendering attr value:', value);
-    // primitives
+  function StringifyShort(v: any) {
+    if (v === null || v === undefined || v === '') return '—';
+    if (
+      typeof v === 'string' ||
+      typeof v === 'number' ||
+      typeof v === 'boolean'
+    )
+      return String(v);
+    try {
+      const s = JSON.stringify(v);
+      if (s.length > 50) return s.slice(0, 47) + '…';
+      return s;
+    } catch (e) {
+      return String(v);
+    }
+  }
+
+  // --- renderer ---
+  function renderAttrValue(value: any, rawMeta?: any): JSX.Element {
+    // value here is the unwrapped value (primitive / array / object)
     if (value === null || value === undefined || value === '') {
       return <Text style={styles.specValue}>—</Text>;
     }
+
     if (typeof value === 'boolean') {
       return <Text style={styles.specValue}>{value ? 'Yes' : 'No'}</Text>;
     }
+
     if (typeof value === 'number' || typeof value === 'string') {
+      // If there's a unit in rawMeta (e.g., rawMeta.units) append it as small text
+      if (rawMeta && typeof rawMeta === 'object' && rawMeta.units) {
+        return (
+          <View style={{alignItems: 'flex-end'}}>
+            <Text style={styles.specValue}>{String(value)}</Text>
+            <Text style={styles.specValueSmall}>{String(rawMeta.units)}</Text>
+          </View>
+        );
+      }
       return <Text style={styles.specValue}>{String(value)}</Text>;
     }
 
-    // If value is a Map (from Mongo map or nested)
-    if (value instanceof Map) {
-      const entries = Array.from(value.entries());
-      return (
-        <View style={{alignItems: 'flex-end'}}>
-          {entries.map(([k, v]) => (
-            <Text key={String(k)} style={styles.specValueSmall}>
-              {formatAttrLabel(String(k))}: {String(v)}
-            </Text>
-          ))}
-        </View>
-      );
-    }
-
-    // If value is an array — render as comma-separated or bullets
+    // arrays: primitives -> join, complex -> bullet list
     if (Array.isArray(value)) {
-      // If array of primitives show inline
-      const primitives = value.every(v =>
+      const allPrimitives = value.every(v =>
         ['string', 'number', 'boolean'].includes(typeof v),
       );
-      if (primitives) {
+      if (allPrimitives) {
         return (
           <Text style={styles.specValue}>
             {value.map(v => String(v)).join(', ')}
           </Text>
         );
       }
-      // Mixed/complex — show short JSON-ish list
       return (
         <View style={{alignItems: 'flex-end'}}>
           {value.map((v, i) => (
@@ -268,9 +337,22 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
       );
     }
 
-    // If value is a plain object (nested attributes)
+    // objects: if rawMeta had type info that implies showing value differently, handle that
     if (typeof value === 'object') {
-      // render up to N nested pairs to avoid UI explosion
+      // If this object came from metadata that contained displayable 'value' nested as object,
+      // try common shapes: { label, name } or { min, max } (range)
+      if ('label' in value && typeof value.label === 'string') {
+        return <Text style={styles.specValue}>{value.label}</Text>;
+      }
+
+      if ('min' in value || 'max' in value) {
+        const parts: string[] = [];
+        if ('min' in value) parts.push(String(value.min));
+        if ('max' in value) parts.push(String(value.max));
+        return <Text style={styles.specValue}>{parts.join(' - ')}</Text>;
+      }
+
+      // Generic object -> show up to N pairs, like Flipkart compact view
       const entries = Object.entries(value).slice(0, 6);
       return (
         <View style={{alignItems: 'flex-end'}}>
@@ -286,26 +368,7 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
       );
     }
 
-    // fallback
     return <Text style={styles.specValue}>{String(value)}</Text>;
-  }
-
-  // Small helper to stringify nested values concisely
-  function StringifyShort(v: any) {
-    if (v === null || v === undefined) return '—';
-    if (
-      typeof v === 'string' ||
-      typeof v === 'number' ||
-      typeof v === 'boolean'
-    )
-      return String(v);
-    try {
-      const s = JSON.stringify(v);
-      if (s.length > 50) return s.slice(0, 47) + '…';
-      return s;
-    } catch (e) {
-      return String(v);
-    }
   }
 
   return (
@@ -418,27 +481,24 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
                     </Text>
 
                     {getAttributeEntries(product.attributes).map(
-                      ([rawKey, rawValue]: [string, any], index: number) => {
+                      ([rawKey, {raw, value}], index) => {
                         const key = String(rawKey);
-                        const value = rawValue;
-
+                        const isLast =
+                          index ===
+                          getAttributeEntries(product.attributes).length - 1;
                         return (
                           <View
                             key={key + index}
                             style={[
                               styles.specRow,
                               index % 2 !== 0 && styles.specRowAlt,
-                              index ===
-                                getAttributeEntries(product.attributes).length -
-                                  1 && {
-                                borderBottomWidth: 0,
-                              },
+                              isLast && {borderBottomWidth: 0},
                             ]}>
                             <Text style={styles.specKey}>
                               {formatAttrLabel(key)}
                             </Text>
                             <View style={{flex: 1, alignItems: 'flex-end'}}>
-                              {renderAttrValue(value)}
+                              {renderAttrValue(value, raw)}
                             </View>
                           </View>
                         );
@@ -458,46 +518,33 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
                 keyExtractor={item => item._id}
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={[styles.subCatList]}
-                renderItem={({item}) =>
-                  // <TouchableOpacity
-                  //   onPress={() => setSelectedSubCat(item)}
-                  //   style={[
-                  //     Theme.buttons.primary,
-                  //     selectedSubCat?._id === item._id && {
-                  //       backgroundColor: Theme.colors.mainYellow,
-                  //     },
-                  //     styles.previewItem,
-                  //   ]}>
-                  //   <Text style={styles.variantText}>{item.name}</Text>
-                  // </TouchableOpacity>
-                  {
-                    const isActive = selectedSubCat?._id === item._id;
-                    return (
-                      <TouchableOpacity
-                        style={styles.previewItem}
-                        activeOpacity={0.8}
-                        onPress={() => setSelectedSubCat(item)}
-                        accessibilityRole="button"
-                        accessibilityLabel={`Open ${item.name} category`}>
-                        <Image
-                          source={{uri: item.image}}
-                          style={styles.previewImage}
-                        />
-                        <Text
-                          numberOfLines={1}
-                          style={[
-                            styles.previewText,
-                            isActive && styles.previewTextActive,
-                          ]}>
-                          {item.name}
-                        </Text>
-                        {isActive ? (
-                          <View style={styles.activeIndicator} />
-                        ) : null}
-                      </TouchableOpacity>
-                    );
-                  }
-                }
+                renderItem={({item}) => {
+                  const isActive = selectedSubCat?._id === item._id;
+                  return (
+                    <TouchableOpacity
+                      style={styles.previewItem}
+                      activeOpacity={0.8}
+                      onPress={() => setSelectedSubCat(item)}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Open ${item.name} category`}>
+                      <Image
+                        source={{uri: item.image}}
+                        style={styles.previewImage}
+                      />
+                      <Text
+                        numberOfLines={1}
+                        style={[
+                          styles.previewText,
+                          isActive && styles.previewTextActive,
+                        ]}>
+                        {item.name}
+                      </Text>
+                      {isActive ? (
+                        <View style={styles.activeIndicator} />
+                      ) : null}
+                    </TouchableOpacity>
+                  );
+                }}
               />
             </View>
           </>
@@ -578,11 +625,6 @@ const ProductScreen = ({route, navigation}: ProductScreenProps) => {
               <Text style={styles.addressText}>
                 {activeAddress?.completeAddress}
               </Text>
-              {/* <TouchableOpacity
-                style={styles.changeAddressButton}
-                onPress={() => console.log('dalksdflkjs')}>
-                <Text style={styles.changeAddressText}>Change Address</Text>
-              </TouchableOpacity> */}
             </View>
 
             {/* Action Buttons */}
