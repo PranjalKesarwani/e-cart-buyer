@@ -39,7 +39,7 @@ import {
 import moment from 'moment';
 import {PersonalChtatStyles as styles} from '../../theme/styles';
 import {addDateSeparators} from '../../utils/helper';
-// import Clipboard from '@react-native-clipboard/clipboard';
+import Clipboard from '@react-native-clipboard/clipboard';
 import {Theme} from '../../theme/theme';
 
 type PersonalChatScreenProps = NativeStackScreenProps<
@@ -122,7 +122,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
 
   const handleCopyToClipboard = async (text: string, type: string) => {
     try {
-      // await Clipboard.setString(text);
+      await Clipboard.setString(text);
       showToast('success', `${type} ID copied to clipboard!`);
     } catch (error) {
       console.error('Failed to copy text: ', error);
