@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {
@@ -16,6 +17,9 @@ import {
   EMessageStatus,
   IDateSeparator,
   IMessage,
+  ReplyToMessage,
+  ReplyToOrder,
+  ReplyToProduct,
   RootStackParamList,
   TChatContact,
   TSeller,
@@ -35,6 +39,8 @@ import {
 import moment from 'moment';
 import {PersonalChtatStyles as styles} from '../../theme/styles';
 import {addDateSeparators} from '../../utils/helper';
+// import Clipboard from '@react-native-clipboard/clipboard';
+import {Theme} from '../../theme/theme';
 
 type PersonalChatScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -114,6 +120,96 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
     }
   };
 
+  const handleCopyToClipboard = async (text: string, type: string) => {
+    try {
+      // await Clipboard.setString(text);
+      showToast('success', `${type} ID copied to clipboard!`);
+    } catch (error) {
+      console.error('Failed to copy text: ', error);
+      showToast('error', `Failed to copy ${type} ID.`);
+    }
+  };
+
+  const renderReplyToContent = (replyTo: any) => {
+    if (!replyTo) {
+      return null;
+    }
+
+    if (replyTo.onModel === 'Message') {
+      const replyToMessage = replyTo as ReplyToMessage;
+      // Check if the replied message contains media
+      const isMedia = replyToMessage.content?.media?.[0];
+      const mediaType = isMedia?.type;
+      const mediaUrl = isMedia?.url;
+
+      if (mediaType === 'image' && mediaUrl) {
+        return (
+          <View style={styles.replyContentContainerImage}>
+            <Image
+              source={{uri: mediaUrl}}
+              style={styles.replyThumbnail}
+              resizeMode="cover"
+            />
+            <Text style={styles.replyText} numberOfLines={1}>
+              {replyToMessage.content?.text || 'Image'}
+            </Text>
+          </View>
+        );
+      } else if (mediaType === 'audio') {
+        return (
+          <View style={styles.replyContentContainerText}>
+            <Icon name="sound" size={20} color="#fff" />
+            <Text style={styles.replyText} numberOfLines={1}>
+              {replyToMessage.content?.text || 'Voice Message'}
+            </Text>
+          </View>
+        );
+      } else {
+        return (
+          <View style={styles.replyTextWrapper}>
+            <Text style={styles.replyContent} numberOfLines={4}>
+              {replyToMessage.content?.text || 'Message'}
+            </Text>
+          </View>
+        );
+      }
+    }
+
+    if (replyTo.onModel === 'Order') {
+      const replyToOrder = replyTo as ReplyToOrder;
+      return (
+        <View style={styles.replyContentContainerText}>
+          <Text style={styles.replyText}>Order: {replyToOrder.orderId}</Text>
+          <TouchableOpacity
+            onPress={() =>
+              handleCopyToClipboard(replyToOrder.orderId!, 'Order')
+            }>
+            <Icon name="copy1" size={16} color="#fff" />
+          </TouchableOpacity>
+        </View>
+      );
+    }
+
+    if (replyTo.onModel === 'Product') {
+      const replyToProduct = replyTo as ReplyToProduct;
+      return (
+        <View style={styles.replyContentContainerText}>
+          <Text style={styles.replyText}>
+            Product: {replyToProduct.productId}
+          </Text>
+          <TouchableOpacity
+            onPress={() =>
+              handleCopyToClipboard(replyToProduct.productId!, 'Product')
+            }>
+            <Icon name="copy1" size={16} color="#fff" />
+          </TouchableOpacity>
+        </View>
+      );
+    }
+
+    return null;
+  };
+
   const renderItem = ({item, index}: {item: ChatItem; index: number}) => {
     if (item.type === 'date_separator') {
       const dateSeparator = item as IDateSeparator;
@@ -149,6 +245,61 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
               ? styles.userBubble
               : styles.otherBubble,
           ]}>
+          {message.replyTo && (
+            <View style={styles.replyContainer}>
+              {renderReplyToContent(message.replyTo)}
+            </View>
+          )}
+
+          {/* {message.content.media?.length! > 0 && (
+              <>
+                {message.content.media![0].type === 'image' ? (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setPreviewImage({
+                        uri: message.content.media?.[0].url as string,
+                      });
+                      setIsChatImagePreviewVisible(true);
+                    }}>
+                    <Image
+                      source={{uri: message.content.media![0].url}}
+                      style={styles.messageImage}
+                      resizeMode="cover"
+                    />
+                  </TouchableOpacity>
+                ) : message.content.media![0].type === 'audio' ? (
+                  <TouchableOpacity
+                    disabled={loadingAudio}
+                    onPress={() => {
+                      // You can add playback logic here
+                      console.log(
+                        'Play audio:',
+                        message.content.media?.[0].url,
+                      );
+                      togglePlayback(message.content.media!?.[0].url, index);
+                    }}
+                    style={styles.audioMessageContainer}>
+                    {loadingAudio && currentPlayingIndex === index ? (
+                      <ActivityIndicator
+                        size="small"
+                        color={Theme.colors.primary}
+                      />
+                    ) : (
+                      <Icon
+                        name={
+                          currentPlayingIndex === index && isPlaying
+                            ? 'pause'
+                            : 'play'
+                        }
+                        size={20}
+                        color={Theme.colors.primary}
+                      />
+                    )}
+                    <Text style={styles.audioText}>Voice message</Text>
+                  </TouchableOpacity>
+                ) : null}
+              </>
+            )} */}
           <Text style={styles.messageText}>{item.content.text}</Text>
           <View style={styles.timeContainer}>
             <Text style={styles.timeText}>

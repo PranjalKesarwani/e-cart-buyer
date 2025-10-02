@@ -148,4 +148,133 @@ export const PersonalChtatStyles = StyleSheet.create({
     borderRadius: 6,
     overflow: 'hidden',
   },
+  replyContainer: {
+    backgroundColor: '#02765c',
+    borderLeftWidth: 3,
+    borderLeftColor: '#4CAF50',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 6,
+    marginBottom: 4,
+    alignSelf: 'stretch',
+  },
+  replyTextWrapper: {
+    flex: 1, // take all available space
+  },
+
+  replyContent: {
+    color: '#fff',
+    fontSize: 14,
+    flexShrink: 1, // allow shrinking if needed
+  },
+  messageImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 8,
+    marginTop: 4,
+    resizeMode: 'cover',
+  },
+  replyToContainer: {
+    width: '100%',
+    backgroundColor: '#152430', // light grey
+    borderLeftWidth: 5,
+    borderLeftColor: '#fff',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    marginBottom: 6,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    position: 'relative',
+  },
+  replyTextContainer: {
+    flex: 1,
+    paddingRight: 20, // space for close button
+  },
+
+  replyName: {
+    fontWeight: '600',
+    fontSize: 14,
+    color: '#02765c',
+    marginBottom: 2,
+  },
+
+  replyMessage: {
+    fontSize: 13,
+    color: '#9c9c9c',
+  },
+
+  closeButton: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    padding: 0,
+    backgroundColor: '#fff', // darker grey
+    borderRadius: 12,
+  },
+  replyThumbnail: {
+    width: 40,
+    height: 40,
+    borderRadius: 4,
+    marginLeft: 8,
+  },
+  replyActionContainer: {
+    marginLeft: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  audioMessageContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#2A3942',
+    borderRadius: 8,
+    padding: 8,
+    marginTop: 4,
+  },
+  audioText: {
+    color: 'white',
+    marginLeft: 8,
+    fontSize: 16,
+  },
+  recordingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#1F2C34',
+    flex: 1,
+  },
+  recordingText: {
+    color: '#FF3B30',
+    marginLeft: 8,
+    fontSize: 16,
+  },
+  recordingTimer: {
+    color: 'white',
+    marginLeft: 8,
+    fontSize: 16,
+  },
+  stopButton: {
+    marginLeft: 'auto',
+    backgroundColor: '#FF3B30',
+    borderRadius: 20,
+    padding: 10,
+  },
+  replyContentContainerImage: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+    gap: 8,
+    paddingBottom: 5,
+  },
+  replyContentContainerText: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+    gap: 8,
+  },
+  replyText: {
+    color: '#fff',
+    fontSize: 14,
+    flexShrink: 1, // allow shrinking if needed
+  },
 });
