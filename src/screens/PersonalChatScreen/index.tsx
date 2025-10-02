@@ -12,7 +12,9 @@ import {
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {
+  ChatItem,
   EMessageStatus,
+  IDateSeparator,
   IMessage,
   RootStackParamList,
   TChatContact,
@@ -32,6 +34,7 @@ import {
 } from '../../utils/socketHelper';
 import moment from 'moment';
 import {PersonalChtatStyles as styles} from '../../theme/styles';
+import {addDateSeparators} from '../../utils/helper';
 
 type PersonalChatScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -111,37 +114,52 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
     }
   };
 
-  const renderItem = ({item}: {item: IMessage}) => (
-    <View
-      style={[
-        styles.messageContainer,
-        item.senderOnModel === 'Buyer'
-          ? styles.userContainer
-          : styles.otherContainer,
-      ]}>
-      {item.senderOnModel === 'Seller' && (
-        <Image
-          source={{uri: (shop.sellerId as TSeller)?.profilePic}}
-          style={styles.avatar}
-        />
-      )}
+  const renderItem = ({item, index}: {item: ChatItem; index: number}) => {
+    if (item.type === 'date_separator') {
+      const dateSeparator = item as IDateSeparator;
+      const formattedDate = dateSeparator.date.format('dddd, MMMM D, YYYY');
+      return (
+        <View style={styles.dateSeparatorContainer}>
+          <Text style={styles.dateSeparatorText}>{formattedDate}</Text>
+        </View>
+      );
+    }
+
+    const message = item as IMessage;
+    const isSender = message.senderOnModel === 'Seller';
+
+    return (
       <View
         style={[
-          styles.messageBubble,
+          styles.messageContainer,
           item.senderOnModel === 'Buyer'
-            ? styles.userBubble
-            : styles.otherBubble,
+            ? styles.userContainer
+            : styles.otherContainer,
         ]}>
-        <Text style={styles.messageText}>{item.content.text}</Text>
-        <View style={styles.timeContainer}>
-          <Text style={styles.timeText}>
-            {moment.unix(item.timestamp).format('h:mm A')}
-          </Text>
-          {item.senderOnModel === 'Buyer' && renderMessageStatus(item.status)}
+        {item.senderOnModel === 'Seller' && (
+          <Image
+            source={{uri: (shop.sellerId as TSeller)?.profilePic}}
+            style={styles.avatar}
+          />
+        )}
+        <View
+          style={[
+            styles.messageBubble,
+            item.senderOnModel === 'Buyer'
+              ? styles.userBubble
+              : styles.otherBubble,
+          ]}>
+          <Text style={styles.messageText}>{item.content.text}</Text>
+          <View style={styles.timeContainer}>
+            <Text style={styles.timeText}>
+              {moment.unix(item.timestamp).format('h:mm A')}
+            </Text>
+            {item.senderOnModel === 'Buyer' && renderMessageStatus(item.status)}
+          </View>
         </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   useEffect(() => {
     // Handler for new private messages
@@ -267,7 +285,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
       </View>
 
       <FlatList
-        data={messages}
+        data={addDateSeparators(messages)}
         renderItem={renderItem}
         keyExtractor={item => item._id}
         contentContainerStyle={styles.listContent}

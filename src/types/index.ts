@@ -1,5 +1,6 @@
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {TChildCat} from '../screens/HomeScreen/CategoryGroupsList';
+import moment from 'moment';
 
 export type RootStackParamList = {
   SplashScreen: undefined;
@@ -439,3 +440,11 @@ export type THomeCats = {
   status?: boolean;
   children: TCategory[];
 };
+
+export interface IDateSeparator {
+  _id: string;
+  type: 'date_separator';
+  date: moment.Moment;
+}
+
+export type ChatItem = IMessage | IDateSeparator;

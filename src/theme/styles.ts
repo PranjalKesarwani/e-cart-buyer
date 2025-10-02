@@ -135,4 +135,17 @@ export const PersonalChtatStyles = StyleSheet.create({
     padding: 10,
     marginLeft: 4,
   },
+  dateSeparatorContainer: {
+    marginVertical: 10,
+    alignItems: 'center',
+  },
+  dateSeparatorText: {
+    fontSize: 12,
+    color: '#44444E',
+    backgroundColor: '#f0f0f0',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
 });

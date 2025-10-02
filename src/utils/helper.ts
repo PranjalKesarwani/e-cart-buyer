@@ -10,7 +10,8 @@ import {
   setCartItemsCount,
   setSelectedCart,
 } from '../redux/slices/buyerSlice';
-import {TCart} from '../types';
+import {ChatItem, IMessage, TCart} from '../types';
+import moment from 'moment';
 
 export const getBuyerToken = async (): Promise<string | null> => {
   try {
@@ -120,4 +121,31 @@ export const debounce = (func: any, delay: any) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => func.apply(this, args), delay);
   };
+};
+
+export const addDateSeparators = (messages: IMessage[]) => {
+  const messagesWithSeparators: ChatItem[] = [];
+  let lastDate: any = null;
+
+  // Process the messages from old to new because the FlatList is inverted
+  const sortedMessages = [...messages].reverse();
+
+  sortedMessages.forEach(message => {
+    const messageDate = moment.unix(message.timestamp).startOf('day');
+
+    if (!lastDate || !messageDate.isSame(lastDate, 'day')) {
+      // Create a date separator object
+      messagesWithSeparators.push({
+        _id: `date_separator_${messageDate.unix()}`,
+        type: 'date_separator',
+        date: messageDate,
+      });
+      lastDate = messageDate;
+    }
+
+    messagesWithSeparators.push(message);
+  });
+
+  // Re-reverse the array to fit the inverted FlatList
+  return messagesWithSeparators.reverse();
 };
