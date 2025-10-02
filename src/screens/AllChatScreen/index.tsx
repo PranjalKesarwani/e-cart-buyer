@@ -1,47 +1,26 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, FlatList, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Image,
+  ActivityIndicator,
+} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {IMessage, RootStackParamList, TChatContact, TShop} from '../../types';
 import {apiClient} from '../../services/api';
 import moment from 'moment';
-import {navigate} from '../../navigation/navigationService';
+import Icons from 'react-native-vector-icons/AntDesign';
 
 type AllChatScreenProps = NativeStackScreenProps<RootStackParamList, 'Chats'>;
-type TChatContactAllScreen = {
-  chatContactId: string;
-  userType: 'Buyer' | 'Seller' | 'DeliveryPerson' | 'Admin';
-  lastMessage: {
-    content: {
-      text: string;
-      media: string[];
-    };
-    _id: string;
-    sender: string;
-    senderOnModel: 'Buyer' | 'Seller' | 'DeliveryPerson' | 'Admin';
-    type: 'text' | 'image' | 'video' | string; // adjust based on your enum
-    status: 'sent' | 'delivered' | 'read' | string; // adjust as needed
-    timestamp: number;
-  };
-  updatedAt: string;
-  shop?: {
-    shopName: string;
-    shopPic: string;
-  };
-};
 // Mock data structure similar to WhatsApp
-const chatData = Array.from({length: 20}, (_, i) => ({
-  id: `chat${i + 1}`,
-  name: `Contact ${i + 1}`,
-  lastMessage: 'Last message preview...',
-  timestamp: '10:30 AM',
-  unreadCount: Math.floor(Math.random() * 5),
-  online: i % 4 === 0, // mock online status
-  avatar: `https://i.pravatar.cc/150?img=${i + 1}`, // placeholder images
-}));
 
 const AllChatScreen = ({navigation}: AllChatScreenProps) => {
   const [chatContacts, setChatContacts] = useState<TChatContact[] | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
   useEffect(() => {
     const getChatContacts = async () => {
       try {
@@ -49,6 +28,8 @@ const AllChatScreen = ({navigation}: AllChatScreenProps) => {
         setChatContacts(res.data.chatContacts);
       } catch (error) {
         console.log('Error fetching chat contacts:', error);
+      } finally {
+        setLoading(false);
       }
     };
     getChatContacts();
@@ -112,12 +93,30 @@ const AllChatScreen = ({navigation}: AllChatScreenProps) => {
 
   return (
     <View style={styles.container}>
-      <FlatList
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icons name="arrowleft" size={24} color="#fff" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Seller Chats</Text>
+      </View>
+      {/* <FlatList
         data={chatContacts}
         renderItem={renderItem}
         keyExtractor={item => item._id}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
-      />
+      /> */}
+      {loading ? (
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color="#FF9933" />
+        </View>
+      ) : (
+        <FlatList
+          data={chatContacts || []}
+          renderItem={renderItem}
+          keyExtractor={item => item._id}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
+        />
+      )}
     </View>
   );
 };
@@ -200,6 +199,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#E0E0E0',
     marginLeft: 82,
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FF9933', // theme primary
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginLeft: 12,
+    color: '#fff',
+  },
+
+  loaderContainer: {flex: 1, justifyContent: 'center', alignItems: 'center'},
 });
 
 export default AllChatScreen;
