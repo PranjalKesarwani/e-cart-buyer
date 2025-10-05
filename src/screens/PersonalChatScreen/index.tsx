@@ -38,6 +38,7 @@ import {apiClient} from '../../services/api';
 import socket from '../../utils/socket';
 import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {
+  applyServerAck,
   handleContinuousChat,
   handleCreatedChat,
 } from '../../utils/socketHelper';
@@ -643,8 +644,8 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
             message: data.chatMessage,
           }),
         );
-        // handleContinuousChat(data.chatMessage, setMessages);
-        // applyServerAck(data.chatMessage, setMessages);
+        handleContinuousChat(data.chatMessage, setMessages);
+        applyServerAck(data.chatMessage, setMessages);
         setIsPreviewVisible(false);
         setCaption('');
         setPreviewImage(null);
