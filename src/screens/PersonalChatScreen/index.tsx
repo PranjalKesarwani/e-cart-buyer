@@ -54,6 +54,9 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   const {_id: buyerId} = useAppSelector(state => state.buyer);
   const [messages, setMessages] = useState<IMessage[] | []>([]);
   const [newMessage, setNewMessage] = useState<string>('');
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const [isTyping, setIsTyping] = useState(false);
   const [isThisChatExist, setIsThisChatExist] = useState<boolean>(false);
   const typingTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -70,25 +73,53 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   const [isChatImagePreviewVisible, setIsChatImagePreviewVisible] =
     useState(false);
 
-  useEffect(() => {
-    const getMessages = async () => {
-      try {
-        const res = await apiClient.post('/buyer/get-chat-screen', {
-          sellerId: (shop.sellerId as TSeller)._id,
-        });
-        setIsThisChatExist(res.data.isChatExist);
-        setChatContact(res.data.chat);
-        setMessages(res.data.messages);
-      } catch (error: any) {
-        const errorMessage =
-          error.response?.data?.message ||
-          error.message ||
-          'Something went wrong';
-        showToast('error', errorMessage);
+  const getMessages = async (pageNumber: number) => {
+    try {
+      if (isLoading || !hasMoreMessages) return;
+      setIsLoading(true);
+      const res = await apiClient.post('/buyer/get-chat-screen', {
+        sellerId: (shop.sellerId as TSeller)._id,
+        page: pageNumber, // 👈 Pass the page number
+        limit: 20,
+      });
+      // setIsThisChatExist(res.data.isChatExist);
+      // setChatContact(res.data.chat);
+      // setMessages(res.data.messages);
+      const {messages: newMessages, totalMessagesCount} = res.data;
+
+      const totalLoadedMessages = messages.length + newMessages.length;
+      setHasMoreMessages(totalLoadedMessages < totalMessagesCount);
+
+      if (pageNumber === 1) {
+        setMessages(newMessages); // 👈 For the first load, set the messages
+      } else {
+        setMessages(prevMessages => [...prevMessages, ...newMessages]); // 👈 Append new messages
       }
-    };
-    getMessages();
+      setPage(pageNumber);
+
+      setIsThisChatExist(res.data.isChatExist);
+      setChatContact(res.data.chat);
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        'Something went wrong';
+      showToast('error', errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getMessages(1);
   }, []);
+
+  const loadMoreMessages = () => {
+    if (!isLoading && hasMoreMessages) {
+      console.log('Loading more messages for page:', page + 1);
+      getMessages(page + 1);
+    }
+  };
 
   // const togglePlayback = async (voiceUri: string, index: number) => {
   //   try {
@@ -485,9 +516,14 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
       <FlatList
         data={addDateSeparators(messages)}
         renderItem={renderItem}
-        keyExtractor={item => item._id}
+        keyExtractor={(item, index) => item._id || index.toString()}
         contentContainerStyle={styles.listContent}
         inverted
+        onEndReached={loadMoreMessages}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
+        }
       />
 
       <View style={styles.inputContainer}>
