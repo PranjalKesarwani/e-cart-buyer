@@ -22,6 +22,7 @@ import {
   ReplyToProduct,
   RootStackParamList,
   TChatContact,
+  TSelectedImageFromDevice,
   TSeller,
   TShop,
 } from '../../types';
@@ -56,7 +57,18 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   const [isTyping, setIsTyping] = useState(false);
   const [isThisChatExist, setIsThisChatExist] = useState<boolean>(false);
   const typingTimeout = useRef<NodeJS.Timeout | null>(null);
+  const [loadingAudio, setLoadingAudio] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const [currentPlayingIndex, setCurrentPlayingIndex] = useState<number | null>(
+    null,
+  );
+
   const [isUserOnline, setIsUserOnline] = useState<boolean>(false);
+  const [previewImage, setPreviewImage] =
+    useState<TSelectedImageFromDevice | null>(null);
+  const [isChatImagePreviewVisible, setIsChatImagePreviewVisible] =
+    useState(false);
 
   useEffect(() => {
     const getMessages = async () => {
@@ -77,6 +89,44 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
     };
     getMessages();
   }, []);
+
+  // const togglePlayback = async (voiceUri: string, index: number) => {
+  //   try {
+  //     if (currentPlayingIndex === index && isPlaying) {
+  //       // Pause current playback
+  //       await audioRecorderPlayer.pausePlayer();
+  //       setIsPlaying(false);
+  //     } else {
+  //       // Stop any currently playing audio
+  //       if (currentPlayingIndex !== null) {
+  //         await audioRecorderPlayer.stopPlayer();
+  //         audioRecorderPlayer.removePlayBackListener();
+  //       }
+
+  //       setLoadingAudio(true);
+
+  //       // Start playing new audio
+  //       await audioRecorderPlayer.startPlayer(voiceUri);
+  //       audioRecorderPlayer.addPlayBackListener(e => {
+  //         if (e.currentPosition === e.duration) {
+  //           // Audio finished playing
+  //           setCurrentPlayingIndex(null);
+  //           setIsPlaying(false);
+  //           setLoadingAudio(false);
+  //           audioRecorderPlayer.removePlayBackListener();
+  //         }
+  //       });
+
+  //       setCurrentPlayingIndex(index);
+  //       setIsPlaying(true);
+  //       setLoadingAudio(false);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error playing voice:', error);
+  //     showToast('error', 'Could not play audio');
+  //     setLoadingAudio(false);
+  //   }
+  // };
 
   const sendMessage = () => {
     if (newMessage.trim() !== '') {
@@ -251,55 +301,52 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
             </View>
           )}
 
-          {/* {message.content.media?.length! > 0 && (
-              <>
-                {message.content.media![0].type === 'image' ? (
-                  <TouchableOpacity
-                    onPress={() => {
-                      setPreviewImage({
-                        uri: message.content.media?.[0].url as string,
-                      });
-                      setIsChatImagePreviewVisible(true);
-                    }}>
-                    <Image
-                      source={{uri: message.content.media![0].url}}
-                      style={styles.messageImage}
-                      resizeMode="cover"
+          {message.content.media?.length! > 0 && (
+            <>
+              {message.content.media![0].type === 'image' ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    setPreviewImage({
+                      uri: message.content.media?.[0].url as string,
+                    });
+                    setIsChatImagePreviewVisible(true);
+                  }}>
+                  <Image
+                    source={{uri: message.content.media![0].url}}
+                    style={styles.messageImage}
+                    resizeMode="cover"
+                  />
+                </TouchableOpacity>
+              ) : message.content.media![0].type === 'audio' ? (
+                <TouchableOpacity
+                  disabled={loadingAudio}
+                  onPress={() => {
+                    // You can add playback logic here
+                    console.log('Play audio:', message.content.media?.[0].url);
+                    // togglePlayback(message.content.media!?.[0].url, index);
+                  }}
+                  style={styles.audioMessageContainer}>
+                  {loadingAudio && currentPlayingIndex === index ? (
+                    <ActivityIndicator
+                      size="small"
+                      color={Theme.colors.primary}
                     />
-                  </TouchableOpacity>
-                ) : message.content.media![0].type === 'audio' ? (
-                  <TouchableOpacity
-                    disabled={loadingAudio}
-                    onPress={() => {
-                      // You can add playback logic here
-                      console.log(
-                        'Play audio:',
-                        message.content.media?.[0].url,
-                      );
-                      togglePlayback(message.content.media!?.[0].url, index);
-                    }}
-                    style={styles.audioMessageContainer}>
-                    {loadingAudio && currentPlayingIndex === index ? (
-                      <ActivityIndicator
-                        size="small"
-                        color={Theme.colors.primary}
-                      />
-                    ) : (
-                      <Icon
-                        name={
-                          currentPlayingIndex === index && isPlaying
-                            ? 'pause'
-                            : 'play'
-                        }
-                        size={20}
-                        color={Theme.colors.primary}
-                      />
-                    )}
-                    <Text style={styles.audioText}>Voice message</Text>
-                  </TouchableOpacity>
-                ) : null}
-              </>
-            )} */}
+                  ) : (
+                    <Icon
+                      name={
+                        currentPlayingIndex === index && isPlaying
+                          ? 'pause'
+                          : 'play'
+                      }
+                      size={20}
+                      color={Theme.colors.primary}
+                    />
+                  )}
+                  <Text style={styles.audioText}>Voice message</Text>
+                </TouchableOpacity>
+              ) : null}
+            </>
+          )}
           <Text style={styles.messageText}>{item.content.text}</Text>
           <View style={styles.timeContainer}>
             <Text style={styles.timeText}>

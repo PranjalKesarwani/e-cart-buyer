@@ -474,3 +474,12 @@ export type ReplyToProduct = ReplyToBase & {
   productId?: string; // reference to the product
   mainId?: string;
 };
+
+export type TSelectedImageFromDevice = {
+  uri: string;
+  fileName?: string;
+  path?: string;
+  type?: string;
+  fileSize?: number;
+  backgroundColor?: string;
+};
