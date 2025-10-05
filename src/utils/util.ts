@@ -1,4 +1,5 @@
 import {TSeller, TShop} from '../types';
+import uuid from 'react-native-uuid';
 
 export const getInitials = (fullName: string) => {
   if (!fullName) return '';
@@ -120,4 +121,8 @@ export const hasAttributes = (attrs: any): boolean => {
   if (Array.isArray(attrs)) return attrs.length > 0;
   if (typeof attrs === 'object') return Object.keys(attrs).length > 0;
   return false;
+};
+
+export const generateUniqueId = (): string => {
+  return uuid.v4();
 };

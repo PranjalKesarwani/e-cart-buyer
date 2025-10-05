@@ -11,12 +11,14 @@ import {
   Image,
   ActivityIndicator,
   Linking,
+  Alert,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {
   ChatItem,
   EMessageStatus,
   IDateSeparator,
+  IMedia,
   IMessage,
   ReplyToMessage,
   ReplyToOrder,
@@ -44,6 +46,8 @@ import {addDateSeparators} from '../../utils/helper';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {Theme} from '../../theme/theme';
 import ChatImagePreviewModal from '../../components/common/ChatImagePreviewModal';
+import ImagePicker from 'react-native-image-crop-picker';
+import {generateUniqueId} from '../../utils/util';
 
 type PersonalChatScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -55,7 +59,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   const [chatContact, setChatContact] = useState<TChatContact | null>(null);
   const {_id: buyerId} = useAppSelector(state => state.buyer);
   const [messages, setMessages] = useState<IMessage[] | []>([]);
-  const [newMessage, setNewMessage] = useState<string>('');
+  const [newMessage, setNewMessage] = useState<string | IMedia>('');
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMoreMessages, setHasMoreMessages] = useState(true);
@@ -65,6 +69,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   const [loadingAudio, setLoadingAudio] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [caption, setCaption] = useState('');
+  const [isPreviewVisible, setIsPreviewVisible] = useState(false);
 
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState<number | null>(
     null,
@@ -163,29 +168,72 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   // };
 
   const sendMessage = () => {
-    if (newMessage.trim() !== '') {
+    const tempId = generateUniqueId();
+    if ((newMessage as string) !== '') {
       let payload: any = {};
       if (!isThisChatExist) {
         payload = {
+          tempId: tempId,
           buyerId,
           sellerId: (shop.sellerId as TSeller)._id,
-          message: newMessage,
+          message: newMessage as string,
           messageType: 'text',
         };
+        // if (replyingTo) {
+        //   if ('content' in replyingTo) {
+        //     payload.replyingTo = (replyingTo as IMessage)._id;
+        //     payload.replyingToType = 'Message';
+        //   } else if (replyingTo.onModel === 'Order') {
+        //     payload.replyingTo = (replyingTo as ReplyToOrder).mainId;
+        //     payload.replyingToType = 'Order';
+        //   } else if (replyingTo.onModel === 'Product') {
+        //     payload.replyingTo = replyingTo.mainId;
+        //     payload.replyingToType = 'Product';
+        //   }
+        // }
       } else {
         payload = {
+          tempId: tempId,
           chatContactId: chatContact?._id,
           message: newMessage,
           messageType: 'text',
           sender: buyerId,
           senderOnModel: 'Buyer',
         };
+        // if (replyingTo) {
+        //   if ('content' in replyingTo) {
+        //     payload.replyingTo = replyingTo._id;
+        //     payload.replyingToType = 'Message';
+        //   } else if (replyingTo.onModel === 'Order') {
+        //     payload.replyingTo = replyingTo.mainId;
+        //     payload.replyingToType = 'Order';
+        //   } else if (replyingTo.onModel === 'Product') {
+        //     payload.replyingTo = replyingTo.mainId;
+        //     payload.replyingToType = 'Product';
+        //   }
+        // }
       }
 
       socket.emit(
         `${isThisChatExist ? 'sendPrivateMessage' : 'initiateChat'}`,
         payload,
       );
+
+      // const message: IMessage = {
+      //   _id: `temp-${Date.now()}`, // Temporary ID
+      //   tempId: tempId,
+      //   chatContactId: chatContact?._id || 'temp-chat-contact-id',
+      //   sender: sellerId || 'temp-seller-id',
+      //   senderOnModel: 'Seller' as 'Seller',
+      //   content: {
+      //     text: newMessage as string,
+      //     media: [],
+      //   },
+      //   type: 'text' as EMessageType.TEXT,
+      //   timestamp: Math.floor(Date.now() / 1000), // Current timestamp in seconds
+      //   status: 'pending' as EMessageStatus.PENDING,
+      //   replyTo: null,
+      // };
     }
   };
 
@@ -467,7 +515,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
     if (!isThisChatExist || !chatContact?._id) return;
 
     // Emit "typing" event
-    if (newMessage.trim()) {
+    if ((newMessage as string).trim()) {
       socket.emit('typing', {
         chatContactId: chatContact._id,
       });
@@ -490,6 +538,31 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
       });
     }
   }, [newMessage]);
+
+  const handlePickImage = () => {
+    ImagePicker.openPicker({
+      cropping: false,
+      compressImageQuality: 0.8, // Compression quality (0 to 1)
+      mediaType: 'photo',
+      multiple: false, // Single image selection
+    })
+      .then(image => {
+        setNewMessage({
+          url: image.path,
+          fileName: image.path.split('/').pop(),
+          type: image.mime,
+          size: image.size,
+        });
+        setIsPreviewVisible(true); // Show the preview modal
+      })
+      .catch(error => {
+        if (error.code === 'E_PICKER_CANCELLED') {
+          console.log('User cancelled image picker');
+        } else {
+          Alert.alert('Image Error', error.message || 'Unknown error');
+        }
+      });
+  };
 
   return (
     <KeyboardAvoidingView
@@ -545,7 +618,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
       />
 
       <View style={styles.inputContainer}>
-        <TouchableOpacity style={styles.plusButton}>
+        <TouchableOpacity onPress={handlePickImage} style={styles.plusButton}>
           <Icon name="pluscircleo" size={24} color="#667781" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.cameraButton}>
@@ -553,7 +626,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
         </TouchableOpacity>
         <TextInput
           style={styles.input}
-          value={newMessage}
+          value={newMessage as string}
           onChangeText={setNewMessage}
           placeholder="Type a message"
           placeholderTextColor="#667781"
