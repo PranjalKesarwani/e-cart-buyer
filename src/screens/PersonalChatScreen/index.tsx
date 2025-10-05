@@ -72,6 +72,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [caption, setCaption] = useState('');
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+  const [isVoiceChatActive, setIsVoiceChatActive] = useState<boolean>(false);
 
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState<number | null>(
     null,
@@ -624,10 +625,10 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
       setIsPreviewVisible(false);
       setCaption('');
       setPreviewImage(null);
-      // setIsVoiceChatActive(false);
+      setIsVoiceChatActive(false);
       // const {status, message, data} = await sendMediaForUploadingForChat(
       //   newMessage as IMedia,
-      //   buyerInfo._id!,
+      //   (shop.sellerId as TSeller)._id!,
       //   socketId as string,
       //   tempId,
       // );

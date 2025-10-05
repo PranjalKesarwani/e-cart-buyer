@@ -410,6 +410,7 @@ export interface IChatGroupInfo {
 }
 
 export type StatusUpdateType = {
+  _id: string;
   shopId: string;
   shopName: string;
   shopPic: string;
