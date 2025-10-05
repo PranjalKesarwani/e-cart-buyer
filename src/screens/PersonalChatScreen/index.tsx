@@ -50,6 +50,7 @@ import ChatImagePreviewModal from '../../components/common/ChatImagePreviewModal
 import ImagePicker from 'react-native-image-crop-picker';
 import {generateUniqueId} from '../../utils/util';
 import ImagePreviewModal from '../../components/common/ImagePreviewModal';
+import {sendMediaForUploadingForChat} from '../../services/apiService';
 
 type PersonalChatScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -59,6 +60,8 @@ type PersonalChatScreenProps = NativeStackScreenProps<
 const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   const {shop}: {shop: TShop} = route.params;
   const [chatContact, setChatContact] = useState<TChatContact | null>(null);
+  const {socketId} = useAppSelector(state => state.chatSlice);
+
   const {_id: buyerId} = useAppSelector(state => state.buyer);
   const [messages, setMessages] = useState<IMessage[] | []>([]);
   const [newMessage, setNewMessage] = useState<string | IMedia>('');
@@ -626,12 +629,12 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
       setCaption('');
       setPreviewImage(null);
       setIsVoiceChatActive(false);
-      // const {status, message, data} = await sendMediaForUploadingForChat(
-      //   newMessage as IMedia,
-      //   (shop.sellerId as TSeller)._id!,
-      //   socketId as string,
-      //   tempId,
-      // );
+      const {status, message, data} = await sendMediaForUploadingForChat(
+        newMessage as IMedia,
+        (shop.sellerId as TSeller)._id!,
+        socketId as string,
+        tempId,
+      );
       // if (status) {
       //   dispatch(
       //     updateLastMessage({

@@ -13,6 +13,7 @@ export interface ServerToClientEvents {
   userLeft: (data: any) => void;
   typing: (data: any) => void;
   stopTyping: (data: any) => void;
+  connected: (data: any) => void;
 }
 
 export interface ClientToServerEvents {

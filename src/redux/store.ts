@@ -3,11 +3,13 @@ import {configureStore} from '@reduxjs/toolkit';
 import authReducer from '../redux/slices/authSlice';
 import buyerReducer from '../redux/slices/buyerSlice';
 // import { APP_ENV } from '@env';
+import chatReducer from '../redux/slices/chatSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     buyer: buyerReducer,
+    chatSlice: chatReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({serializableCheck: false}), // Allow non-serializable data if needed

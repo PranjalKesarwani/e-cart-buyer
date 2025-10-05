@@ -4,7 +4,7 @@ import {debounce, setBuyToken} from '../utils/helper';
 import {apiClient} from './api';
 import {getCurrentLocation} from './locationService';
 import MapView from 'react-native-maps';
-import {IAddress, OTPResult, SendOTPOptions, TProduct} from '../types';
+import {IAddress, IMedia, OTPResult, SendOTPOptions, TProduct} from '../types';
 import {Alert} from 'react-native';
 import {showToast} from '../utils/toast';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -506,6 +506,46 @@ export const getShopProductsByCat = async (
   } catch (error: any) {
     const errorMessage =
       error.response?.data?.message || error?.message || 'Server Error!';
+    return {status: false, message: errorMessage, data: null};
+  }
+};
+
+export const sendMediaForUploadingForChat = async (
+  message: IMedia,
+  sellerId: string,
+  socketId: string,
+  tempId: string,
+) => {
+  try {
+    const formData = new FormData();
+    formData.append('caption', message.caption || '');
+    formData.append('sellerId', sellerId);
+    formData.append('socketId', socketId);
+    formData.append('tempId', tempId);
+    formData.append('file', {
+      uri: message.url,
+      name: message.fileName || `chat_image_${Date.now()}.jpg`,
+      type: message.type || 'image/jpeg',
+    } as any);
+
+    console.log('FormData for sendMediaForUploadingForChat:', formData);
+    const res = await apiClient.post('/seller/send-media-in-chat', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return {
+      status: res.data.success,
+      message: res.data.message,
+      data: res.data,
+    };
+  } catch (error: any) {
+    const errorMessage =
+      error?.response?.data?.message ||
+      error?.response?.message ||
+      error?.message ||
+      'An error occurred while sending image in chat';
     return {status: false, message: errorMessage, data: null};
   }
 };

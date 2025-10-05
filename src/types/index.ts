@@ -233,7 +233,7 @@ export type TShop = {
   updatedAt: string;
 };
 export type TSeller = {
-  _id: String;
+  _id: string;
   sellerName: string;
   mobile: string;
   isMobileVerified: boolean;
