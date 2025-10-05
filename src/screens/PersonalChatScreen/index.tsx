@@ -41,6 +41,7 @@ import {
   applyServerAck,
   handleContinuousChat,
   handleCreatedChat,
+  handlePendingChatMsg,
 } from '../../utils/socketHelper';
 import moment from 'moment';
 import {PersonalChtatStyles as styles} from '../../theme/styles';
@@ -227,21 +228,24 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
         payload,
       );
 
-      // const message: IMessage = {
-      //   _id: `temp-${Date.now()}`, // Temporary ID
-      //   tempId: tempId,
-      //   chatContactId: chatContact?._id || 'temp-chat-contact-id',
-      //   sender: sellerId || 'temp-seller-id',
-      //   senderOnModel: 'Seller' as 'Seller',
-      //   content: {
-      //     text: newMessage as string,
-      //     media: [],
-      //   },
-      //   type: 'text' as EMessageType.TEXT,
-      //   timestamp: Math.floor(Date.now() / 1000), // Current timestamp in seconds
-      //   status: 'pending' as EMessageStatus.PENDING,
-      //   replyTo: null,
-      // };
+      const message: IMessage = {
+        _id: `temp-${Date.now()}`, // Temporary ID
+        tempId: tempId,
+        chatContactId: chatContact?._id || 'temp-chat-contact-id',
+        sender: buyerId || 'temp-seller-id',
+        senderOnModel: 'Buyer' as 'Buyer',
+        content: {
+          text: newMessage as string,
+          media: [],
+        },
+        type: 'text' as EMessageType.TEXT,
+        timestamp: Math.floor(Date.now() / 1000), // Current timestamp in seconds
+        status: 'pending' as EMessageStatus.PENDING,
+        replyTo: null,
+      };
+      handlePendingChatMsg(message, setMessages);
+      setNewMessage('');
+      // setReplyingTo(null);
     }
   };
 
@@ -626,7 +630,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
         replyTo: null,
       };
       console.log('sadfasdg', mediaMessage.content.media?.[0].url as string);
-      // handlePendingChatMsg(mediaMessage, setMessages);
+      handlePendingChatMsg(mediaMessage, setMessages);
       setIsPreviewVisible(false);
       setCaption('');
       setPreviewImage(null);

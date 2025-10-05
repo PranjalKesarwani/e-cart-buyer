@@ -529,7 +529,7 @@ export const sendMediaForUploadingForChat = async (
     } as any);
 
     console.log('FormData for sendMediaForUploadingForChat:', formData);
-    const res = await apiClient.post('/seller/send-media-in-chat', formData, {
+    const res = await apiClient.post('/buyer/send-media-in-chat', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
