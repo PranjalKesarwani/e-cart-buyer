@@ -36,7 +36,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {showToast} from '../../utils/toast';
 import {apiClient} from '../../services/api';
 import socket from '../../utils/socket';
-import {useAppSelector} from '../../redux/hooks';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import {
   handleContinuousChat,
   handleCreatedChat,
@@ -51,6 +51,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {generateUniqueId} from '../../utils/util';
 import ImagePreviewModal from '../../components/common/ImagePreviewModal';
 import {sendMediaForUploadingForChat} from '../../services/apiService';
+import {updateLastMessage} from '../../redux/slices/chatSlice';
 
 type PersonalChatScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -61,7 +62,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   const {shop}: {shop: TShop} = route.params;
   const [chatContact, setChatContact] = useState<TChatContact | null>(null);
   const {socketId} = useAppSelector(state => state.chatSlice);
-
+  const dispatch = useAppDispatch();
   const {_id: buyerId} = useAppSelector(state => state.buyer);
   const [messages, setMessages] = useState<IMessage[] | []>([]);
   const [newMessage, setNewMessage] = useState<string | IMedia>('');
@@ -635,18 +636,19 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
         socketId as string,
         tempId,
       );
-      // if (status) {
-      //   dispatch(
-      //     updateLastMessage({
-      //       chatContactId: chatContact?._id || '',
-      //       message: data.chatMessage,
-      //     }),
-      //   );
-      // handleContinuousChat(data.chatMessage, setMessages);
-      // applyServerAck(data.chatMessage, setMessages);
-      setIsPreviewVisible(false);
-      setCaption('');
-      setPreviewImage(null);
+      if (status) {
+        dispatch(
+          updateLastMessage({
+            chatContactId: chatContact?._id || '',
+            message: data.chatMessage,
+          }),
+        );
+        // handleContinuousChat(data.chatMessage, setMessages);
+        // applyServerAck(data.chatMessage, setMessages);
+        setIsPreviewVisible(false);
+        setCaption('');
+        setPreviewImage(null);
+      }
     }
   };
 

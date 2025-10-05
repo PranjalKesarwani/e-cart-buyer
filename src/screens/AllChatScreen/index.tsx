@@ -14,19 +14,22 @@ import {apiClient} from '../../services/api';
 import moment from 'moment';
 import Icons from 'react-native-vector-icons/AntDesign';
 import LottieView from 'lottie-react-native';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {setChatContacts} from '../../redux/slices/chatSlice';
 
 type AllChatScreenProps = NativeStackScreenProps<RootStackParamList, 'Chats'>;
 // Mock data structure similar to WhatsApp
 
 const AllChatScreen = ({navigation}: AllChatScreenProps) => {
-  const [chatContacts, setChatContacts] = useState<TChatContact[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const dispatch = useAppDispatch();
+  const chatContacts = useAppSelector(state => state.chatSlice.chatContacts);
 
   useEffect(() => {
     const getChatContacts = async () => {
       try {
         const res = await apiClient.get('/buyer/get-chat-contacts');
-        setChatContacts(res.data.chatContacts);
+        dispatch(setChatContacts(res.data.chatContacts));
       } catch (error) {
         console.log('Error fetching chat contacts:', error);
       } finally {
