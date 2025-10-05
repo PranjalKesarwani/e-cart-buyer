@@ -13,6 +13,7 @@ import {IMessage, RootStackParamList, TChatContact, TShop} from '../../types';
 import {apiClient} from '../../services/api';
 import moment from 'moment';
 import Icons from 'react-native-vector-icons/AntDesign';
+import LottieView from 'lottie-react-native';
 
 type AllChatScreenProps = NativeStackScreenProps<RootStackParamList, 'Chats'>;
 // Mock data structure similar to WhatsApp
@@ -109,13 +110,21 @@ const AllChatScreen = ({navigation}: AllChatScreenProps) => {
         <View style={styles.loaderContainer}>
           <ActivityIndicator size="large" color="#FF9933" />
         </View>
-      ) : (
+      ) : chatContacts && chatContacts.length > 0 ? (
         <FlatList
-          data={chatContacts || []}
+          data={chatContacts}
           renderItem={renderItem}
           keyExtractor={item => item._id}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
+      ) : (
+        <View style={styles.emptyContainer}>
+          <Icons name="message1" size={70} color="#ccc" />
+          <Text style={styles.emptyTitle}>Looks quiet here! </Text>
+          <Text style={styles.emptySubtitle}>
+            Ask sellers about product details or crack a deal through chat.
+          </Text>
+        </View>
       )}
     </View>
   );
@@ -211,6 +220,25 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 12,
     color: '#fff',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#333',
+    marginTop: 15,
+  },
+  emptySubtitle: {
+    fontSize: 14,
+    color: '#777',
+    textAlign: 'center',
+    marginTop: 5,
+    lineHeight: 20,
   },
 
   loaderContainer: {flex: 1, justifyContent: 'center', alignItems: 'center'},
