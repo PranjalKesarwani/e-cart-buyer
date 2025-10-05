@@ -10,6 +10,7 @@ import {
   Platform,
   Image,
   ActivityIndicator,
+  Linking,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {
@@ -503,13 +504,27 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
           style={styles.headerAvatar}
         />
         <View style={styles.headerInfo}>
-          <Text style={styles.userName}>
-            {shop.shopName}
-            {/* {chatContact?.participants.find(p => p.onModel === "Seller" && p.userId)?.userId?.sellerName || "N/A"} */}
-          </Text>
+          <Text style={styles.userName}>{shop.shopName}</Text>
           <Text style={styles.statusText}>
             {isTyping ? 'typing...' : isUserOnline ? 'online' : 'offline'}
           </Text>
+        </View>
+        <View style={styles.headerIcons}>
+          <MaterialIcon
+            onPress={() =>
+              Linking.openURL(
+                `tel:${
+                  (shop.sellerId as TSeller).mobile.startsWith('+91')
+                    ? (shop.sellerId as TSeller).mobile
+                    : `+91 ${(shop.sellerId as TSeller).mobile}`
+                }`,
+              )
+            }
+            name="call"
+            size={24}
+            color="white"
+            style={styles.iconSpacing}
+          />
         </View>
       </View>
 
