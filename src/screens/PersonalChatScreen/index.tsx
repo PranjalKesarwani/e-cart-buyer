@@ -463,8 +463,17 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
       setNewMessage('');
     });
     socket.on('messageSent', (data: IMessage) => {
-      handleContinuousChat(data, setMessages);
+      dispatch(
+        updateLastMessage({
+          chatContactId: data.chatContactId || '',
+          message: data,
+        }),
+      );
+      // handleContinuousChat(data, setMessages);
+      // setNewMessage('');
+      applyServerAck(data, setMessages);
       setNewMessage('');
+      // setReplyingTo(null);
     });
     socket.on('newPrivateMessage', (data: IMessage) => {
       handleContinuousChat(data, setMessages);
