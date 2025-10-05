@@ -43,6 +43,7 @@ import {PersonalChtatStyles as styles} from '../../theme/styles';
 import {addDateSeparators} from '../../utils/helper';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {Theme} from '../../theme/theme';
+import ChatImagePreviewModal from '../../components/common/ChatImagePreviewModal';
 
 type PersonalChatScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -63,6 +64,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   const typingTimeout = useRef<NodeJS.Timeout | null>(null);
   const [loadingAudio, setLoadingAudio] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [caption, setCaption] = useState('');
 
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState<number | null>(
     null,
@@ -342,6 +344,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
                       uri: message.content.media?.[0].url as string,
                     });
                     setIsChatImagePreviewVisible(true);
+                    setCaption(message.content.text || '');
                   }}>
                   <Image
                     source={{uri: message.content.media![0].url}}
@@ -564,6 +567,14 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
           )}
         </TouchableOpacity>
       </View>
+
+      <ChatImagePreviewModal
+        caption={caption}
+        setCaption={setCaption}
+        isChatImagePreviewVisible={isChatImagePreviewVisible}
+        setIsChatImagePreviewVisible={setIsChatImagePreviewVisible}
+        previewImage={previewImage}
+      />
     </KeyboardAvoidingView>
   );
 };
