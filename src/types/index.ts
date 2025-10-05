@@ -311,9 +311,39 @@ export enum EMessageStatus {
   SENT = 'sent',
   DELIVERED = 'delivered',
   READ = 'read',
+  PENDING = 'pending',
 }
 
+export interface IContent {
+  text?: string;
+  media?: IMedia[];
+}
+
+type ReplyToBase = {
+  onModel: 'Message' | 'Order' | 'Product' | null;
+  mainId: string | null; // ObjectId stored as string
+};
+
+export type ReplyToMessage = ReplyToBase & {
+  onModel: 'Message';
+  content?: IContent; // maybe a text excerpt of the replied message
+};
+
+export type ReplyToOrder = ReplyToBase & {
+  onModel: 'Order';
+  orderId?: string; // reference to the order
+  mainId?: string;
+};
+export type ReplyToProduct = ReplyToBase & {
+  onModel: 'Product';
+  productId?: string; // reference to the product
+  mainId?: string;
+};
+
+export type ReplyTo = ReplyToMessage | ReplyToOrder | ReplyToProduct | null;
+
 export interface IMessage {
+  tempId?: string; // client-generated UUID for matching
   _id: string;
   chatContactId: string;
   sender: string;
@@ -324,11 +354,11 @@ export interface IMessage {
   };
   type: EMessageType;
   status: EMessageStatus;
-  readBy: IReadBy[];
-  deletedFor: IMessageDelete[];
-  replyTo?: String;
-  forwarded: boolean;
-  starredBy: IStarredBy[];
+  readBy?: IReadBy[];
+  deletedFor?: IMessageDelete[];
+  replyTo?: ReplyTo;
+  forwarded?: boolean;
+  starredBy?: IStarredBy[];
   timestamp: number;
   systemMessage?: ISystemMessage;
 }
@@ -448,32 +478,6 @@ export interface IDateSeparator {
 }
 
 export type ChatItem = IMessage | IDateSeparator;
-
-export interface IContent {
-  text?: string;
-  media?: IMedia[];
-}
-
-type ReplyToBase = {
-  onModel: 'Message' | 'Order' | 'Product' | null;
-  mainId: string | null; // ObjectId stored as string
-};
-
-export type ReplyToMessage = ReplyToBase & {
-  onModel: 'Message';
-  content?: IContent; // maybe a text excerpt of the replied message
-};
-
-export type ReplyToOrder = ReplyToBase & {
-  onModel: 'Order';
-  orderId?: string; // reference to the order
-  mainId?: string;
-};
-export type ReplyToProduct = ReplyToBase & {
-  onModel: 'Product';
-  productId?: string; // reference to the product
-  mainId?: string;
-};
 
 export type TSelectedImageFromDevice = {
   uri: string;

@@ -17,6 +17,7 @@ import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {
   ChatItem,
   EMessageStatus,
+  EMessageType,
   IDateSeparator,
   IMedia,
   IMessage,
@@ -48,6 +49,7 @@ import {Theme} from '../../theme/theme';
 import ChatImagePreviewModal from '../../components/common/ChatImagePreviewModal';
 import ImagePicker from 'react-native-image-crop-picker';
 import {generateUniqueId} from '../../utils/util';
+import ImagePreviewModal from '../../components/common/ImagePreviewModal';
 
 type PersonalChatScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -515,7 +517,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
     if (!isThisChatExist || !chatContact?._id) return;
 
     // Emit "typing" event
-    if ((newMessage as string).trim()) {
+    if (newMessage as string) {
       socket.emit('typing', {
         chatContactId: chatContact._id,
       });
@@ -562,6 +564,86 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
           Alert.alert('Image Error', error.message || 'Unknown error');
         }
       });
+  };
+
+  const handleClickImage = () => {
+    ImagePicker.openCamera({
+      cropping: false,
+      compressImageQuality: 0.8, // Compression quality (0 to 1)
+      mediaType: 'photo',
+      multiple: false, // Single image selection
+    })
+      .then(image => {
+        setNewMessage({
+          url: image.path,
+          fileName: image.path.split('/').pop(),
+          type: image.mime,
+          size: image.size,
+        });
+        setIsPreviewVisible(true); // Show the preview modal
+      })
+      .catch(error => {
+        if (error.code === 'E_PICKER_CANCELLED') {
+          console.log('User cancelled image picker');
+        } else {
+          Alert.alert('Image Error', error.message || 'Unknown error');
+        }
+      });
+  };
+
+  const handleSendMedia = async (newMessage: IMedia) => {
+    console.log('handleSendMedia called with:', newMessage);
+    if (newMessage && (newMessage as IMedia).url) {
+      const tempId = generateUniqueId();
+      const mediaMessage: IMessage = {
+        _id: `temp-${Date.now()}`, // Temporary ID
+        tempId: tempId,
+        chatContactId: chatContact?._id || 'temp-chat-contact-id',
+        sender: buyerId || 'temp-buyer-id',
+        senderOnModel: 'Buyer' as 'Buyer',
+        content: {
+          text: newMessage.caption || '',
+          media: [
+            {
+              ...newMessage,
+              type: newMessage.type?.startsWith('image')
+                ? 'image'
+                : newMessage.type?.startsWith('audio')
+                ? 'audio'
+                : 'file',
+            },
+          ],
+        },
+        type: 'text' as EMessageType.TEXT,
+        timestamp: Math.floor(Date.now() / 1000), // Current timestamp in seconds
+        status: 'pending' as EMessageStatus.PENDING,
+        replyTo: null,
+      };
+      console.log('sadfasdg', mediaMessage.content.media?.[0].url as string);
+      // handlePendingChatMsg(mediaMessage, setMessages);
+      setIsPreviewVisible(false);
+      setCaption('');
+      setPreviewImage(null);
+      // setIsVoiceChatActive(false);
+      // const {status, message, data} = await sendMediaForUploadingForChat(
+      //   newMessage as IMedia,
+      //   buyerInfo._id!,
+      //   socketId as string,
+      //   tempId,
+      // );
+      // if (status) {
+      //   dispatch(
+      //     updateLastMessage({
+      //       chatContactId: chatContact?._id || '',
+      //       message: data.chatMessage,
+      //     }),
+      //   );
+      // handleContinuousChat(data.chatMessage, setMessages);
+      // applyServerAck(data.chatMessage, setMessages);
+      setIsPreviewVisible(false);
+      setCaption('');
+      setPreviewImage(null);
+    }
   };
 
   return (
@@ -621,7 +703,9 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
         <TouchableOpacity onPress={handlePickImage} style={styles.plusButton}>
           <Icon name="pluscircleo" size={24} color="#667781" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.cameraButton}>
+        <TouchableOpacity
+          onPress={handleClickImage}
+          style={styles.cameraButton}>
           <MaterialIcon name="camera-alt" size={24} color="#667781" />
         </TouchableOpacity>
         <TextInput
@@ -640,6 +724,16 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
           )}
         </TouchableOpacity>
       </View>
+
+      <ImagePreviewModal
+        isPreviewVisible={isPreviewVisible}
+        setIsPreviewVisible={setIsPreviewVisible}
+        setNewMessage={
+          setNewMessage as React.Dispatch<React.SetStateAction<IMedia>>
+        }
+        newMessage={newMessage as IMedia}
+        handleSendImage={handleSendMedia}
+      />
 
       <ChatImagePreviewModal
         caption={caption}
