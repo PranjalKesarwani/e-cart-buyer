@@ -657,7 +657,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
             message: data.chatMessage,
           }),
         );
-        handleContinuousChat(data.chatMessage, setMessages);
+        // handleContinuousChat(data.chatMessage, setMessages);
         applyServerAck(data.chatMessage, setMessages);
         setIsPreviewVisible(false);
         setCaption('');
