@@ -210,18 +210,18 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
           message: newMessage as string,
           messageType: 'text',
         };
-        // if (replyingTo) {
-        //   if ('content' in replyingTo) {
-        //     payload.replyingTo = (replyingTo as IMessage)._id;
-        //     payload.replyingToType = 'Message';
-        //   } else if (replyingTo.onModel === 'Order') {
-        //     payload.replyingTo = (replyingTo as ReplyToOrder).mainId;
-        //     payload.replyingToType = 'Order';
-        //   } else if (replyingTo.onModel === 'Product') {
-        //     payload.replyingTo = replyingTo.mainId;
-        //     payload.replyingToType = 'Product';
-        //   }
-        // }
+        if (replyingTo) {
+          if ('content' in replyingTo) {
+            payload.replyingTo = (replyingTo as IMessage)._id;
+            payload.replyingToType = 'Message';
+          } else if (replyingTo.onModel === 'Order') {
+            payload.replyingTo = (replyingTo as ReplyToOrder).mainId;
+            payload.replyingToType = 'Order';
+          } else if (replyingTo.onModel === 'Product') {
+            payload.replyingTo = replyingTo.mainId;
+            payload.replyingToType = 'Product';
+          }
+        }
       } else {
         payload = {
           tempId: tempId,
@@ -231,18 +231,18 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
           sender: buyerId,
           senderOnModel: 'Buyer',
         };
-        // if (replyingTo) {
-        //   if ('content' in replyingTo) {
-        //     payload.replyingTo = replyingTo._id;
-        //     payload.replyingToType = 'Message';
-        //   } else if (replyingTo.onModel === 'Order') {
-        //     payload.replyingTo = replyingTo.mainId;
-        //     payload.replyingToType = 'Order';
-        //   } else if (replyingTo.onModel === 'Product') {
-        //     payload.replyingTo = replyingTo.mainId;
-        //     payload.replyingToType = 'Product';
-        //   }
-        // }
+        if (replyingTo) {
+          if ('content' in replyingTo) {
+            payload.replyingTo = replyingTo._id;
+            payload.replyingToType = 'Message';
+          } else if (replyingTo.onModel === 'Order') {
+            payload.replyingTo = replyingTo.mainId;
+            payload.replyingToType = 'Order';
+          } else if (replyingTo.onModel === 'Product') {
+            payload.replyingTo = replyingTo.mainId;
+            payload.replyingToType = 'Product';
+          }
+        }
       }
 
       socket.emit(
@@ -267,7 +267,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
       };
       handlePendingChatMsg(message, setMessages);
       setNewMessage('');
-      // setReplyingTo(null);
+      setReplyingTo(null);
     }
   };
 
