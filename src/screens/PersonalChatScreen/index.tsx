@@ -849,31 +849,33 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
         </View>
       ) : null}
 
-      <View style={styles.inputContainer}>
-        <TouchableOpacity onPress={handlePickImage} style={styles.plusButton}>
-          <Icon name="pluscircleo" size={24} color="#667781" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={handleClickImage}
-          style={styles.cameraButton}>
-          <MaterialIcon name="camera-alt" size={24} color="#667781" />
-        </TouchableOpacity>
-        <TextInput
-          style={styles.input}
-          value={newMessage as string}
-          onChangeText={setNewMessage}
-          placeholder="Type a message"
-          placeholderTextColor="#667781"
-          multiline
-        />
-        <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
-          {newMessage ? (
-            <MaterialIcon name="send" size={24} color="white" />
-          ) : (
-            <MaterialIcon name="mic" size={24} color="#667781" />
-          )}
-        </TouchableOpacity>
-      </View>
+      {isVoiceChatActive ? null : (
+        <View style={styles.inputContainer}>
+          <TouchableOpacity onPress={handlePickImage} style={styles.plusButton}>
+            <Icon name="pluscircleo" size={24} color="#667781" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleClickImage}
+            style={styles.cameraButton}>
+            <MaterialIcon name="camera-alt" size={24} color="#667781" />
+          </TouchableOpacity>
+          <TextInput
+            style={styles.input}
+            value={newMessage as string}
+            onChangeText={setNewMessage}
+            placeholder="Type a message"
+            placeholderTextColor="#667781"
+            multiline
+          />
+          <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
+            {newMessage ? (
+              <MaterialIcon name="send" size={24} color="white" />
+            ) : (
+              <MaterialIcon name="mic" size={24} color="#667781" />
+            )}
+          </TouchableOpacity>
+        </View>
+      )}
 
       <ImagePreviewModal
         isPreviewVisible={isPreviewVisible}

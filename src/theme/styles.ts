@@ -278,3 +278,95 @@ export const PersonalChtatStyles = StyleSheet.create({
     flexShrink: 1, // allow shrinking if needed
   },
 });
+
+export const VoiceChatStyles = StyleSheet.create({
+  voiceModalContainer: {
+    width: '100%',
+    backgroundColor: '#15232B',
+    borderRadius: 16,
+    padding: 8,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.2,
+    shadowRadius: 20,
+    elevation: 5,
+  },
+  visualizationBar: {
+    width: 6,
+    borderRadius: 3,
+  },
+  recordingTimer: {
+    textAlign: 'center',
+    fontSize: 22,
+    fontWeight: '400',
+    color: '#fff',
+    marginBottom: 32,
+  },
+
+  controlButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  primaryButton: {
+    padding: 10,
+    // borderRadius: '50%',
+  },
+  secondaryButton: {
+    // backgroundColor: '#F5F5F5',
+  },
+  recordingActive: {
+    backgroundColor: '#F44336',
+    transform: [{scale: 1.1}],
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 16,
+  },
+  actionButton: {
+    // flex: 1,
+    // flexDirection: 'row',
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // padding: 16,
+    // borderRadius: 8,
+    // gap: 8,
+  },
+  cancelButton: {
+    padding: 10,
+    // borderRadius: '50%',
+  },
+  saveButton: {
+    padding: 10,
+    // borderRadius: '50%',
+  },
+  actionButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  micButton: {
+    padding: 10,
+    borderRadius: 30,
+  },
+  voiceModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between', // opposite walls
+    alignItems: 'center', // vertical center
+    paddingHorizontal: 12, // optional spacing from edges
+    marginBottom: 16, // space below header
+  },
+  recordingControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  visualizationContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    height: 50,
+    gap: 4,
+  },
+});
