@@ -12,6 +12,8 @@ import {
   ActivityIndicator,
   Linking,
   Alert,
+  Vibration,
+  Animated,
 } from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {
@@ -54,11 +56,26 @@ import {generateUniqueId} from '../../utils/util';
 import ImagePreviewModal from '../../components/common/ImagePreviewModal';
 import {sendMediaForUploadingForChat} from '../../services/apiService';
 import {updateLastMessage} from '../../redux/slices/chatSlice';
+import {Swipeable, GestureHandlerRootView} from 'react-native-gesture-handler';
 
 type PersonalChatScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'PersonalChatScreen'
 >;
+
+const RenderLeftActions: React.FC<{
+  progress: Animated.AnimatedInterpolation<number>;
+}> = ({progress}) => {
+  // A transparent container is still necessary to give the swipe action a target area.
+  return (
+    <View
+      style={{
+        width: 80, // Define the width of the swipe area
+        backgroundColor: 'transparent',
+      }}
+    />
+  );
+};
 
 const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   const {shop}: {shop: TShop} = route.params;
@@ -78,6 +95,11 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [caption, setCaption] = useState('');
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+  const swipeableRefs = useRef<Record<string, any | null>>({});
+  const [replyingTo, setReplyingTo] = useState<
+    IMessage | null | ReplyToOrder | ReplyToProduct
+  >(null);
+
   const [isVoiceChatActive, setIsVoiceChatActive] = useState<boolean>(false);
 
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState<number | null>(
@@ -369,88 +391,107 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
     const isSender = message.senderOnModel === 'Seller';
 
     return (
-      <View
-        style={[
-          styles.messageContainer,
-          item.senderOnModel === 'Buyer'
-            ? styles.userContainer
-            : styles.otherContainer,
-        ]}>
-        {item.senderOnModel === 'Seller' && (
-          <Image
-            source={{uri: (shop.sellerId as TSeller)?.profilePic}}
-            style={styles.avatar}
-          />
+      <Swipeable
+        ref={ref => {
+          swipeableRefs.current[message._id] = ref;
+        }}
+        overshootLeft={true}
+        renderLeftActions={(progress, dragX) => (
+          <RenderLeftActions progress={progress} />
         )}
+        onSwipeableOpen={() => {
+          console.log('Swipe open detected! Tagging message:', message);
+          setReplyingTo(message);
+          Vibration.vibrate([1, 0], false);
+          swipeableRefs.current[message._id]?.close();
+        }}>
         <View
           style={[
-            styles.messageBubble,
+            styles.messageContainer,
             item.senderOnModel === 'Buyer'
-              ? styles.userBubble
-              : styles.otherBubble,
+              ? styles.userContainer
+              : styles.otherContainer,
           ]}>
-          {message.replyTo && (
-            <View style={styles.replyContainer}>
-              {renderReplyToContent(message.replyTo)}
-            </View>
+          {item.senderOnModel === 'Seller' && (
+            <Image
+              source={{uri: (shop.sellerId as TSeller)?.profilePic}}
+              style={styles.avatar}
+            />
           )}
+          <View
+            style={[
+              styles.messageBubble,
+              item.senderOnModel === 'Buyer'
+                ? styles.userBubble
+                : styles.otherBubble,
+            ]}>
+            {message.replyTo && (
+              <View style={styles.replyContainer}>
+                {renderReplyToContent(message.replyTo)}
+              </View>
+            )}
 
-          {message.content.media?.length! > 0 && (
-            <>
-              {message.content.media![0].type === 'image' ? (
-                <TouchableOpacity
-                  onPress={() => {
-                    setPreviewImage({
-                      uri: message.content.media?.[0].url as string,
-                    });
-                    setIsChatImagePreviewVisible(true);
-                    setCaption(message.content.text || '');
-                  }}>
-                  <Image
-                    source={{uri: message.content.media![0].url}}
-                    style={styles.messageImage}
-                    resizeMode="cover"
-                  />
-                </TouchableOpacity>
-              ) : message.content.media![0].type === 'audio' ? (
-                <TouchableOpacity
-                  disabled={loadingAudio}
-                  onPress={() => {
-                    // You can add playback logic here
-                    console.log('Play audio:', message.content.media?.[0].url);
-                    // togglePlayback(message.content.media!?.[0].url, index);
-                  }}
-                  style={styles.audioMessageContainer}>
-                  {loadingAudio && currentPlayingIndex === index ? (
-                    <ActivityIndicator
-                      size="small"
-                      color={Theme.colors.primary}
+            {message.content.media?.length! > 0 && (
+              <>
+                {message.content.media![0].type === 'image' ? (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setPreviewImage({
+                        uri: message.content.media?.[0].url as string,
+                      });
+                      setIsChatImagePreviewVisible(true);
+                      setCaption(message.content.text || '');
+                    }}>
+                    <Image
+                      source={{uri: message.content.media![0].url}}
+                      style={styles.messageImage}
+                      resizeMode="cover"
                     />
-                  ) : (
-                    <Icon
-                      name={
-                        currentPlayingIndex === index && isPlaying
-                          ? 'pause'
-                          : 'play'
-                      }
-                      size={20}
-                      color={Theme.colors.primary}
-                    />
-                  )}
-                  <Text style={styles.audioText}>Voice message</Text>
-                </TouchableOpacity>
-              ) : null}
-            </>
-          )}
-          <Text style={styles.messageText}>{item.content.text}</Text>
-          <View style={styles.timeContainer}>
-            <Text style={styles.timeText}>
-              {moment.unix(item.timestamp).format('h:mm A')}
-            </Text>
-            {item.senderOnModel === 'Buyer' && renderMessageStatus(item.status)}
+                  </TouchableOpacity>
+                ) : message.content.media![0].type === 'audio' ? (
+                  <TouchableOpacity
+                    disabled={loadingAudio}
+                    onPress={() => {
+                      // You can add playback logic here
+                      console.log(
+                        'Play audio:',
+                        message.content.media?.[0].url,
+                      );
+                      // togglePlayback(message.content.media!?.[0].url, index);
+                    }}
+                    style={styles.audioMessageContainer}>
+                    {loadingAudio && currentPlayingIndex === index ? (
+                      <ActivityIndicator
+                        size="small"
+                        color={Theme.colors.primary}
+                      />
+                    ) : (
+                      <Icon
+                        name={
+                          currentPlayingIndex === index && isPlaying
+                            ? 'pause'
+                            : 'play'
+                        }
+                        size={20}
+                        color={Theme.colors.primary}
+                      />
+                    )}
+                    <Text style={styles.audioText}>Voice message</Text>
+                  </TouchableOpacity>
+                ) : null}
+              </>
+            )}
+            <Text style={styles.messageText}>{item.content.text}</Text>
+            <View style={styles.timeContainer}>
+              <Text style={styles.timeText}>
+                {moment.unix(item.timestamp).format('h:mm A')}
+              </Text>
+              {item.senderOnModel === 'Buyer' &&
+                renderMessageStatus(item.status)}
+            </View>
           </View>
         </View>
-      </View>
+      </Swipeable>
     );
   };
 
@@ -718,6 +759,95 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
           isLoading ? <ActivityIndicator size="small" color="#fff" /> : null
         }
       />
+
+      {replyingTo ? (
+        <View style={styles.replyToContainer}>
+          <View style={styles.replyTextContainer}>
+            {'content' in replyingTo ? (
+              <>
+                <Text style={styles.replyName} numberOfLines={1}>
+                  {(replyingTo as IMessage).senderOnModel === 'Seller'
+                    ? 'You'
+                    : shop.shopName}
+                </Text>
+                <Text style={styles.replyMessage} numberOfLines={1}>
+                  {(replyingTo as IMessage).content.text ||
+                    ((replyingTo as IMessage).content.media &&
+                    (replyingTo as IMessage).content.media!.length > 0 ? (
+                      <View
+                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <FontAwesome
+                          name={
+                            (replyingTo as IMessage).content.media![0].type ===
+                            'image'
+                              ? 'file-image-o'
+                              : 'file-video-o'
+                          }
+                          size={14}
+                          color="#555"
+                        />
+                        <Text style={{color: '#555', marginLeft: 5}}>
+                          {(
+                            replyingTo as IMessage
+                          ).content.media![0].type.toUpperCase()}
+                        </Text>
+                      </View>
+                    ) : (
+                      ''
+                    ))}
+                </Text>
+              </>
+            ) : replyingTo.onModel === 'Order' ? (
+              <>
+                <Text style={styles.replyName} numberOfLines={1}>
+                  Replying to Order
+                </Text>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Text style={styles.replyMessage} numberOfLines={1}>
+                    Order ID: {replyingTo.orderId}
+                  </Text>
+                  <TouchableOpacity
+                    style={{marginLeft: 8}}
+                    onPress={() =>
+                      handleCopyToClipboard(replyingTo.orderId!, 'Order')
+                    }>
+                    <Icon name="copy1" size={16} color="#555" />
+                  </TouchableOpacity>
+                </View>
+              </>
+            ) : replyingTo.onModel === 'Product' ? (
+              <>
+                <Text style={styles.replyName} numberOfLines={1}>
+                  Replying to Product
+                </Text>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Text style={styles.replyMessage} numberOfLines={1}>
+                    Product ID: {replyingTo.productId}
+                  </Text>
+                  <TouchableOpacity
+                    style={{marginLeft: 8}}
+                    onPress={() => handleCopyToClipboard('123', 'Product')}>
+                    <Icon name="copy1" size={16} color="#555" />
+                  </TouchableOpacity>
+                </View>
+              </>
+            ) : null}
+          </View>
+          {'content' in replyingTo &&
+          (replyingTo as IMessage).content.media &&
+          (replyingTo as IMessage).content.media!.length > 0 ? (
+            <Image
+              source={{uri: (replyingTo as IMessage).content.media![0].url}}
+              style={styles.replyThumbnail}
+            />
+          ) : null}
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => setReplyingTo(null)}>
+            <Icon name="close" size={16} color="#555" />
+          </TouchableOpacity>
+        </View>
+      ) : null}
 
       <View style={styles.inputContainer}>
         <TouchableOpacity onPress={handlePickImage} style={styles.plusButton}>
