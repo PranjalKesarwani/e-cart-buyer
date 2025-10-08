@@ -22,3 +22,26 @@ cd android
 cd ..
 npx react-native run-android
 ==========
+
+=======react native audio recorder player for version "^4.1.0"==========
+
+1) install package
+2) create nitro.json at root project folder
+3) android/settings.gradle---> add these: include ':react-native-nitro-modules'
+project(':react-native-nitro-modules').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-nitro-modules/android')
+4) android/app/build.gradle---> add this:   implementation project(':react-native-nitro-modules')
+5) In androidmanifest.xml of main , paste this:   <uses-permission android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+<uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+<uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+<uses-permission android:name="android.permission.RECORD_AUDIO" />
+  <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29"
+        tools:replace="android:maxSdkVersion" />
+
+        and also at top do this: <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.buyer" xmlns:tools="http://schemas.android.com/tools">
+
+
+
+========================================================================
