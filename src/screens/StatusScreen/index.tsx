@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {StackNavigationProp} from '@react-navigation/stack';
+// import {StackNavigationProp} from '@react-navigation/stack';
 import {useNavigation} from '@react-navigation/native';
 import {Svg, Circle} from 'react-native-svg';
 
@@ -21,36 +21,36 @@ import {
   StatusUpdateType,
 } from '../../types';
 
-type NavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'StatusViewer'
->;
+// type NavigationProp = NativeStackNavigationProp<
+//   RootStackParamList,
+//   'StatusViewer'
+// >;
 
 const StatusScreen = () => {
-  const navigation = useNavigation<NavigationProp>();
+  // const navigation = useNavigation<NavigationProp>();
   const [statusUpdates, setStatusUpdates] = useState<StatusUpdateType[] | []>(
     [],
   );
 
-  const getStatusUpdates = async () => {
-    try {
-      const res = await apiClient.get('/buyer/get-nearby-status-updates');
-      // console.log('Status updatesxxx:', res.data);
-      setStatusUpdates(res.data.statusUpdates);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getStatusUpdates = async () => {
+  //   try {
+  //     const res = await apiClient.get('/buyer/get-nearby-status-updates');
+  //     // console.log('Status updatesxxx:', res.data);
+  //     setStatusUpdates(res.data.statusUpdates);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  useEffect(() => {
-    getStatusUpdates();
-  }, []);
+  // useEffect(() => {
+  //   getStatusUpdates();
+  // }, []);
 
   const handleStatusPress = (statusIndex: number) => {
-    navigation.navigate('StatusViewer', {
-      statusUpdates,
-      currentIndex: statusIndex,
-    });
+    // navigation.navigate('StatusViewer', {
+    //   statusUpdates,
+    //   currentIndex: statusIndex,
+    // });
   };
 
   const renderStatusItem = (shop: StatusUpdateType, index: number) => {
