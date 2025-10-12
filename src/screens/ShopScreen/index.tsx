@@ -1,4 +1,4 @@
-// import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
@@ -31,32 +31,21 @@ import {Theme} from '../../theme/theme';
 import {useAppSelector} from '../../redux/hooks';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {goBack, navigate} from '../../navigation/navigationService';
-// import {RouteProp, useRoute} from '@react-navigation/native';
-import {
-  NativeStackScreenProps,
-  NativeStackNavigationProp,
-} from '@react-navigation/native-stack';
-// import {StackNavigationProp} from '@react-navigation/stack';
-// import { createNativeStackNavigator } from '@react-navigation/native-stack';
-// const Stack = createNativeStackNavigator();
-
+import {RouteProp, useRoute} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
 import {
   getShopProductsByCat,
   getSubCatsForShop,
 } from '../../services/apiService';
 import {HomeLevel2Cats} from '../HomeScreen/HomeLevel2Cats';
 
-// type ShopScreenRouteProp = RouteProp<RootDrawerParamList, 'ShopScreen'>;
-// type ShopScreenNavProp = StackNavigationProp<RootDrawerParamList, 'ShopScreen'>;
+type ShopScreenRouteProp = RouteProp<RootDrawerParamList, 'ShopScreen'>;
+type ShopScreenNavProp = StackNavigationProp<RootDrawerParamList, 'ShopScreen'>;
 
-// type ShopScreenProps = {
-//   route: ShopScreenRouteProp;
-//   navigation: ShopScreenNavProp;
-// };
-type ShopScreenProps = NativeStackScreenProps<
-  RootDrawerParamList,
-  'ShopScreen'
->;
+type ShopScreenProps = {
+  route: ShopScreenRouteProp;
+  navigation: ShopScreenNavProp;
+};
 const {width} = Dimensions.get('window');
 const CARD_WIDTH = (width - Theme.spacing.sm * 2) / 2 - 6; // responsive
 
