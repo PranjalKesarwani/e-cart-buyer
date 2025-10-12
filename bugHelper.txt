@@ -17,9 +17,15 @@ npx react-native start --reset-cache
 npx react-native run-android
 
 ==========mainly use when new dependency added in running dev project========
+
+
+# Android clean
 cd android
 ./gradlew clean
+./gradlew cleanBuildCache || true
 cd ..
+rm -rf android/app/build android/build || true
+
 npx react-native run-android
 ==========
 
