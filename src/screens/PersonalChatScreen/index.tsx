@@ -57,7 +57,8 @@ import ImagePreviewModal from '../../components/common/ImagePreviewModal';
 import {sendMediaForUploadingForChat} from '../../services/apiService';
 import {updateLastMessage} from '../../redux/slices/chatSlice';
 import {Swipeable, GestureHandlerRootView} from 'react-native-gesture-handler';
-
+import VoiceChat from '../../components/modules/VoiceChat';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 type PersonalChatScreenProps = NativeStackScreenProps<
   RootStackParamList,
   'PersonalChatScreen'
@@ -101,7 +102,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
   >(null);
 
   const [isVoiceChatActive, setIsVoiceChatActive] = useState<boolean>(false);
-
+  const audioRecorderPlayer = useRef(AudioRecorderPlayer).current;
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState<number | null>(
     null,
   );
@@ -160,43 +161,43 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
     }
   };
 
-  // const togglePlayback = async (voiceUri: string, index: number) => {
-  //   try {
-  //     if (currentPlayingIndex === index && isPlaying) {
-  //       // Pause current playback
-  //       await audioRecorderPlayer.pausePlayer();
-  //       setIsPlaying(false);
-  //     } else {
-  //       // Stop any currently playing audio
-  //       if (currentPlayingIndex !== null) {
-  //         await audioRecorderPlayer.stopPlayer();
-  //         audioRecorderPlayer.removePlayBackListener();
-  //       }
+  const togglePlayback = async (voiceUri: string, index: number) => {
+    try {
+      if (currentPlayingIndex === index && isPlaying) {
+        // Pause current playback
+        await audioRecorderPlayer.pausePlayer();
+        setIsPlaying(false);
+      } else {
+        // Stop any currently playing audio
+        if (currentPlayingIndex !== null) {
+          await audioRecorderPlayer.stopPlayer();
+          audioRecorderPlayer.removePlayBackListener();
+        }
 
-  //       setLoadingAudio(true);
+        setLoadingAudio(true);
 
-  //       // Start playing new audio
-  //       await audioRecorderPlayer.startPlayer(voiceUri);
-  //       audioRecorderPlayer.addPlayBackListener(e => {
-  //         if (e.currentPosition === e.duration) {
-  //           // Audio finished playing
-  //           setCurrentPlayingIndex(null);
-  //           setIsPlaying(false);
-  //           setLoadingAudio(false);
-  //           audioRecorderPlayer.removePlayBackListener();
-  //         }
-  //       });
+        // Start playing new audio
+        await audioRecorderPlayer.startPlayer(voiceUri);
+        audioRecorderPlayer.addPlayBackListener(e => {
+          if (e.currentPosition === e.duration) {
+            // Audio finished playing
+            setCurrentPlayingIndex(null);
+            setIsPlaying(false);
+            setLoadingAudio(false);
+            audioRecorderPlayer.removePlayBackListener();
+          }
+        });
 
-  //       setCurrentPlayingIndex(index);
-  //       setIsPlaying(true);
-  //       setLoadingAudio(false);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error playing voice:', error);
-  //     showToast('error', 'Could not play audio');
-  //     setLoadingAudio(false);
-  //   }
-  // };
+        setCurrentPlayingIndex(index);
+        setIsPlaying(true);
+        setLoadingAudio(false);
+      }
+    } catch (error) {
+      console.error('Error playing voice:', error);
+      showToast('error', 'Could not play audio');
+      setLoadingAudio(false);
+    }
+  };
 
   const sendMessage = () => {
     const tempId = generateUniqueId();
@@ -457,7 +458,7 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
                         'Play audio:',
                         message.content.media?.[0].url,
                       );
-                      // togglePlayback(message.content.media!?.[0].url, index);
+                      togglePlayback(message.content.media!?.[0].url, index);
                     }}
                     style={styles.audioMessageContainer}>
                     {loadingAudio && currentPlayingIndex === index ? (
@@ -849,7 +850,17 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
         </View>
       ) : null}
 
-      {isVoiceChatActive ? null : (
+      {isVoiceChatActive ? (
+        <VoiceChat
+          newMessage={newMessage as IMedia}
+          setNewMessage={
+            setNewMessage as React.Dispatch<React.SetStateAction<IMedia>>
+          }
+          setIsVoiceChatActive={setIsVoiceChatActive}
+          isVoiceChatActive={isVoiceChatActive}
+          handleSendMedia={handleSendMedia}
+        />
+      ) : (
         <View style={styles.inputContainer}>
           <TouchableOpacity onPress={handlePickImage} style={styles.plusButton}>
             <Icon name="pluscircleo" size={24} color="#667781" />
@@ -867,7 +878,11 @@ const PersonalChatScreen = ({route, navigation}: PersonalChatScreenProps) => {
             placeholderTextColor="#667781"
             multiline
           />
-          <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
+          <TouchableOpacity
+            onPress={
+              newMessage ? sendMessage : () => setIsVoiceChatActive(true)
+            }
+            style={styles.sendButton}>
             {newMessage ? (
               <MaterialIcon name="send" size={24} color="white" />
             ) : (
