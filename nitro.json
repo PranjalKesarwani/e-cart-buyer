@@ -1,0 +1,21 @@
+{
+  "android": {
+    "androidPackageName": "com.audiorecorderplayer",
+    "androidNamespace": ["com", "audiorecorderplayer"],
+    "androidCxxLibName": "audiorecorderplayer"
+  },
+  "ios": {
+    "iosModuleName": "AudioRecorderPlayer",
+    "libraryName": "AudioRecorderPlayer"
+  },
+  "autolinking": {
+    "android": {
+      "moduleClassName": "AudioRecorderPlayer",
+      "packageClassName": "AudioRecorderPlayerPackage"
+    },
+    "ios": {
+      "moduleClassName": "AudioRecorderPlayer"
+    }
+  },
+  "cxxNamespace": ["audiorecorderplayer"]
+}
