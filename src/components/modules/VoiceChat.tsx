@@ -1,14 +1,6 @@
 // import React, {useState, useEffect, useRef} from 'react';
 // import {View, Text, TouchableOpacity, Modal, Platform} from 'react-native';
 // import Icon from 'react-native-vector-icons/MaterialIcons';
-// // import AudioRecorderPlayer, {
-// //   AudioSet,
-// //   AudioEncoderAndroidType,
-// //   AudioSourceAndroidType,
-// //   OutputFormatAndroidType,
-// //   RecordBackType,
-// //   PlayBackType,
-// // } from 'react-native-audio-recorder-player';
 // import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 // import { VoiceChatStyles as styles } from '../../theme/styles';
 // import RNFS from 'react-native-fs';
