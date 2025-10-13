@@ -135,18 +135,6 @@ const StatusScreen = () => {
         <Text style={{fontSize: 22, fontWeight: 'bold'}}>Updates</Text>
       </View>
       <ScrollView>
-        {/* {unseenStatusUpdates?.length > 0 ? (
-          <>
-            <Text style={styles.sectionHeader}>Recent updates</Text>
-            {unseenStatusUpdates.map((item, index) =>
-              renderStatusItem(item, index),
-            )}
-          </>
-        ) : (
-          <Text style={{textAlign: 'center', marginTop: 50}}>
-            No status updates yet
-          </Text>
-        )} */}
         {unseenStatusUpdates?.length > 0 && (
           <>
             <Text style={styles.sectionHeader}>Recent updates</Text>
