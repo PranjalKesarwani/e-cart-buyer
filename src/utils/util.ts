@@ -130,7 +130,7 @@ export const generateUniqueId = (): string => {
 export const sampleStatuses: StatusUpdateType[] = [
   {
     _id: 'status_001',
-    shopId: 'shop_123',
+    // shopId: 'shop_123',
     shopName: 'Urban Styles',
     shopPic:
       'https://i.pinimg.com/1200x/bb/b8/98/bbb89883b4cbe83f37f0d20aa8e4a608.jpg',
@@ -171,7 +171,7 @@ export const sampleStatuses: StatusUpdateType[] = [
 
   {
     _id: 'status_002',
-    shopId: 'shop_456',
+    // shopId: 'shop_456',
     shopName: 'TechWorld Electronics',
     shopPic:
       'https://i.pinimg.com/1200x/bb/b8/98/bbb89883b4cbe83f37f0d20aa8e4a608.jpg',
@@ -222,7 +222,7 @@ export const sampleStatuses: StatusUpdateType[] = [
 
   {
     _id: 'status_003',
-    shopId: 'shop_789',
+    // shopId: 'shop_789',
     shopName: 'FreshMart Grocery',
     shopPic:
       'https://i.pinimg.com/1200x/bb/b8/98/bbb89883b4cbe83f37f0d20aa8e4a608.jpg',

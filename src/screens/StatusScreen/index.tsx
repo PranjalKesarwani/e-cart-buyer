@@ -28,13 +28,20 @@ type NavigationProp = NativeStackNavigationProp<
 
 const StatusScreen = () => {
   const navigation = useNavigation<NavigationProp>();
-  const [statusUpdates, setStatusUpdates] = useState<StatusUpdateType[]>([]);
+  const [unseenStatusUpdates, setUnseenStatusUpdates] = useState<
+    StatusUpdateType[]
+  >([]);
+  const [seenStatusUpdates, setSeenStatusUpdates] = useState<
+    StatusUpdateType[]
+  >([]);
 
   const getStatusUpdates = async () => {
     try {
       const res = await apiClient.get('/buyer/get-nearby-status-updates');
-      // console.log('Status updatesxxx:', res.data);
-      setStatusUpdates(res.data.statusUpdates);
+      if (res.data.success) {
+        setUnseenStatusUpdates(res.data.unseenShopUpdates);
+        setSeenStatusUpdates(res.data.seenShopUpdates);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -46,7 +53,7 @@ const StatusScreen = () => {
 
   const handleStatusPress = (statusIndex: number) => {
     navigation.navigate('StatusViewer', {
-      statusUpdates,
+      unseenStatusUpdates,
       currentIndex: statusIndex,
     });
   };
@@ -128,10 +135,12 @@ const StatusScreen = () => {
         <Text style={{fontSize: 22, fontWeight: 'bold'}}>Updates</Text>
       </View>
       <ScrollView>
-        {statusUpdates?.length > 0 ? (
+        {unseenStatusUpdates?.length > 0 ? (
           <>
             <Text style={styles.sectionHeader}>Recent updates</Text>
-            {statusUpdates.map((item, index) => renderStatusItem(item, index))}
+            {unseenStatusUpdates.map((item, index) =>
+              renderStatusItem(item, index),
+            )}
           </>
         ) : (
           <Text style={{textAlign: 'center', marginTop: 50}}>

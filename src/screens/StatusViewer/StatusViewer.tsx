@@ -31,14 +31,15 @@ type StatusViewerProps = NativeStackScreenProps<
 
 const StatusViewer = ({route, navigation}: StatusViewerProps) => {
   const {
-    statusUpdates,
+    unseenStatusUpdates,
     currentIndex: initialShopIndex,
-  }: {statusUpdates: StatusUpdateType[]; currentIndex: number} = route.params;
+  }: {unseenStatusUpdates: StatusUpdateType[]; currentIndex: number} =
+    route.params;
   const [currentShopIndex, setCurrentShopIndex] =
     useState<number>(initialShopIndex);
   const [currentStatusIndex, setCurrentStatusIndex] = useState<number>(0);
   const progress = useSharedValue(0);
-  const currentShop = statusUpdates[currentShopIndex];
+  const currentShop = unseenStatusUpdates[currentShopIndex];
   const currentStatus = currentShop?.statuses[currentStatusIndex]?.content;
   const shopInfo = {
     shopPic: currentShop?.shopPic,
@@ -99,7 +100,7 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
         setCurrentStatusIndex(prev => prev + 1);
       } else {
         // Move to next shop if available
-        if (currentShopIndex < statusUpdates.length - 1) {
+        if (currentShopIndex < unseenStatusUpdates.length - 1) {
           setCurrentShopIndex(prev => prev + 1);
           setCurrentStatusIndex(0);
         } else {
@@ -114,7 +115,7 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
         // Move to previous shop if available
         if (currentShopIndex > 0) {
           const newShopIndex = currentShopIndex - 1; // Calculate first
-          const prevShopStatuses = statusUpdates[newShopIndex].statuses;
+          const prevShopStatuses = unseenStatusUpdates[newShopIndex].statuses;
           setCurrentShopIndex(newShopIndex);
           // const prevShopStatuses = statusUpdates[currentShopIndex - 1].statuses;
           setCurrentStatusIndex(prevShopStatuses.length - 1);

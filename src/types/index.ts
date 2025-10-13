@@ -23,7 +23,7 @@ export type RootStackParamList = {
   YourOrdersScreen: undefined;
   PersonalChatScreen: {shop: TShop};
   OrderedItemDetailScreen: undefined;
-  StatusViewer: {statusUpdates: any; currentIndex: any};
+  StatusViewer: {unseenStatusUpdates: any; currentIndex: any};
   LocationSetupScreen: undefined;
   AddressInputScreen: {formattedAddress: string; markerPosition: any};
   LocationConfirmationScreen: undefined;
