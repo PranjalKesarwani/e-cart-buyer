@@ -117,6 +117,16 @@ const StatusScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View
+        style={{
+          paddingTop: 20,
+          paddingLeft: 15,
+          paddingBottom: 10,
+          borderBottomWidth: 0.5,
+          borderBottomColor: '#e8e8e8',
+        }}>
+        <Text style={{fontSize: 22, fontWeight: 'bold'}}>Updates</Text>
+      </View>
       <ScrollView>
         {statusUpdates?.length > 0 ? (
           <>
@@ -129,11 +139,6 @@ const StatusScreen = () => {
           </Text>
         )}
       </ScrollView>
-
-      {/* Floating Camera Button */}
-      <TouchableOpacity style={styles.cameraButton}>
-        <Icon name="photo-camera" size={28} color="white" />
-      </TouchableOpacity>
     </SafeAreaView>
   );
 };
