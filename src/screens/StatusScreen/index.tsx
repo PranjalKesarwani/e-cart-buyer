@@ -135,7 +135,7 @@ const StatusScreen = () => {
         <Text style={{fontSize: 22, fontWeight: 'bold'}}>Updates</Text>
       </View>
       <ScrollView>
-        {unseenStatusUpdates?.length > 0 ? (
+        {/* {unseenStatusUpdates?.length > 0 ? (
           <>
             <Text style={styles.sectionHeader}>Recent updates</Text>
             {unseenStatusUpdates.map((item, index) =>
@@ -143,6 +143,27 @@ const StatusScreen = () => {
             )}
           </>
         ) : (
+          <Text style={{textAlign: 'center', marginTop: 50}}>
+            No status updates yet
+          </Text>
+        )} */}
+        {unseenStatusUpdates?.length > 0 && (
+          <>
+            <Text style={styles.sectionHeader}>Recent updates</Text>
+            {unseenStatusUpdates.map((item, index) =>
+              renderStatusItem(item, index),
+            )}
+          </>
+        )}
+        {seenStatusUpdates?.length > 0 && (
+          <>
+            <Text style={styles.sectionHeader}>Viewed updates</Text>
+            {seenStatusUpdates.map((item, index) =>
+              renderStatusItem(item, index + unseenStatusUpdates.length),
+            )}
+          </>
+        )}
+        {unseenStatusUpdates.length === 0 && seenStatusUpdates.length === 0 && (
           <Text style={{textAlign: 'center', marginTop: 50}}>
             No status updates yet
           </Text>
