@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {StackNavigationProp} from '@react-navigation/stack';
 import {useNavigation} from '@react-navigation/native';
 import {Svg, Circle} from 'react-native-svg';
 
@@ -20,6 +19,7 @@ import {
   RootStackParamList,
   StatusUpdateType,
 } from '../../types';
+import {sampleStatuses} from '../../utils/util';
 
 type NavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -28,9 +28,7 @@ type NavigationProp = NativeStackNavigationProp<
 
 const StatusScreen = () => {
   const navigation = useNavigation<NavigationProp>();
-  const [statusUpdates, setStatusUpdates] = useState<StatusUpdateType[] | []>(
-    [],
-  );
+  const [statusUpdates, setStatusUpdates] = useState<StatusUpdateType[]>([]);
 
   const getStatusUpdates = async () => {
     try {

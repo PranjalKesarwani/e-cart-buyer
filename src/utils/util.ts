@@ -1,4 +1,4 @@
-import {TSeller, TShop} from '../types';
+import {StatusUpdateType, TSeller, TShop} from '../types';
 import uuid from 'react-native-uuid';
 
 export const getInitials = (fullName: string) => {
@@ -126,3 +126,140 @@ export const hasAttributes = (attrs: any): boolean => {
 export const generateUniqueId = (): string => {
   return uuid.v4();
 };
+
+export const sampleStatuses: StatusUpdateType[] = [
+  {
+    _id: 'status_001',
+    shopId: 'shop_123',
+    shopName: 'Urban Styles',
+    shopPic:
+      'https://i.pinimg.com/1200x/bb/b8/98/bbb89883b4cbe83f37f0d20aa8e4a608.jpg',
+    statuses: [
+      {
+        _id: 'stat_001_a',
+        createdAt: '2025-10-12T10:30:00.000Z',
+        expiresAt: '2025-10-13T10:30:00.000Z',
+        content: {
+          background: {
+            type: 'color',
+            value: '#FFAA00',
+          },
+          text: {
+            content: 'New Autumn Collection is here! 🍂',
+            fontStyle: 'italic',
+            color: '#ffffff',
+            alignment: 'center',
+            position: {x: 50, y: 200},
+          },
+          drawings: [
+            {
+              color: '#ffffff',
+              thickness: 4,
+              path: [
+                {x: 30, y: 100},
+                {x: 50, y: 120},
+                {x: 80, y: 130},
+              ],
+            },
+          ],
+        },
+      },
+    ],
+    createdAt: new Date('2025-10-12T10:30:00.000Z'),
+    expiresAt: new Date('2025-10-13T10:30:00.000Z'),
+  },
+
+  {
+    _id: 'status_002',
+    shopId: 'shop_456',
+    shopName: 'TechWorld Electronics',
+    shopPic:
+      'https://i.pinimg.com/1200x/bb/b8/98/bbb89883b4cbe83f37f0d20aa8e4a608.jpg',
+    statuses: [
+      {
+        _id: 'stat_002_a',
+        createdAt: '2025-10-12T08:00:00.000Z',
+        expiresAt: '2025-10-13T08:00:00.000Z',
+        content: {
+          background: {
+            type: 'image',
+            value:
+              'https://i.pinimg.com/1200x/bb/b8/98/bbb89883b4cbe83f37f0d20aa8e4a608.jpg',
+          },
+          text: {
+            content: 'Mega Diwali Sale 🔥 Up to 40% OFF!',
+            fontStyle: 'bold',
+            color: '#00ffcc',
+            alignment: 'left',
+            position: {x: 30, y: 250},
+          },
+          drawings: [],
+        },
+      },
+      {
+        _id: 'stat_002_b',
+        createdAt: '2025-10-12T09:15:00.000Z',
+        expiresAt: '2025-10-13T09:15:00.000Z',
+        content: {
+          background: {
+            type: 'color',
+            value: '#001F3F',
+          },
+          text: {
+            content: 'New Smartwatches just dropped ⌚️',
+            fontStyle: 'normal',
+            color: '#ffffff',
+            alignment: 'center',
+            position: {x: 50, y: 180},
+          },
+          drawings: [],
+        },
+      },
+    ],
+    createdAt: new Date('2025-10-12T08:00:00.000Z'),
+    expiresAt: new Date('2025-10-13T08:00:00.000Z'),
+  },
+
+  {
+    _id: 'status_003',
+    shopId: 'shop_789',
+    shopName: 'FreshMart Grocery',
+    shopPic:
+      'https://i.pinimg.com/1200x/bb/b8/98/bbb89883b4cbe83f37f0d20aa8e4a608.jpg',
+    statuses: [
+      {
+        _id: 'stat_003_a',
+        createdAt: '2025-10-12T06:00:00.000Z',
+        expiresAt: '2025-10-13T06:00:00.000Z',
+        content: {
+          background: {
+            type: 'image',
+            value:
+              'https://i.pinimg.com/1200x/bb/b8/98/bbb89883b4cbe83f37f0d20aa8e4a608.jpg',
+          },
+          text: {
+            content: 'Organic veggies restocked 🥦🥕🍅',
+            fontStyle: 'italic',
+            color: '#ffffff',
+            alignment: 'center',
+            position: {x: 50, y: 220},
+          },
+          drawings: [
+            {
+              color: '#00FF00',
+              thickness: 5,
+              path: [
+                {x: 40, y: 180},
+                {x: 60, y: 200},
+                {x: 80, y: 210},
+                {x: 100, y: 230},
+              ],
+            },
+          ],
+        },
+      },
+    ],
+    createdAt: new Date('2025-10-12T06:00:00.000Z'),
+    expiresAt: new Date('2025-10-13T06:00:00.000Z'),
+  },
+];
