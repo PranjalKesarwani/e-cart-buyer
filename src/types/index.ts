@@ -411,7 +411,7 @@ export interface IChatGroupInfo {
 
 export type StatusUpdateType = {
   _id: string;
-  shopId: string;
+  // shopId: string;
   shopName: string;
   shopPic: string;
   statuses: {
@@ -442,6 +442,7 @@ export type StatusUpdateType = {
         }[];
       }[];
     };
+    seen?: boolean;
   }[];
   createdAt: Date;
   expiresAt: Date;

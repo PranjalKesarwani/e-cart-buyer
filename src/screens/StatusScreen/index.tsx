@@ -70,7 +70,7 @@ const StatusScreen = () => {
 
     return (
       <TouchableOpacity
-        key={shop.shopId}
+        key={shop._id}
         style={styles.statusItem}
         onPress={() => handleStatusPress(index)}>
         <View style={styles.avatarContainer}>
