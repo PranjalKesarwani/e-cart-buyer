@@ -22,6 +22,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import {Theme} from '../../theme/theme';
 import {useAppSelector} from '../../redux/hooks';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {width, height} = Dimensions.get('window');
 
@@ -29,6 +30,9 @@ type StatusViewerProps = NativeStackScreenProps<
   RootStackParamList,
   'StatusViewer'
 >;
+
+const localKeyPrefix = 'statusSeen:'; // AsyncStorage key prefix
+const EMIT_THRESHOLD_MS = 800; // wait 800ms before emitting to avoid accidental flicks
 
 const StatusViewer = ({route, navigation}: StatusViewerProps) => {
   const {_id: buyerId} = useAppSelector(state => state.buyer);
@@ -49,6 +53,12 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
     shopName: currentShop?.shopName,
   };
 
+  // session-level in-memory dedupe (won't survive app restart)
+  const inMemorySentRef = useRef<Set<string>>(new Set());
+
+  // keep track of pending timeout so we can cancel if user swipes away quickly
+  const emitTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   const validDuration = 6000;
   // const progressAnim = useRef(new Animated.Value(0)).current;
   const panResponder = useRef(
@@ -67,20 +77,110 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
   const progressStyle = useAnimatedStyle(() => ({
     width: `${progress.value * 100}%`,
   }));
-  useEffect(() => {
-    if (currentShop?.statuses) {
-      startProgressAnimation();
-      socket.emit('saw_status', {
-        buyerId,
-        statusId: currentShop.statuses[currentStatusIndex]._id,
-        expiresAt: moment(
-          currentShop.statuses[currentStatusIndex].expiresAt,
-        ).valueOf(),
-      });
+
+  // ---- Mark status seen logic ----
+  const markStatusSeen = async (
+    statusId: string,
+    buyerIdArg: string,
+    statusExpiresAt?: number,
+  ) => {
+    if (!statusId || !buyerIdArg) return;
+    // session guard
+    if (inMemorySentRef.current.has(statusId)) return;
+
+    const key = localKeyPrefix + statusId;
+    try {
+      const stored = await AsyncStorage.getItem(key);
+      if (stored) {
+        // persist guard exists on this device -> mark in-memory too and return
+        inMemorySentRef.current.add(statusId);
+        return;
+      }
+    } catch (err) {
+      // ignore storage errors, still proceed with in-memory guard
+      console.warn('AsyncStorage read error', err);
     }
+
+    // start threshold timer; only emit if user stays on the status for threshold duration
+    if (emitTimerRef.current) {
+      clearTimeout(emitTimerRef.current);
+      emitTimerRef.current = null;
+    }
+
+    emitTimerRef.current = setTimeout(async () => {
+      try {
+        // double-check in-memory guard
+        if (inMemorySentRef.current.has(statusId)) return;
+
+        // emit socket event. Use 'saw-status' to match server handler.
+        socket.emit('saw_status', {
+          buyerId: buyerIdArg,
+          statusId,
+          statusExpiresAt,
+        });
+
+        // mark as sent in-memory
+        inMemorySentRef.current.add(statusId);
+
+        // persist locally so next visits on this device don't re-emit
+        try {
+          await AsyncStorage.setItem(key, '1');
+          // schedule removal from AsyncStorage when the status expires (if expiresAt is available)
+          if (statusExpiresAt) {
+            const ttl = statusExpiresAt - Date.now();
+            if (ttl > 0) {
+              setTimeout(() => {
+                AsyncStorage.removeItem(key).catch(e =>
+                  console.warn('remove local seen key failed', e),
+                );
+              }, ttl);
+            }
+          }
+        } catch (err) {
+          console.warn('AsyncStorage write error', err);
+        }
+      } catch (err) {
+        console.warn('markStatusSeen emit failed', err);
+      } finally {
+        // clear timer ref
+        if (emitTimerRef.current) {
+          clearTimeout(emitTimerRef.current);
+          emitTimerRef.current = null;
+        }
+      }
+    }, EMIT_THRESHOLD_MS);
+  };
+
+  // When status index or shop index changes -> start animation and schedule status seen emission
+  useEffect(() => {
+    if (currentShop?.statuses && currentShop.statuses.length > 0) {
+      startProgressAnimation();
+
+      const statusDoc = currentShop.statuses[currentStatusIndex];
+      if (statusDoc?._id) {
+        const expiresAtMillis = moment(statusDoc.expiresAt).valueOf();
+        // schedule markStatusSeen for the currently displayed status
+        markStatusSeen(statusDoc._id, buyerId as string, expiresAtMillis);
+      }
+    }
+
+    // cancel any pending emit when unmounting or changing status
+    return () => {
+      if (emitTimerRef.current) {
+        clearTimeout(emitTimerRef.current);
+        emitTimerRef.current = null;
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStatusIndex, currentShopIndex]);
 
-  if (!currentShop || !currentStatus) return null;
+  useEffect(() => {
+    if (currentShop?.statuses) {
+      setCurrentStatusIndex(0); // Reset status index when shop changes
+      startProgressAnimation();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentShopIndex]);
 
   const startProgressAnimation = () => {
     progress.value = 0;
@@ -96,17 +196,16 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
     );
   };
 
-  useEffect(() => {
-    if (currentShop?.statuses) {
-      setCurrentStatusIndex(0); // Reset status index when shop changes
-      startProgressAnimation();
-    }
-  }, [currentShopIndex]);
-
   const handleSwipe = (direction: 'left' | 'right') => {
+    // clear any pending emit when user navigates away immediately
+    if (emitTimerRef.current) {
+      clearTimeout(emitTimerRef.current);
+      emitTimerRef.current = null;
+    }
+
     if (direction === 'left') {
       // Check if there's next status in current shop
-      if (currentStatusIndex < currentShop.statuses.length - 1) {
+      if (currentStatusIndex < (currentShop?.statuses?.length ?? 0) - 1) {
         setCurrentStatusIndex(prev => prev + 1);
       } else {
         // Move to next shop if available
@@ -127,7 +226,6 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
           const newShopIndex = currentShopIndex - 1; // Calculate first
           const prevShopStatuses = unseenStatusUpdates[newShopIndex].statuses;
           setCurrentShopIndex(newShopIndex);
-          // const prevShopStatuses = statusUpdates[currentShopIndex - 1].statuses;
           setCurrentStatusIndex(prevShopStatuses.length - 1);
         } else {
           navigation.goBack();
@@ -136,7 +234,17 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
     }
   };
 
-  if (!currentStatus) return null;
+  useEffect(() => {
+    // cleanup on unmount (clear timer)
+    return () => {
+      if (emitTimerRef.current) {
+        clearTimeout(emitTimerRef.current);
+        emitTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  if (!currentShop || !currentStatus) return null;
 
   return (
     <View style={styles.container} {...panResponder.panHandlers}>
