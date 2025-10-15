@@ -8,7 +8,7 @@ import {
   Image,
   PanResponder,
 } from 'react-native';
-
+import socket from '../../utils/socket';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList, StatusUpdateType} from '../../types';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -21,6 +21,7 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import {Theme} from '../../theme/theme';
+import {useAppSelector} from '../../redux/hooks';
 
 const {width, height} = Dimensions.get('window');
 
@@ -30,6 +31,8 @@ type StatusViewerProps = NativeStackScreenProps<
 >;
 
 const StatusViewer = ({route, navigation}: StatusViewerProps) => {
+  const {_id: buyerId} = useAppSelector(state => state.buyer);
+
   const {
     unseenStatusUpdates,
     currentIndex: initialShopIndex,
@@ -67,6 +70,13 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
   useEffect(() => {
     if (currentShop?.statuses) {
       startProgressAnimation();
+      socket.emit('saw_status', {
+        buyerId,
+        statusId: currentShop.statuses[currentStatusIndex]._id,
+        expiresAt: moment(
+          currentShop.statuses[currentStatusIndex].expiresAt,
+        ).valueOf(),
+      });
     }
   }, [currentStatusIndex, currentShopIndex]);
 
