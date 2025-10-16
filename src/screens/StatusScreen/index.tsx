@@ -19,7 +19,11 @@ import {
   StatusUpdateType,
 } from '../../types';
 import {sampleStatuses} from '../../utils/util';
-import {useAppDispatch} from '../../redux/hooks';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
+import {
+  setSeenStatusUpdates,
+  setUnseenStatusUpdates,
+} from '../../redux/slices/chatSlice';
 
 type NavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -28,19 +32,22 @@ type NavigationProp = NativeStackNavigationProp<
 
 const StatusScreen = () => {
   const navigation = useNavigation<NavigationProp>();
-  const [unseenStatusUpdates, setUnseenStatusUpdates] = useState<
-    StatusUpdateType[]
-  >([]);
-  const [seenStatusUpdates, setSeenStatusUpdates] = useState<
-    StatusUpdateType[]
-  >([]);
+  // const [unseenStatusUpdates, setUnseenStatusUpdates] = useState<
+  //   StatusUpdateType[]
+  // >([]);
+  // const [seenStatusUpdates, setSeenStatusUpdates] = useState<
+  //   StatusUpdateType[]
+  // >([]);
+  const {seenStatusUpdates, unseenStatusUpdates} = useAppSelector(
+    state => state.chatSlice,
+  );
   const dispatch = useAppDispatch();
   const getStatusUpdates = async () => {
     try {
       const res = await apiClient.get('/buyer/get-nearby-status-updates');
       if (res.data.success) {
-        setUnseenStatusUpdates(res.data.unseenShopUpdates);
-        setSeenStatusUpdates(res.data.seenShopUpdates);
+        dispatch(setUnseenStatusUpdates(res.data.unseenShopUpdates));
+        dispatch(setSeenStatusUpdates(res.data.seenShopUpdates));
       }
     } catch (error) {
       console.log(error);

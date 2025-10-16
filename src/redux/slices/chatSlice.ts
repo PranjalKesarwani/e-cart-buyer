@@ -65,7 +65,12 @@ const chatSlice = createSlice({
   extraReducers: builder => {},
 });
 
-export const {setChatContacts, updateLastMessage, setSocketId} =
-  chatSlice.actions;
+export const {
+  setChatContacts,
+  setSeenStatusUpdates,
+  setUnseenStatusUpdates,
+  updateLastMessage,
+  setSocketId,
+} = chatSlice.actions;
 
 export default chatSlice.reducer;
