@@ -21,8 +21,12 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import {Theme} from '../../theme/theme';
-import {useAppSelector} from '../../redux/hooks';
+import {useAppDispatch, useAppSelector} from '../../redux/hooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  setUnseenStatusUpdates,
+  setSeenStatusUpdates,
+} from '../../redux/slices/chatSlice';
 
 const {width, height} = Dimensions.get('window');
 
@@ -36,7 +40,10 @@ const EMIT_THRESHOLD_MS = 800; // wait 800ms before emitting to avoid accidental
 
 const StatusViewer = ({route, navigation}: StatusViewerProps) => {
   const {_id: buyerId} = useAppSelector(state => state.buyer);
-
+  const {unseenStatusUpdates, seenStatusUpdates} = useAppSelector(
+    state => state.chatSlice, // or whatever your slice name is
+  );
+  const dispatch = useAppDispatch();
   const {
     statusUpdates,
     currentIndex: initialShopIndex,
@@ -209,12 +216,13 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
         setCurrentStatusIndex(prev => prev + 1);
       } else {
         // Move to next shop if available
-        if (currentShopIndex < statusUpdates.length - 1) {
-          setCurrentShopIndex(prev => prev + 1);
-          setCurrentStatusIndex(0);
-        } else {
-          navigation.goBack();
-        }
+        // if (currentShopIndex < statusUpdates.length - 1) {
+        //   setCurrentShopIndex(prev => prev + 1);
+        //   setCurrentStatusIndex(0);
+        // } else {
+        //   navigation.goBack();
+        // }
+        moveShopToSeen();
       }
     } else {
       // Swipe right
@@ -231,6 +239,26 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
           navigation.goBack();
         }
       }
+    }
+  };
+  const moveShopToSeen = () => {
+    if (!currentShop) return;
+
+    // remove from unseen and add to seen
+    const newUnseen = unseenStatusUpdates.filter(
+      (_, i) => i !== currentShopIndex,
+    );
+    const newSeen = [currentShop, ...seenStatusUpdates];
+
+    dispatch(setUnseenStatusUpdates(newUnseen));
+    dispatch(setSeenStatusUpdates(newSeen));
+
+    // Navigate to next unseen shop if any left
+    if (newUnseen.length > 0 && currentShopIndex < newUnseen.length) {
+      setCurrentShopIndex(currentShopIndex); // same index now points to next shop
+      setCurrentStatusIndex(0);
+    } else {
+      navigation.goBack();
     }
   };
 
