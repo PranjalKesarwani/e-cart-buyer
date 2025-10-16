@@ -32,12 +32,7 @@ type NavigationProp = NativeStackNavigationProp<
 
 const StatusScreen = () => {
   const navigation = useNavigation<NavigationProp>();
-  // const [unseenStatusUpdates, setUnseenStatusUpdates] = useState<
-  //   StatusUpdateType[]
-  // >([]);
-  // const [seenStatusUpdates, setSeenStatusUpdates] = useState<
-  //   StatusUpdateType[]
-  // >([]);
+
   const {seenStatusUpdates, unseenStatusUpdates} = useAppSelector(
     state => state.chatSlice,
   );
@@ -58,14 +53,20 @@ const StatusScreen = () => {
     getStatusUpdates();
   }, []);
 
-  const handleStatusPress = (statusIndex: number) => {
+  const handleStatusPress = (statusIndex: number, statusType = 'seen') => {
+    const statusUpdates =
+      statusType === 'seen' ? seenStatusUpdates : unseenStatusUpdates;
     navigation.navigate('StatusViewer', {
-      unseenStatusUpdates,
+      statusUpdates,
       currentIndex: statusIndex,
     });
   };
 
-  const renderStatusItem = (shop: StatusUpdateType, index: number) => {
+  const renderStatusItem = (
+    shop: StatusUpdateType,
+    index: number,
+    statusType = 'seen',
+  ) => {
     if (!shop.statuses || shop.statuses.length === 0) return null;
 
     const totalStatuses = shop.statuses.length;
@@ -86,7 +87,7 @@ const StatusScreen = () => {
       <TouchableOpacity
         key={shop._id}
         style={styles.statusItem}
-        onPress={() => handleStatusPress(index)}>
+        onPress={() => handleStatusPress(index, statusType)}>
         <View style={styles.avatarContainer}>
           <Svg height="60" width="60" style={styles.statusRing}>
             {/* Background circle */}
@@ -146,7 +147,7 @@ const StatusScreen = () => {
           <>
             <Text style={styles.sectionHeader}>Recent updates</Text>
             {unseenStatusUpdates.map((item, index) =>
-              renderStatusItem(item, index),
+              renderStatusItem(item, index, 'unseen'),
             )}
           </>
         )}
@@ -154,7 +155,11 @@ const StatusScreen = () => {
           <>
             <Text style={styles.sectionHeader}>Viewed updates</Text>
             {seenStatusUpdates.map((item, index) =>
-              renderStatusItem(item, index + unseenStatusUpdates.length),
+              renderStatusItem(
+                item,
+                index + unseenStatusUpdates.length,
+                'seen',
+              ),
             )}
           </>
         )}

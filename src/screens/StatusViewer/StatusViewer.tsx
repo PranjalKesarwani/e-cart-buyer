@@ -38,15 +38,14 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
   const {_id: buyerId} = useAppSelector(state => state.buyer);
 
   const {
-    unseenStatusUpdates,
+    statusUpdates,
     currentIndex: initialShopIndex,
-  }: {unseenStatusUpdates: StatusUpdateType[]; currentIndex: number} =
-    route.params;
+  }: {statusUpdates: StatusUpdateType[]; currentIndex: number} = route.params;
   const [currentShopIndex, setCurrentShopIndex] =
     useState<number>(initialShopIndex);
   const [currentStatusIndex, setCurrentStatusIndex] = useState<number>(0);
   const progress = useSharedValue(0);
-  const currentShop = unseenStatusUpdates[currentShopIndex];
+  const currentShop = statusUpdates[currentShopIndex];
   const currentStatus = currentShop?.statuses[currentStatusIndex]?.content;
   const shopInfo = {
     shopPic: currentShop?.shopPic,
@@ -209,7 +208,7 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
         setCurrentStatusIndex(prev => prev + 1);
       } else {
         // Move to next shop if available
-        if (currentShopIndex < unseenStatusUpdates.length - 1) {
+        if (currentShopIndex < statusUpdates.length - 1) {
           setCurrentShopIndex(prev => prev + 1);
           setCurrentStatusIndex(0);
         } else {
@@ -224,7 +223,7 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
         // Move to previous shop if available
         if (currentShopIndex > 0) {
           const newShopIndex = currentShopIndex - 1; // Calculate first
-          const prevShopStatuses = unseenStatusUpdates[newShopIndex].statuses;
+          const prevShopStatuses = statusUpdates[newShopIndex].statuses;
           setCurrentShopIndex(newShopIndex);
           setCurrentStatusIndex(prevShopStatuses.length - 1);
         } else {
