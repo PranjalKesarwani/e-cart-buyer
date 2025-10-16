@@ -56,6 +56,7 @@ const StatusScreen = () => {
   const handleStatusPress = (statusIndex: number, statusType = 'seen') => {
     const statusUpdates =
       statusType === 'seen' ? seenStatusUpdates : unseenStatusUpdates;
+    // console.log(statusType, statusUpdates);
     navigation.navigate('StatusViewer', {
       statusUpdates,
       currentIndex: statusIndex,
@@ -155,11 +156,7 @@ const StatusScreen = () => {
           <>
             <Text style={styles.sectionHeader}>Viewed updates</Text>
             {seenStatusUpdates.map((item, index) =>
-              renderStatusItem(
-                item,
-                index + unseenStatusUpdates.length,
-                'seen',
-              ),
+              renderStatusItem(item, index, 'seen'),
             )}
           </>
         )}

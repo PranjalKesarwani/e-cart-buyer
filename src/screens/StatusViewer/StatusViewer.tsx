@@ -41,6 +41,7 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
     statusUpdates,
     currentIndex: initialShopIndex,
   }: {statusUpdates: StatusUpdateType[]; currentIndex: number} = route.params;
+  console.log('--->status updates', statusUpdates, initialShopIndex);
   const [currentShopIndex, setCurrentShopIndex] =
     useState<number>(initialShopIndex);
   const [currentStatusIndex, setCurrentStatusIndex] = useState<number>(0);
