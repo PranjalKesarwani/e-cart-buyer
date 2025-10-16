@@ -19,6 +19,7 @@ import {
   StatusUpdateType,
 } from '../../types';
 import {sampleStatuses} from '../../utils/util';
+import {useAppDispatch} from '../../redux/hooks';
 
 type NavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -33,7 +34,7 @@ const StatusScreen = () => {
   const [seenStatusUpdates, setSeenStatusUpdates] = useState<
     StatusUpdateType[]
   >([]);
-
+  const dispatch = useAppDispatch();
   const getStatusUpdates = async () => {
     try {
       const res = await apiClient.get('/buyer/get-nearby-status-updates');
