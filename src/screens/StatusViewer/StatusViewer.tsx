@@ -328,7 +328,7 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
       )}
 
       {/* Text Content */}
-      <View
+      {/* <View
         style={[
           styles.textContainer,
           {
@@ -348,6 +348,40 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
           ]}>
           {currentStatus.text.content}
         </Text>
+      </View> */}
+
+      <View style={[styles.textWrapper]}>
+        {currentStatus.background.type === 'color' ? (
+          <Text
+            style={[
+              styles.statusText,
+              {
+                color: currentStatus.text.color,
+                fontWeight:
+                  currentStatus.text.fontStyle === 'bold' ? 'bold' : 'normal',
+                textAlign: currentStatus.text.alignment,
+              },
+            ]}>
+            {currentStatus.text.content}
+          </Text>
+        ) : (
+          <View
+            style={[
+              styles.imageCaptionContainer, // New style for the caption container
+            ]}>
+            <Text
+              style={[
+                styles.statusText,
+                styles.imageCaptionText, // New style for text in image caption
+                {
+                  fontWeight:
+                    currentStatus.text.fontStyle === 'bold' ? 'bold' : 'normal',
+                },
+              ]}>
+              {currentStatus.text.content}
+            </Text>
+          </View>
+        )}
       </View>
 
       {/* Navigation Controls */}
@@ -423,11 +457,11 @@ const styles = StyleSheet.create({
     flexShrink: 1, // allow it to shrink if needed
     backgroundColor: 'transparent',
   },
-  statusText: {
-    fontSize: 24,
-    includeFontPadding: false,
-    flexWrap: 'wrap',
-  },
+  // statusText: {
+  //   fontSize: 24,
+  //   includeFontPadding: false,
+  //   flexWrap: 'wrap',
+  // },
   leftTouchArea: {
     ...StyleSheet.absoluteFillObject,
     right: '50%',
@@ -435,6 +469,46 @@ const styles = StyleSheet.create({
   rightTouchArea: {
     ...StyleSheet.absoluteFillObject,
     left: '50%',
+  },
+  textWrapper: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center', // vertical center
+    alignItems: 'center', // horizontal center
+    paddingHorizontal: 20, // allow text to shrink/grow inside margins
+  },
+
+  statusText: {
+    fontSize: 24,
+    includeFontPadding: false,
+    textAlign: 'center', // ensures multiple lines stay centered
+    flexWrap: 'wrap', // allow wrapping
+  },
+  imageCaptionContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)', // Dark semi-transparent background
+    paddingHorizontal: 15,
+    paddingTop: 10,
+    paddingBottom: 25, // More padding at the bottom for better look
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    maxHeight: '40%', // Limits the height so it doesn't cover too much of the image
+    // flexShrink: 1, // Allow the container to shrink if content is short
+  },
+  imageCaptionText: {
+    color: 'white', // White text for captions on dark background
+    fontSize: 18, // Slightly smaller font size for captions, adjust as needed
+    lineHeight: 24, // Helps with readability for multi-line text
+    // Adding `flexShrink: 1` to the text style itself is also good for responsiveness
+    // flexShrink: 1, // Already handled by flexWrap and container constraints
   },
 });
 
