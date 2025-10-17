@@ -418,6 +418,7 @@ export type StatusUpdateType = {
     _id: string;
     createdAt: string;
     expiresAt: string;
+    time?: number;
     content: {
       background: {
         type: 'color' | 'image';

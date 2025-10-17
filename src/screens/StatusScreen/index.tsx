@@ -11,7 +11,7 @@ import {
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useNavigation} from '@react-navigation/native';
 import {Svg, Circle} from 'react-native-svg';
-
+import momentTz from 'moment-timezone';
 import {apiClient} from '../../services/api';
 import {
   MainTabsParamList,
@@ -74,10 +74,31 @@ const StatusScreen = () => {
     const avatar = shop.shopPic; // Using shop's profile picture instead of status background
     const name = shop.shopName;
     const latestStatus = shop.statuses[0];
-    const time = new Date(latestStatus.createdAt).toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+
+    const subtitleText = (() => {
+      const now = new Date();
+      const istUnix = momentTz
+        .utc(latestStatus.createdAt)
+        .tz('Asia/Kolkata')
+        .unix();
+      const statusDate = new Date(istUnix * 1000);
+      const timeString = statusDate.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+
+      if (now.toDateString() === statusDate.toDateString()) {
+        return `Today, ${timeString}`;
+      }
+
+      const yesterday = new Date(now);
+      yesterday.setDate(now.getDate() - 1);
+      if (yesterday.toDateString() === statusDate.toDateString()) {
+        return `Yesterday, ${timeString}`;
+      }
+
+      return `${statusDate.toLocaleDateString()}, ${timeString}`;
+    })();
 
     // Calculate angles for each segment
     const segmentAngle = 360 / totalStatuses;
@@ -125,7 +146,7 @@ const StatusScreen = () => {
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.name}>{name}</Text>
-          <Text style={styles.time}>{time}</Text>
+          <Text style={styles.time}>{subtitleText}</Text>
         </View>
       </TouchableOpacity>
     );
