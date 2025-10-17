@@ -241,26 +241,68 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
       }
     }
   };
+  // const moveShopToSeen = () => {
+  //   if (!currentShop) return;
+
+  //   const isAnyUnseenStatus = unseenStatusUpdates[
+  //     currentShopIndex
+  //   ]?.statuses.some(status => !status.seen);
+  //   let newUnseen = unseenStatusUpdates;
+  //   if (isAnyUnseenStatus) {
+  //     // remove from unseen and add to seen
+  //     newUnseen = unseenStatusUpdates.filter((_, i) => i !== currentShopIndex);
+  //     const newSeen = [currentShop, ...seenStatusUpdates];
+
+  //     dispatch(setUnseenStatusUpdates(newUnseen));
+  //     dispatch(setSeenStatusUpdates(newSeen));
+  //     // return
+  //   }
+
+  //   // Navigate to next unseen shop if any left
+  //   if (newUnseen.length > 0 && currentShopIndex < newUnseen.length) {
+  //     setCurrentShopIndex(currentShopIndex); // same index now points to next shop
+  //     setCurrentStatusIndex(0);
+  //   } else {
+  //     navigation.goBack();
+  //   }
+  // };
+
   const moveShopToSeen = () => {
     if (!currentShop) return;
 
-    const isAnyUnseenStatus = unseenStatusUpdates[
-      currentShopIndex
-    ]?.statuses.some(status => !status.seen);
-    let newUnseen = unseenStatusUpdates;
-    if (isAnyUnseenStatus) {
-      // remove from unseen and add to seen
-      newUnseen = unseenStatusUpdates.filter((_, i) => i !== currentShopIndex);
-      const newSeen = [currentShop, ...seenStatusUpdates];
+    const shopIndex = currentShopIndex;
+    const shopData = unseenStatusUpdates[shopIndex];
 
+    if (!shopData) return;
+
+    const isAnyUnseenStatus = shopData.statuses.some(status => !status.seen);
+
+    let newUnseen = unseenStatusUpdates;
+
+    if (isAnyUnseenStatus) {
+      // ✅ Step 1: Mark all statuses of current shop as seen
+      const updatedShop = {
+        ...shopData,
+        statuses: shopData.statuses.map(status => ({
+          ...status,
+          seen: true,
+        })),
+      };
+
+      // ✅ Step 2: Remove the shop from unseen list
+      newUnseen = unseenStatusUpdates.filter((_, i) => i !== shopIndex);
+
+      // ✅ Step 3: Add the updated shop to seen list
+      const newSeen = [updatedShop, ...seenStatusUpdates];
+
+      // ✅ Step 4: Dispatch state updates
       dispatch(setUnseenStatusUpdates(newUnseen));
       dispatch(setSeenStatusUpdates(newSeen));
-      // return
     }
 
-    // Navigate to next unseen shop if any left
-    if (newUnseen.length > 0 && currentShopIndex < newUnseen.length) {
-      setCurrentShopIndex(currentShopIndex); // same index now points to next shop
+    // ✅ Step 5: Move to next unseen shop if available
+    if (newUnseen.length > 0 && shopIndex < newUnseen.length) {
+      setCurrentShopIndex(shopIndex); // same index now points to next shop
       setCurrentStatusIndex(0);
     } else {
       navigation.goBack();
