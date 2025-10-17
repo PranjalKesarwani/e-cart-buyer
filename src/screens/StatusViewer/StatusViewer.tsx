@@ -244,14 +244,19 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
   const moveShopToSeen = () => {
     if (!currentShop) return;
 
-    // remove from unseen and add to seen
-    const newUnseen = unseenStatusUpdates.filter(
-      (_, i) => i !== currentShopIndex,
-    );
-    const newSeen = [currentShop, ...seenStatusUpdates];
+    const isAnyUnseenStatus = unseenStatusUpdates[
+      currentShopIndex
+    ]?.statuses.some(status => !status.seen);
+    let newUnseen = unseenStatusUpdates;
+    if (isAnyUnseenStatus) {
+      // remove from unseen and add to seen
+      newUnseen = unseenStatusUpdates.filter((_, i) => i !== currentShopIndex);
+      const newSeen = [currentShop, ...seenStatusUpdates];
 
-    dispatch(setUnseenStatusUpdates(newUnseen));
-    dispatch(setSeenStatusUpdates(newSeen));
+      dispatch(setUnseenStatusUpdates(newUnseen));
+      dispatch(setSeenStatusUpdates(newSeen));
+      // return
+    }
 
     // Navigate to next unseen shop if any left
     if (newUnseen.length > 0 && currentShopIndex < newUnseen.length) {
