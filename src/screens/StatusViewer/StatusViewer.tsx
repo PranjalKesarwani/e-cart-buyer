@@ -48,7 +48,6 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
     statusUpdates,
     currentIndex: initialShopIndex,
   }: {statusUpdates: StatusUpdateType[]; currentIndex: number} = route.params;
-  console.log('--->status updates', statusUpdates, initialShopIndex);
   const [currentShopIndex, setCurrentShopIndex] =
     useState<number>(initialShopIndex);
   const [currentStatusIndex, setCurrentStatusIndex] = useState<number>(0);
@@ -268,12 +267,22 @@ const StatusViewer = ({route, navigation}: StatusViewerProps) => {
   // };
 
   const moveShopToSeen = () => {
-    if (!currentShop) return;
-
+    if (!currentShop) {
+      navigation.goBack();
+      return;
+    }
     const shopIndex = currentShopIndex;
+    console.log('Moving shop to seen, isAnyUnseenStatus:', 'isAnyUnseenStatus');
     const shopData = unseenStatusUpdates[shopIndex];
 
-    if (!shopData) return;
+    if (!shopData) {
+      navigation.goBack();
+      return;
+    }
+    console.log(
+      'Moving shop to seen, xxxxxxisAnyUnseenStatus:',
+      'isAnyUnseenStatus',
+    );
 
     const isAnyUnseenStatus = shopData.statuses.some(status => !status.seen);
 
