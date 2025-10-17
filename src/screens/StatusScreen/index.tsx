@@ -123,14 +123,15 @@ const StatusScreen = () => {
             />
 
             {/* Status segments */}
-            {shop.statuses.map((_, idx) => (
+            {shop.statuses.map((status, idx) => (
               <Circle
                 key={idx}
                 cx="30"
                 cy="30"
                 r={radius}
-                stroke="#25D366"
-                strokeWidth="2"
+                // stroke="#25D366"
+                stroke={status.seen ? '#999999' : '#25D366'}
+                strokeWidth="4"
                 fill="none"
                 strokeDasharray={circumference}
                 strokeDashoffset={
